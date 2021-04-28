@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.ContactUsFragment"
+    android:background="@drawable/border">
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+       android:layout_width="match_parent"
+       android:layout_height="match_parent">
+
+       <TextView
+           android:id="@+id/text1"
+           android:layout_width="match_parent"
+           android:layout_height="50sp"
+           android:text="Contact Us"
+           android:background="@drawable/border_textview3"
+           app:layout_constraintTop_toTopOf="parent"
+           android:gravity="center"
+           android:textSize="22sp"/>
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Name"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/text1"
+           android:layout_marginTop="10dp"
+           android:textSize="15sp"
+           android:textColor="@color/main_color"
+           android:id="@+id/text2"/>
+       <EditText
+           android:id="@+id/c_name"
+           android:layout_width="0dp"
+           android:layout_height="50sp"
+           android:layout_marginTop="10sp"
+           android:background="@drawable/border_edittext"
+           android:hint="@string/hint_cname"
+           android:paddingLeft="10dp"
+           android:textSize="18sp"
+           android:inputType="text"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintRight_toRightOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/text2" />
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Mobile Number"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/c_name"
+           android:layout_marginTop="10dp"
+           android:textSize="15sp"
+           android:textColor="@color/main_color"
+           android:id="@+id/text3"/>
+       <EditText
+           android:id="@+id/c_mob"
+           android:layout_width="0dp"
+           android:layout_height="50sp"
+           android:layout_marginTop="10sp"
+           android:background="@drawable/border_edittext"
+           android:hint="@string/hint_cmobile"
+           android:paddingLeft="10dp"
+           android:textSize="18sp"
+           android:inputType="number"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintRight_toRightOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/text3" />
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Email"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/c_mob"
+           android:layout_marginTop="10dp"
+           android:textSize="15sp"
+           android:textColor="@color/main_color"
+           android:id="@+id/text4"/>
+       <EditText
+           android:id="@+id/c_email"
+           android:layout_width="0dp"
+           android:layout_height="50sp"
+           android:layout_marginTop="10sp"
+           android:background="@drawable/border_edittext"
+           android:hint="@string/hint_cemail"
+           android:paddingLeft="10dp"
+           android:textSize="18sp"
+           android:inputType="textEmailAddress"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintRight_toRightOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/text4" />
+       <TextView
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:text="Message"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/c_email"
+           android:layout_marginTop="10dp"
+           android:textSize="15sp"
+           android:textColor="@color/main_color"
+           android:id="@+id/text5"/>
+       <EditText
+           android:id="@+id/c_message"
+           android:layout_width="0dp"
+           android:layout_height="100sp"
+           android:layout_marginTop="10sp"
+           android:background="@drawable/border_edittext"
+           android:hint="@string/hint_cmessage"
+           android:paddingLeft="10dp"
+           android:textSize="18sp"
+           android:inputType="textMultiLine"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintRight_toRightOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/text5" />
+       <Button
+           android:id="@+id/send_message"
+           android:layout_width="0dp"
+           android:layout_height="wrap_content"
+           android:layout_marginTop="15sp"
+           android:text="Send"
+           android:textSize="18sp"
+           app:layout_constraintLeft_toLeftOf="parent"
+           app:layout_constraintRight_toRightOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/c_message" />
+   </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

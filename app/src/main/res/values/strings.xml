@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">FreshFarmNew</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="hint_mobile"><b>Mobile Number</b></string>
+    <string name="hint_username"><b>Username</b></string>
+    <string name="hint_email"><b>Email Address</b></string>
+    <string name="hint_pass1"><b>Password</b></string>
+    <string name="hint_pass2"><b>Confirm Password</b></string>
+    <string name="hint_referral"><b>Referral Code</b></string>
+    <string name="hint_search"><b>Search</b></string>
+    <string name="hint_address"><b>Address</b></string>
+    <string name="hint_curr_pass"><b>Current Password</b></string>
+    <string name="hint_new_pass"><b>New Password</b></string>
+    <string name="hint_conf_pass"><b>Confirm Password</b></string>
+    <string name="hint_amount"><b>Enter Amount</b></string>
+    <string name="hint_cname"><b>Name</b></string>
+    <string name="hint_cmobile"><b>Mobile Number</b></string>
+    <string name="hint_cemail"><b>Email</b></string>
+    <string name="hint_cmessage"><b>Message</b></string>
+    <string name="hint_otp"><b>Provide OTP</b></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_maps">Map</string>
+
+</resources>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.ProfileFragment"
+    android:background="@drawable/border">
+
+    <EditText
+        android:id="@+id/edit_profile"
+        android:layout_width="0dp"
+        android:layout_height="35sp"
+        android:layout_marginTop="10sp"
+        android:background="@drawable/border_edittext2"
+        android:text="Edit Profile"
+        android:drawablePadding="8sp"
+        android:editable="false"
+        android:drawableLeft="@drawable/ic_profile"
+        android:paddingLeft="10dp"
+        android:textSize="14sp"
+        android:focusable="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/change_pass"
+        android:layout_width="0dp"
+        android:layout_height="35sp"
+        android:layout_marginTop="10sp"
+        android:background="@drawable/border_edittext2"
+        android:text="Change Password"
+        android:drawablePadding="8sp"
+        android:editable="false"
+        android:drawableLeft="@drawable/ic_change_pass"
+        android:paddingLeft="10dp"
+        android:textSize="14sp"
+        android:focusable="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/edit_profile" />
+
+    <EditText
+        android:id="@+id/referral_code"
+        android:layout_width="0dp"
+        android:layout_height="35sp"
+        android:layout_marginTop="10sp"
+        android:background="@drawable/border_edittext2"
+        android:text="Referral Code"
+        android:drawablePadding="8sp"
+        android:editable="false"
+        android:drawableLeft="@drawable/ic_referral"
+        android:paddingLeft="10dp"
+        android:textSize="14sp"
+        android:focusable="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/change_pass" />
+
+    <EditText
+        android:id="@+id/nav_logout2"
+        android:layout_width="0dp"
+        android:layout_height="35sp"
+        android:layout_marginTop="10sp"
+        android:background="@drawable/border_edittext2"
+        android:text="Logout"
+        android:drawablePadding="8sp"
+        android:editable="false"
+        android:drawableLeft="@drawable/ic_logout"
+        android:paddingLeft="10dp"
+        android:textSize="14sp"
+        android:focusable="false"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/referral_code"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

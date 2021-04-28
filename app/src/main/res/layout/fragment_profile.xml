@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border"
+    tools:context=".Fragments.ProfileFragments.EditProfile">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Your Profile"
+            android:textColor="@color/main_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/u_name"
+            android:layout_width="0dp"
+            android:layout_height="50sp"
+            android:layout_marginTop="10sp"
+            android:background="@drawable/border_edittext"
+            android:hint="@string/hint_username"
+            android:paddingLeft="10dp"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/text1" />
+
+        <EditText
+            android:id="@+id/u_mob_number"
+            android:layout_width="0dp"
+            android:layout_height="50sp"
+            android:layout_marginTop="10sp"
+            android:focusable="false"
+            android:editable="false"
+            android:background="@drawable/border_edittext"
+            android:hint="@string/hint_mobile"
+            android:paddingLeft="10dp"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/u_name" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/text2"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="10sp"-->
+<!--            android:text="Email"-->
+<!--            android:textColor="@color/main_color"-->
+<!--            android:textSize="18sp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/u_mob_number" />-->
+
+        <EditText
+            android:id="@+id/u_email"
+            android:layout_width="0dp"
+            android:layout_height="50sp"
+            android:layout_marginTop="10sp"
+            android:background="@drawable/border_edittext"
+            android:hint="@string/hint_email"
+            android:paddingLeft="10dp"
+            android:textSize="18sp"
+            android:focusable="false"
+            android:editable="false"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/u_mob_number" />
+
+<!--        <TextView-->
+<!--            android:id="@+id/text3"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="10sp"-->
+<!--            android:text="Address"-->
+<!--            android:textColor="@color/main_color"-->
+<!--            android:textSize="18sp"-->
+<!--            android:textStyle="bold"-->
+<!--            app:layout_constraintLeft_toLeftOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/u_email" />-->
+
+        <EditText
+            android:id="@+id/u_address"
+            android:layout_width="0dp"
+            android:layout_height="100sp"
+            android:layout_marginTop="10sp"
+            android:background="@drawable/border_edittext"
+            android:hint="@string/hint_address"
+            android:inputType="textMultiLine"
+            android:paddingLeft="10dp"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/u_email" />
+
+        <Button
+            android:id="@+id/save_profile"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15sp"
+            android:text="Save"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/u_address" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

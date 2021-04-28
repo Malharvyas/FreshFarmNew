@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".Fragments.WalletFragment"
+    android:background="@drawable/border">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/text1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enter Amount"
+            android:textColor="@color/main_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/amount_layout"
+            android:layout_width="match_parent"
+            android:layout_height="110sp"
+            android:layout_marginTop="10sp"
+            android:background="@drawable/wallet_amount_bg"
+            app:layout_constraintTop_toBottomOf="@id/text1">
+
+            <EditText
+                android:id="@+id/amount"
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:layout_marginLeft="10sp"
+                android:layout_marginTop="10sp"
+                android:layout_marginRight="10sp"
+                android:background="@drawable/border_edittext"
+                android:hint="@string/hint_amount"
+                android:paddingLeft="10dp"
+                android:textSize="18sp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/t1000"
+                android:layout_width="60sp"
+                android:layout_height="30sp"
+                android:layout_marginTop="15sp"
+                android:background="@drawable/border_textview"
+                android:gravity="center"
+                android:text="1000"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="@id/guideline2"
+                app:layout_constraintTop_toBottomOf="@id/amount" />
+
+            <TextView
+                android:id="@+id/t2000"
+                android:layout_width="60sp"
+                android:layout_height="30sp"
+                android:layout_marginTop="15sp"
+                android:background="@drawable/border_textview"
+                android:gravity="center"
+                android:text="2000"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toRightOf="@id/guideline2"
+                app:layout_constraintRight_toRightOf="@id/guideline3"
+                app:layout_constraintTop_toBottomOf="@id/amount" />
+
+            <TextView
+                android:id="@+id/t3000"
+                android:layout_width="60sp"
+                android:layout_height="30sp"
+                android:layout_marginTop="15sp"
+                android:background="@drawable/border_textview"
+                android:gravity="center"
+                android:text="3000"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toRightOf="@id/guideline3"
+                app:layout_constraintTop_toBottomOf="@id/amount"
+                app:layout_constraintRight_toRightOf="@id/guideline4"/>
+
+            <TextView
+                android:id="@+id/t4000"
+                android:layout_width="60sp"
+                android:layout_height="30sp"
+                android:layout_marginTop="15sp"
+                android:background="@drawable/border_textview"
+                android:gravity="center"
+                android:text="4000"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="@id/guideline4"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/amount" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.25" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.50" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.75" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/add_money"
+            android:layout_width="wrap_content"
+            android:layout_height="40sp"
+            android:layout_marginTop="20sp"
+            android:text="+ Add Money"
+            android:backgroundTint="#374241"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/amount_layout" />
+
+        <TextView
+            android:id="@+id/text2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wallet Balance"
+            android:textColor="@color/main_color"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="10sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_money" />
+
+        <TextView
+            android:id="@+id/wallet_ballance"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20sp"
+            android:text="5000"
+            android:background="@drawable/border_textview2"
+            android:textSize="23sp"
+            android:textColor="#FFFFFF"
+            android:gravity="center_vertical"
+            android:paddingLeft="40sp"
+            android:drawablePadding="6sp"
+            android:paddingBottom="5dp"
+            android:drawableTint="#FFFFFF"
+            android:drawableStart="@drawable/ic_wallet"
+            app:layout_constraintLeft_toLeftOf="@id/add_money"
+            app:layout_constraintRight_toRightOf="@id/add_money"
+            app:layout_constraintTop_toBottomOf="@id/text2" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

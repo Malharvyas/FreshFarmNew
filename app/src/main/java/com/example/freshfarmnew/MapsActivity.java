@@ -25,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -38,16 +39,18 @@ import java.io.IOException;
 import java.sql.Array;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
     SearchView searchView;
-    EditText search;
+    EditText map_address;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
+    MarkerOptions markerOptions;
 
 
     @Override
@@ -59,10 +62,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .findFragmentById(R.id.map);
 
         searchView = findViewById(R.id.searchview);
+        map_address = findViewById(R.id.map_address);
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
+        markerOptions = new MarkerOptions().draggable(true);
+
+
+
         fetchLocation();
+
 
 //        search = findViewById(R.id.search_map);
 //
@@ -110,6 +119,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        mapFragment.getMapAsync(this);
     }
 
+    private void fetchmarkerLocation(double latitude, double longitude) throws IOException {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+        String address = addresses.get(0).getAddressLine(0);
+
+        map_address.setText(address);
+    }
+
+    private void fetchAddress(double latitude, double longitude) throws IOException {
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(this, Locale.getDefault());
+
+        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+        String address = addresses.get(0).getAddressLine(0);
+
+        map_address.setText(address);
+    }
+
     private void fetchLocation() {
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -126,6 +159,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 {
                     currentLocation = location;
                     mapFragment.getMapAsync(MapsActivity.this);
+                    try {
+                        fetchAddress(currentLocation.getLatitude(),currentLocation.getLongitude());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
@@ -151,8 +189,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+                try {
+                    fetchmarkerLocation(marker.getPosition().latitude,marker.getPosition().longitude);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+
+            }
+        });
+
         LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng);
+        markerOptions.position(latLng);
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
         googleMap.addMarker(markerOptions);

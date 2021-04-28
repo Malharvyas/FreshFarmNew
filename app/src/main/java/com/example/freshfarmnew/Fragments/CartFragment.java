@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Base64;
@@ -93,6 +94,10 @@ public class CartFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                HomeFragment h = new HomeFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                ft.replace(R.id.fragment_container, h);
+                ft.commit();
                 //MainActivity.getInstance().goToHome();
 
                 //getActivity().getSupportFragmentManager().popBackStack();

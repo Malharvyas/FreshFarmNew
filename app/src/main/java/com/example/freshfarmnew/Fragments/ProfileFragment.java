@@ -15,10 +15,9 @@ import com.example.freshfarmnew.Fragments.ProfileFragments.EditProfile;
 import com.example.freshfarmnew.R;
 
 
-
 public class ProfileFragment extends Fragment implements View.OnClickListener {
 
-    EditText edit_profile,change_pass,referral_code,logout;
+    EditText edit_profile, change_pass, referral_code, logout;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -54,31 +53,26 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
-            case R.id.edit_profile:
-            {
+        switch (v.getId()) {
+            case R.id.edit_profile: {
                 EditProfile p = new EditProfile();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("edit_profile");
-                ft.replace(R.id.fragment_container,p);
+                ft.replace(R.id.fragment_container, p);
                 ft.commit();
             }
             break;
-            case R.id.change_pass:
-            {
+            case R.id.change_pass: {
                 ChangePassword p = new ChangePassword();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("change_pass");
-                ft.replace(R.id.fragment_container,p);
+                ft.replace(R.id.fragment_container, p);
                 ft.commit();
             }
             break;
-            case R.id.referral_code:
-            {
+            case R.id.referral_code: {
 
             }
             break;
-            case  R.id.nav_logout2:
-            {
+            case R.id.nav_logout2: {
 
             }
             break;

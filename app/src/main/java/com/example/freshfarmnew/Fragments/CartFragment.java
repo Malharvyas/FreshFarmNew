@@ -60,6 +60,7 @@ public class CartFragment extends Fragment {
     CartAdapter cartAdapter;
     private TextView tvTotalAmount;
     private Button btnAddItem;
+    private Button btnContinue, btnCheckout;
 
     public CartFragment() {
         // Required empty public constructor
@@ -90,6 +91,18 @@ public class CartFragment extends Fragment {
         nonemptyCart = v.findViewById(R.id.nonempty_cart);
         tvTotalAmount = v.findViewById(R.id.tvTotalAmount);
         btnAddItem = v.findViewById(R.id.add_item);
+        btnContinue = v.findViewById(R.id.btnContinue);
+        btnCheckout = v.findViewById(R.id.btnCheckout);
+
+        btnCheckout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                /*CheckoutFragment checkoutFragment = new CheckoutFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
+                ft.replace(R.id.fragment_container, checkoutFragment);
+                ft.commit();*/
+            }
+        });
 
         btnAddItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,9 +114,6 @@ public class CartFragment extends Fragment {
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
                 ft.replace(R.id.fragment_container, h);
                 ft.commit();
-                //MainActivity.getInstance().goToHome();
-
-                //getActivity().getSupportFragmentManager().popBackStack();
             }
         });
 

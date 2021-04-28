@@ -24,5 +24,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="btn_continue">Continue</string>
     <string name="checkout">Checkout</string>
+    <string name="payment">Payment</string>
 
 </resources>

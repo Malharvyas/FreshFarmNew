@@ -24,7 +24,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     private onClickListener monclicklistener;
     private String frag_id;
 
-    public CategoryAdapter(Context context, List<Category> list, onClickListener monclicklistener,String frag_id) {
+    public CategoryAdapter(Context context, List<Category> list, onClickListener monclicklistener, String frag_id) {
         this.context = context;
         this.list = list;
         this.monclicklistener = monclicklistener;
@@ -35,21 +35,18 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @Override
     public CategoryAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = null;
-        if(frag_id.equals("Home"))
-        {
-            v = LayoutInflater.from(context).inflate(R.layout.cateogory_layout_home,parent,false);
+        if (frag_id.equals("Home")) {
+            v = LayoutInflater.from(context).inflate(R.layout.cateogory_layout_home, parent, false);
+        } else if (frag_id.equals("Category")) {
+            v = LayoutInflater.from(context).inflate(R.layout.cateogory_layout, parent, false);
         }
-        else if(frag_id.equals("Category"))
-        {
-            v = LayoutInflater.from(context).inflate(R.layout.cateogory_layout,parent,false);
-        }
-        
-        return new ViewHolder(v,monclicklistener);
+
+        return new ViewHolder(v, monclicklistener);
     }
 
     @Override
     public void onBindViewHolder(@NonNull CategoryAdapter.ViewHolder holder, int position) {
-        Category cat =list.get(position);
+        Category cat = list.get(position);
         holder.cat_name.setText(cat.getCategory_name());
 
         Picasso.get().load(cat.category_image).fit().into(holder.cat_img);
@@ -60,13 +57,13 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         return list.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         onClickListener onClickListener;
         TextView cat_name;
         ImageView cat_img;
 
-        public ViewHolder(@NonNull View itemView,onClickListener onClickListener) {
+        public ViewHolder(@NonNull View itemView, onClickListener onClickListener) {
             super(itemView);
 
             this.onClickListener = onClickListener;
@@ -82,7 +79,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         }
     }
 
-    public interface onClickListener{
+    public interface onClickListener {
         void onClicked(int position);
     }
 }

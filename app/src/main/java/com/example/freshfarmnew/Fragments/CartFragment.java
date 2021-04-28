@@ -94,10 +94,10 @@ public class CartFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-//                HomeFragment h = new HomeFragment();
-//                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
-//                ft.replace(R.id.fragment_container, h);
-//                ft.commit();
+                HomeFragment h = new HomeFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                ft.replace(R.id.fragment_container, h);
+                ft.commit();
                 //MainActivity.getInstance().goToHome();
 
                 //getActivity().getSupportFragmentManager().popBackStack();

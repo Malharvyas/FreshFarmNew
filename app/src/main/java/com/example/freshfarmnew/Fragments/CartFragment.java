@@ -36,6 +36,7 @@ import com.example.freshfarmnew.Interfaces.CartCallBack;
 import com.example.freshfarmnew.Model.CartModel;
 import com.example.freshfarmnew.R;
 import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -94,6 +95,8 @@ public class CartFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
+                BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_nav);
+                bottomNavigationView.getMenu().getItem(0).setChecked(true);
                 HomeFragment h = new HomeFragment();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
                 ft.replace(R.id.fragment_container, h);

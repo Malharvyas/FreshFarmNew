@@ -105,8 +105,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
             tvMinus = itemView.findViewById(R.id.tvMinus);
 
         }
-
     }
-
 }
 

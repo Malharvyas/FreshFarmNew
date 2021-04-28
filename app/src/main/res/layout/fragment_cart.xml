@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
     tools:context=".Fragments.CartFragment">
 
     <include
@@ -13,6 +10,7 @@
         layout="@layout/empty_cart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:visibility="gone" />
 
     <include
@@ -20,7 +18,7 @@
         layout="@layout/nonempty_cart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible" />
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progressbar"
@@ -29,4 +27,4 @@
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
-</LinearLayout>
+</RelativeLayout>

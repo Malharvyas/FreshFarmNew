@@ -39,6 +39,9 @@ public class AddressDataModel implements Serializable {
     @SerializedName("UpdatedDate")
     @Expose
     private String updatedDate;
+    @SerializedName("contact_name")
+    @Expose
+    private String contactName;
 
     public String getAddressId() {
         return addressId;
@@ -127,4 +130,13 @@ public class AddressDataModel implements Serializable {
     public void setUpdatedDate(String updatedDate) {
         this.updatedDate = updatedDate;
     }
+
+    public String getContactName() {
+        return contactName;
+    }
+
+    public void setContactName(String contactName) {
+        this.contactName = contactName;
+    }
+
 }

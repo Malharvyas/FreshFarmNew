@@ -44,11 +44,13 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
         AddressDataModel addressDataModel = list.get(position);
 
         holder.tvAddress.setText(addressDataModel.getAddress());
+        holder.tvName.setText(addressDataModel.getContactName());
+        holder.tvPhone.setText(addressDataModel.getPhoneNumber());
 
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addressCallBack.removeAddress(position,addressDataModel.getAddressId());
+                addressCallBack.removeAddress(position, addressDataModel.getAddressId());
             }
         });
 

@@ -54,7 +54,7 @@ import java.util.TimerTask;
 
 import me.relex.circleindicator.CircleIndicator;
 
-public class HomeFragment extends Fragment implements CategoryAdapter.onClickListener,TrendingAdapter.onClickListener,DealsAdapter.onClickListener{
+public class HomeFragment extends Fragment implements CategoryAdapter.onClickListener, TrendingAdapter.onClickListener, DealsAdapter.onClickListener {
 
     ViewPager viewPager;
     String url = "";
@@ -62,18 +62,18 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
     BannerAdapter bannerAdapter;
     Timer timer;
     CircleIndicator circleIndicator;
-    RecyclerView category_recycler,trending_recycler,deals_recycler;
-    RecyclerView.Adapter adapter,adapter2,adapter3;
+    RecyclerView category_recycler, trending_recycler, deals_recycler;
+    RecyclerView.Adapter adapter, adapter2, adapter3;
     List<Category> catlist;
-    List<ProductVariation> variantionlist,variantionlist2;
-    List<Product> prolist,prolist2;
-    String cat_id = "0",sub_cat_id="0",trend_id="3",deals_id="2";
+    List<ProductVariation> variantionlist, variantionlist2;
+    List<Product> prolist, prolist2;
+    String cat_id = "0", sub_cat_id = "0", trend_id = "3", deals_id = "2";
     int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
     String cus_id = "";
 
     ProgressBar progressBar;
 
-    GridLayoutManager gridLayoutManager,gridLayoutManager2,gridLayoutManager3;
+    GridLayoutManager gridLayoutManager, gridLayoutManager2, gridLayoutManager3;
 
     public HomeFragment() {
         // Required empty public constructor
@@ -92,11 +92,11 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
         prolist2 = new ArrayList<>();
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
-        cus_id = sharedPreferences.getString("customer_id","");
+        cus_id = sharedPreferences.getString("customer_id", "");
 
-        adapter = new CategoryAdapter(getContext(),catlist,this,"Home");
-        adapter2 = new TrendingAdapter(getContext(),prolist,this,cus_id);
-        adapter3 = new DealsAdapter(getContext(),prolist2,this);
+        adapter = new CategoryAdapter(getContext(), catlist, this, "Home");
+        adapter2 = new TrendingAdapter(getContext(), prolist, this, cus_id);
+        adapter3 = new DealsAdapter(getContext(), prolist2, this);
 
 //        gridLayoutManager = new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false);
 //        gridLayoutManager2 = new GridLayoutManager(getContext(), 1, LinearLayoutManager.HORIZONTAL, false);
@@ -106,7 +106,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       View v = inflater.inflate(R.layout.fragment_home, container, false);
+        View v = inflater.inflate(R.layout.fragment_home, container, false);
         viewPager = v.findViewById(R.id.banner1);
         circleIndicator = v.findViewById(R.id.circle_indicator);
         category_recycler = v.findViewById(R.id.cat_recycler);
@@ -138,12 +138,11 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
 
         getCategory();
 
-        gettrending(cat_id,sub_cat_id,trend_id);
+        gettrending(cat_id, sub_cat_id, trend_id);
 
-        getdeals(cat_id,sub_cat_id,deals_id);
+        getdeals(cat_id, sub_cat_id, deals_id);
 
-        if(c1 == 1 && c2 == 1 && c3 == 1 && c4 ==1)
-        {
+        if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
             progressBar.setVisibility(View.GONE);
         }
 
@@ -162,7 +161,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -170,12 +169,10 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                 JSONObject json2 = json.getJSONObject("getProduct");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     prolist2.clear();
                                     JSONArray data = json2.getJSONArray("data");
-                                    for(int i = 0; i < data.length(); i++ )
-                                    {
+                                    for (int i = 0; i < data.length(); i++) {
                                         Product product = new Product();
                                         JSONObject catobj = data.getJSONObject(i);
                                         String pro_id = catobj.getString("product_id");
@@ -183,8 +180,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                         String pro_img = catobj.getString("product_image");
                                         variantionlist = new ArrayList<>();
                                         JSONArray variant = catobj.getJSONArray("variation");
-                                        for(int j = 0; j < variant.length(); j++)
-                                        {
+                                        for (int j = 0; j < variant.length(); j++) {
                                             ProductVariation pv = new ProductVariation();
                                             JSONObject varobj = variant.getJSONObject(j);
                                             String v_id = varobj.getString("v_id");
@@ -207,11 +203,9 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                         prolist2.add(product);
                                     }
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -219,8 +213,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                             }
                             adapter3.notifyDataSetChanged();
                             c4 = 1;
-                            if(c1 == 1 && c2 == 1 && c3 == 1 && c4 ==1)
-                            {
+                            if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
                                 progressBar.setVisibility(View.GONE);
                             }
                         }
@@ -231,40 +224,35 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
             public void onErrorResponse(VolleyError error) {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("category_id",cat_id);
-                params.put("subcat_id",sub_cat_id);
-                params.put("product_type",deals_id);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("category_id", cat_id);
+                params.put("subcat_id", sub_cat_id);
+                params.put("product_type", deals_id);
                 return params;
             }
+
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -296,7 +284,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -304,12 +292,10 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                 JSONObject json2 = json.getJSONObject("getProduct");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     prolist.clear();
                                     JSONArray data = json2.getJSONArray("data");
-                                    for(int i = 0; i < data.length(); i++ )
-                                    {
+                                    for (int i = 0; i < data.length(); i++) {
                                         Product product = new Product();
                                         JSONObject catobj = data.getJSONObject(i);
                                         String pro_id = catobj.getString("product_id");
@@ -317,8 +303,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                         String pro_img = catobj.getString("product_image");
                                         variantionlist2 = new ArrayList<>();
                                         JSONArray variant = catobj.getJSONArray("variation");
-                                        for(int j = 0; j < variant.length(); j++)
-                                        {
+                                        for (int j = 0; j < variant.length(); j++) {
                                             ProductVariation pv = new ProductVariation();
                                             JSONObject varobj = variant.getJSONObject(j);
                                             String v_id = varobj.getString("v_id");
@@ -341,11 +326,9 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                         prolist.add(product);
                                     }
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -353,8 +336,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                             }
                             adapter2.notifyDataSetChanged();
                             c3 = 1;
-                            if(c1 == 1 && c2 == 1 && c3 == 1 && c4 ==1)
-                            {
+                            if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
                                 progressBar.setVisibility(View.GONE);
                             }
                         }
@@ -365,40 +347,35 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
             public void onErrorResponse(VolleyError error) {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("category_id",cat_id);
-                params.put("subcat_id",sub_cat_id);
-                params.put("product_type",trend_id);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("category_id", cat_id);
+                params.put("subcat_id", sub_cat_id);
+                params.put("product_type", trend_id);
                 return params;
             }
+
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -430,7 +407,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -438,12 +415,10 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                 JSONObject json2 = json.getJSONObject("CatData");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     catlist.clear();
                                     JSONArray data = json2.getJSONArray("data");
-                                    for(int i = 0; i < data.length(); i++ )
-                                    {
+                                    for (int i = 0; i < data.length(); i++) {
                                         Category category = new Category();
                                         JSONObject catobj = data.getJSONObject(i);
                                         String cat_id = catobj.getString("category_id");
@@ -455,11 +430,9 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                         catlist.add(category);
                                     }
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -467,8 +440,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                             }
                             adapter.notifyDataSetChanged();
                             c2 = 1;
-                            if(c1 == 1 && c2 == 1 && c3 == 1 && c4 ==1)
-                            {
+                            if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
                                 progressBar.setVisibility(View.GONE);
                             }
                         }
@@ -479,32 +451,26 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
             public void onErrorResponse(VolleyError error) {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -536,7 +502,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -544,34 +510,30 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                 JSONObject json2 = json.getJSONObject("BannerData");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     banners.clear();
                                     JSONArray data = json2.getJSONArray("data");
-                                    for(int i = 0; i < data.length(); i++ )
-                                    {
+                                    for (int i = 0; i < data.length(); i++) {
                                         JSONObject imgobj = data.getJSONObject(i);
                                         String bimg = imgobj.getString("banner_image");
                                         banners.add(bimg);
                                     }
-                                    bannerAdapter = new BannerAdapter(getContext(),banners);
+                                    bannerAdapter = new BannerAdapter(getContext(), banners);
                                     viewPager.setAdapter(bannerAdapter);
                                     circleIndicator.setViewPager(viewPager);
                                     c1 = 1;
-                                    if(c1 == 1 && c2 == 1 && c3 == 1 && c4 ==1)
-                                    {
+                                    if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
                                         progressBar.setVisibility(View.GONE);
                                     }
                                     TimerTask timerTask = new TimerTask() {
                                         @Override
                                         public void run() {
-                                            viewPager.post(new Runnable(){
+                                            viewPager.post(new Runnable() {
 
                                                 @Override
                                                 public void run() {
-                                                    if(banners.size() > 0 )
-                                                    {
-                                                        viewPager.setCurrentItem((viewPager.getCurrentItem()+1)%banners.size());
+                                                    if (banners.size() > 0) {
+                                                        viewPager.setCurrentItem((viewPager.getCurrentItem() + 1) % banners.size());
                                                     }
                                                 }
                                             });
@@ -579,11 +541,9 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                     };
                                     timer = new Timer();
                                     timer.schedule(timerTask, 6000, 6000);
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -597,32 +557,26 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
             public void onErrorResponse(VolleyError error) {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -647,11 +601,11 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
         Category cat = catlist.get(position);
         String cat_id = cat.getCategory_id();
         Bundle b = new Bundle();
-        b.putString("category_id",cat_id);
+        b.putString("category_id", cat_id);
         SubCategoryFragment s = new SubCategoryFragment();
         s.setArguments(b);
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("sub_category");
-        ft.replace(R.id.fragment_container,s);
+        ft.replace(R.id.fragment_container, s);
         ft.commit();
     }
 
@@ -660,11 +614,11 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
         Product p = prolist2.get(position);
         String p_id = p.getProduct_id();
         Bundle b = new Bundle();
-        b.putString("product_id",p_id);
+        b.putString("product_id", p_id);
         ProductDetailsFragment pdf = new ProductDetailsFragment();
         pdf.setArguments(b);
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("product_details");
-        ft.replace(R.id.fragment_container,pdf);
+        ft.replace(R.id.fragment_container, pdf);
         ft.commit();
     }
 
@@ -682,7 +636,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -690,24 +644,21 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                 JSONObject json2 = json.getJSONObject("addtocart");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     progressBar.setVisibility(View.GONE);
-                                    if(quantity.equals("1")){
+                                    if (quantity.equals("1")) {
                                         String msg = json2.getString("Message");
-                                        Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                     }
-                                    if(quantity.equals("0")){
+                                    if (quantity.equals("0")) {
                                         String msg = "Item Removed Successfully";
-                                        Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                     }
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     progressBar.setVisibility(View.GONE);
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -722,30 +673,24 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 progressBar.setVisibility(View.GONE);
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -757,7 +702,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
             }
 
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -783,11 +728,11 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
         Product p = prolist.get(position);
         String p_id = p.getProduct_id();
         Bundle b = new Bundle();
-        b.putString("product_id",p_id);
+        b.putString("product_id", p_id);
         ProductDetailsFragment pdf = new ProductDetailsFragment();
         pdf.setArguments(b);
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("product_details");
-        ft.replace(R.id.fragment_container,pdf);
+        ft.replace(R.id.fragment_container, pdf);
         ft.commit();
     }
 
@@ -805,7 +750,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -813,24 +758,21 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                 JSONObject json2 = json.getJSONObject("addtocart");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     progressBar.setVisibility(View.GONE);
-                                    if(quantity.equals("1")){
+                                    if (quantity.equals("1")) {
                                         String msg = json2.getString("Message");
-                                        Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                     }
-                                    if(quantity.equals("0")){
+                                    if (quantity.equals("0")) {
                                         String msg = "Item Removed Successfully";
-                                        Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                     }
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     progressBar.setVisibility(View.GONE);
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -845,30 +787,24 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 progressBar.setVisibility(View.GONE);
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -880,7 +816,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
             }
 
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "

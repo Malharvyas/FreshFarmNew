@@ -75,7 +75,7 @@ import java.util.Map;
 public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
 
     AddressModel addressModel;
-    String url = "", cus_id = "", latitude = "0.0", longitude = "0.0", address = "", type = "1";
+    String url = "", cus_id = "", latitude = "0.0", longitude = "0.0", name = "", phoneNumber = "", address = "", type = "1";
     private Button btnAddAddress;
     private EditText edName, edAddress, edPhone;
     private RadioGroup radioGroup;
@@ -88,7 +88,7 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
     MarkerOptions markerOptions;
-    SharedPreferences sharedPreferences,sharedPreferences2,getpreferances;
+    SharedPreferences sharedPreferences, sharedPreferences2, getpreferances;
 
     public AddAddressFragment() {
         // Required empty public constructor
@@ -125,10 +125,13 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
         radioGroup = v.findViewById(R.id.radioGroup);
         radioBtnHome = v.findViewById(R.id.radioBtnHome);
         radioBtnOffice = v.findViewById(R.id.radioBtnOffice);
+
         if (getArguments() != null) {
             if (getArguments().containsKey("data")) {
                 addressDataModel = (AddressDataModel) getArguments().getSerializable("data");
                 if (addressDataModel != null) {
+                    edName.setText(addressDataModel.getContactName());
+                    edPhone.setText(addressDataModel.getPhoneNumber());
                     edAddress.setText(addressDataModel.getAddress());
                     if (addressDataModel.getType().equals("2"))
                         radioBtnOffice.setChecked(true);
@@ -160,11 +163,9 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
             }
         });
 
-        if(addressDataModel != null)
-        {
+        if (addressDataModel != null) {
             fetchlatlnglocation();
-        }
-        else{
+        } else {
             fetchLocation();
         }
 
@@ -172,20 +173,19 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
     }
 
     private void fetchlatlnglocation() {
-        if(addressDataModel != null)
-        {
+        if (addressDataModel != null) {
             Location location = new Location(LocationManager.GPS_PROVIDER);
             location.setLatitude(Double.parseDouble(addressDataModel.getLatitude()));
             location.setLongitude(Double.parseDouble(addressDataModel.getLongitude()));
             currentLocation = location;
             sharedPreferences = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("lat",String.valueOf(currentLocation.getLatitude()));
-            editor.putString("long",String.valueOf(currentLocation.getLongitude()));
+            editor.putString("lat", String.valueOf(currentLocation.getLatitude()));
+            editor.putString("long", String.valueOf(currentLocation.getLongitude()));
             editor.apply();
             mapFragment.getMapAsync(AddAddressFragment.this);
             try {
-                fetchAddress(currentLocation.getLatitude(),currentLocation.getLongitude());
+                fetchAddress(currentLocation.getLatitude(), currentLocation.getLongitude());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -194,9 +194,11 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
 
     private void getAddressDetails() {
         address = edAddress.getText().toString();
-        SharedPreferences ss = getActivity().getSharedPreferences("location",Context.MODE_PRIVATE);
-        latitude = ss.getString("lat","0.0");
-        longitude = ss.getString("long","0.0");
+        name = edName.getText().toString();
+        phoneNumber = edPhone.getText().toString();
+        SharedPreferences ss = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
+        latitude = ss.getString("lat", "0.0");
+        longitude = ss.getString("long", "0.0");
         // progressbar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
@@ -275,6 +277,8 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
                 params.put("longitude", longitude);
                 params.put("address", address);
                 params.put("type", type);
+                params.put("phone_number", phoneNumber);
+                params.put("contact_name", name);
                 return params;
             }
 
@@ -302,7 +306,7 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
 
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(), new String[]
-                    {Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
+                    {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
             return;
         }
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
@@ -310,17 +314,16 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                if(location != null)
-                {
+                if (location != null) {
                     currentLocation = location;
                     sharedPreferences = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("lat",String.valueOf(currentLocation.getLatitude()));
-                    editor.putString("long",String.valueOf(currentLocation.getLongitude()));
+                    editor.putString("lat", String.valueOf(currentLocation.getLatitude()));
+                    editor.putString("long", String.valueOf(currentLocation.getLongitude()));
                     editor.apply();
                     mapFragment.getMapAsync(AddAddressFragment.this);
                     try {
-                        fetchAddress(currentLocation.getLatitude(),currentLocation.getLongitude());
+                        fetchAddress(currentLocation.getLatitude(), currentLocation.getLongitude());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -352,8 +355,8 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
 
         sharedPreferences2 = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences2.edit();
-        editor.putString("lat",String.valueOf(latitude));
-        editor.putString("long",String.valueOf(longitude));
+        editor.putString("lat", String.valueOf(latitude));
+        editor.putString("long", String.valueOf(longitude));
         editor.apply();
 
         edAddress.setText(address);
@@ -373,7 +376,7 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onMarkerDrag(Marker marker) {
                 try {
-                    fetchmarkerLocation(marker.getPosition().latitude,marker.getPosition().longitude);
+                    fetchmarkerLocation(marker.getPosition().latitude, marker.getPosition().longitude);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -391,11 +394,11 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
 //        else{
 //            latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
 //        }
-        latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+        latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
         markerOptions.position(latLng);
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
         googleMap.addMarker(markerOptions).setTitle("Hold the marker to drag!");
     }
 }

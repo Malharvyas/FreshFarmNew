@@ -263,6 +263,7 @@ public class CartFragment extends Fragment {
                             JSONObject json = null;
                             try {
                                 json = new JSONObject(String.valueOf(response));
+                                Log.e("PrintLog", "---------response--------" + response);
                                 JSONObject json2 = json.getJSONObject("addtocart");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
@@ -278,10 +279,13 @@ public class CartFragment extends Fragment {
                                     }.getType();
 
                                     cartModelList.addAll(gson.fromJson(dataStr, cartListType));
+
                                     calculateTotalAmount(cartModelList);
+
                                     if (cartModelList.size() > 0) {
                                         nonemptyCart.setVisibility(View.VISIBLE);
                                         emptyCart.setVisibility(View.GONE);
+
                                         cartAdapter.notifyDataSetChanged();
                                     } else {
                                         emptyCart.setVisibility(View.VISIBLE);

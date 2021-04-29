@@ -44,6 +44,7 @@ import com.example.freshfarmnew.Fragments.CategoryFragments.SubCategoryFragment;
 import com.example.freshfarmnew.Fragments.ContactUsFragment;
 import com.example.freshfarmnew.Fragments.HomeFragment;
 import com.example.freshfarmnew.Fragments.ProfileFragment;
+import com.example.freshfarmnew.Fragments.SearchResultsFragment;
 import com.example.freshfarmnew.Fragments.WalletFragment;
 import com.example.freshfarmnew.Fragments.WishlistFragment;
 import com.example.freshfarmnew.Model.Product;
@@ -109,8 +110,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String ss = search.getText().toString();
-                    Toast.makeText(getApplicationContext(),ss,Toast.LENGTH_SHORT).show();
-//                    searchquery();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("search_key",ss);
+                    SearchResultsFragment srf = new SearchResultsFragment();
+                    srf.setArguments(bundle);
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("searchresults");
+                    ft.replace(R.id.fragment_container, srf);
+                    ft.commit();
                     return true;
                 }
                 return false;

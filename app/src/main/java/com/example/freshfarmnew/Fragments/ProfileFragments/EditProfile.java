@@ -90,7 +90,15 @@ public class EditProfile extends Fragment {
             public void onClick(View v) {
                 updatedname = username.getText().toString();
                 updatedadd = uaddress.getText().toString();
-                update(cus_id,updatedname,updatedadd);
+
+                if(updatedname.equals("") || updatedname == null || updatedadd.equals("") || updatedadd == null)
+                {
+                    Toast.makeText(getContext(),"Name or Address cannot be empty",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    update(cus_id,updatedname,updatedadd);
+                }
+
             }
         });
         return v;

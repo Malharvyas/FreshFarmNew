@@ -69,9 +69,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView navprofile, nav_location;
     BottomNavigationView bottomNavigationView;
     Boolean isLogin;
-    String cus_id = "", url = "";
+    String cus_id = "", url = "",address="";
     EditText search;
     private static final int REQUEST_CODE = 101;
+    TextView head_address;
+    View headerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +82,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         navigationView = findViewById(R.id.nav_view);
         search = findViewById(R.id.search_input );
+        headerView = navigationView.getHeaderView(0);
+        head_address = headerView.findViewById(R.id.head_address );
 
         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
         isLogin = sharedPreferences.getBoolean("islogin", false);
 
         SharedPreferences sharedPreferences2 = getSharedPreferences("userpref", Context.MODE_PRIVATE);
         cus_id = sharedPreferences2.getString("customer_id", "");
+        address = sharedPreferences2.getString("address", "");
+
+        head_address.setText(address);
 
         if (isLogin == false) {
             navigationView.inflateMenu(R.menu.side_nav_logout);
@@ -417,7 +424,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     return;
                 }
                 else{
-                    gotomaps();
+                    SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
+                    Boolean islogin = sharedPreferences.getBoolean("islogin", false);
+                    if (islogin == false) {
+                        Toast.makeText(getApplicationContext(), "Please login to continue", Toast.LENGTH_SHORT).show();
+                    } else {
+                       gotomaps();
+                    }
                 }
 
             }
@@ -433,7 +446,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             {
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
                 {
-                    gotomaps();
+                    SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
+                    Boolean islogin = sharedPreferences.getBoolean("islogin", false);
+                    if (islogin == false) {
+                        Toast.makeText(getApplicationContext(), "Please login to continue", Toast.LENGTH_SHORT).show();
+                    } else {
+                        gotomaps();
+                    }
                 }
             }
             break;
@@ -443,5 +462,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void gotomaps() {
         Intent i = new Intent(getApplicationContext(), MapsActivity.class);
         startActivity(i);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
     }
 }

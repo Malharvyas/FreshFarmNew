@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,7 +48,7 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class ProductDetailsFragment extends Fragment {
 
-    String url = "",product_id;
+    String url = "",product_id,cus_id;
     ViewPager viewPager;
     CircleIndicator circleIndicator;
     TextView productname,productprice,productdesc;
@@ -58,6 +59,7 @@ public class ProductDetailsFragment extends Fragment {
     ArrayList<String> stringArrayList = new ArrayList<String>();
     ArrayList<String> imageslist = new ArrayList<String>();
     ProductImageAdapter productImageAdapter;
+    ProgressBar progressBar;
 
     public ProductDetailsFragment() {
         // Required empty public constructor
@@ -73,6 +75,9 @@ public class ProductDetailsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prolist = new ArrayList<>();
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
+        cus_id = sharedPreferences.getString("customer_id","");
     }
 
     @Override
@@ -87,6 +92,7 @@ public class ProductDetailsFragment extends Fragment {
         pdvariant = v.findViewById(R.id.pd_variation);
         pdbuy = v.findViewById(R.id.pd_buy);
         pdadd = v.findViewById(R.id.pd_add);
+        progressBar = v.findViewById(R.id.progressbar);
 
         if(getArguments() != null)
         {
@@ -94,7 +100,125 @@ public class ProductDetailsFragment extends Fragment {
         }
 
         getproductdetails(product_id);
+
+        pdbuy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        pdadd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                progressBar.setVisibility(View.VISIBLE);
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pdtemp",Context.MODE_PRIVATE);
+                String v_id = sharedPreferences.getString("v_id","0");
+                addtocart(v_id);
+            }
+        });
         return v;
+    }
+
+    private void addtocart(String v_id) {
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/addtocart");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if(response != null) {
+                            JSONObject json = null;
+
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2 = json.getJSONObject("addtocart");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                if(stat.equals("true"))
+                                {
+                                    progressBar.setVisibility(View.GONE);
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+
+                                }
+                                else if(stat.equals("false"))
+                                {
+                                    progressBar.setVisibility(View.GONE);
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                }
+//                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                progressBar.setVisibility(View.GONE);
+                if(error instanceof ClientError)
+                {
+                    try{
+                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if(stat.equals("false"))
+                        {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                }
+            }
+        }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                params.put("product_id", product_id);
+                params.put("v_id", v_id);
+                params.put("quantity", "1");
+                return params;
+            }
+
+            @Override
+            public Map<String,String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
     }
 
     private void getproductdetails(String product_id) {
@@ -154,7 +278,7 @@ public class ProductDetailsFragment extends Fragment {
                                         for (int k = 0; k < images.length(); k++)
                                         {
                                             JSONObject imgobj = images.getJSONObject(k);
-                                            String img = imgobj.getString("img");
+                                            String img = imgobj.getString("product_image");
                                             imageslist.add(img);
                                         }
                                         product.setProduct_id(pro_id);
@@ -195,7 +319,10 @@ public class ProductDetailsFragment extends Fragment {
                                                 String selected = pdvariant.getSelectedItem().toString();
                                                 if(item.equals(selected))
                                                 {
-
+                                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pdtemp",Context.MODE_PRIVATE);
+                                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                    editor.putString("v_id",pv.getV_id());
+                                                    editor.apply();
                                                     productprice.setText("\u20B9 " + pv.getPrice());
                                                 }
                                             }

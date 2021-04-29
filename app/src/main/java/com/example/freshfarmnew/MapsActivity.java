@@ -6,17 +6,34 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Base64;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.ClientError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.freshfarmnew.Class.BaseUrl;
+import com.example.freshfarmnew.Model.CartModel;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -34,12 +51,20 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.Array;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -51,6 +76,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
     MarkerOptions markerOptions;
+    Button save_changes;
+    Double m_latitude,m_longitude;
+    int check = 0;
+    LatLng slatLng;
+    SharedPreferences sharedPreferences,sharedPreferences2,getpreferances;
+    ProgressBar progressBar;
+    String cus_id,url = "";
 
 
     @Override
@@ -63,14 +95,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         searchView = findViewById(R.id.searchview);
         map_address = findViewById(R.id.map_address);
+        save_changes = findViewById(R.id.save_changes);
+        progressBar = findViewById(R.id.progressbar);
+
+        SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
+        cus_id = sharedPreferences.getString("customer_id", "");
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         markerOptions = new MarkerOptions().draggable(true);
 
-
-
         fetchLocation();
+
+        save_changes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                savelatlng();
+            }
+        });
 
 
 //        search = findViewById(R.id.search_map);
@@ -90,33 +132,236 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        });
 
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                String location = searchView.getQuery().toString();
-                List<Address> addressList = null;
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                String location = searchView.getQuery().toString();
+//                List<Address> addressList = null;
+//
+//                if (location != null || !location.equals("")) {
+//                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+//                    try {
+//                        addressList = geocoder.getFromLocationName(location, 1);
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                    Address address = addressList.get(0);
+//                    slatLng = new LatLng(address.getLatitude(), address.getLongitude());
+////                    mMap.addMarker(markerOptions.position(slatLng));
+////                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(slatLng, 10));
+//                    check = 1;
+//                    mapFragment.getMapAsync(MapsActivity.this);
+//
+//                }
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
+//        mapFragment.getMapAsync(this);
+    }
 
-                if (location != null || !location.equals("")) {
-                    Geocoder geocoder = new Geocoder(MapsActivity.this);
+    private void savelatlng() {
+        getpreferances = getSharedPreferences("location",Context.MODE_PRIVATE);
+        String latitude = getpreferances.getString("lat","00");
+        String longitude = getpreferances.getString("long","00");
+        String address = map_address.getText().toString();
+
+        progressBar.setVisibility(View.VISIBLE);
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/latlong");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
+
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2 = json.getJSONObject("resetlatlong");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                if (stat.equals("true")) {
+//                                    Toast.makeText(getApplicationContext(),"latlon set",Toast.LENGTH_SHORT).show();
+                                    saveadress(address);
+
+                                } else if (stat.equals("false")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
                     try {
-                        addressList = geocoder.getFromLocationName(location, 1);
-                    } catch (IOException e) {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Address address = addressList.get(0);
-                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
-                    mMap.addMarker(new MarkerOptions().position(latLng).title(location));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
-                return false;
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                params.put("longitude", longitude);
+                params.put("latitude", latitude);
+                return params;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
             }
-        });
-//        mapFragment.getMapAsync(this);
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+    }
+
+    private void saveadress(String address) {
+        progressBar.setVisibility(View.VISIBLE);
+
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/editProfile");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if(response != null) {
+                            JSONObject json = null;
+
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2 = json.getJSONObject("getProduct");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                if(stat.equals("true"))
+                                {
+                                    String msg = json2.getString("Message");
+                                    JSONObject data = json2.getJSONObject("data");
+                                    String cusadd = data.getString("address");
+
+                                    SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("address",cusadd);
+                                    editor.apply();
+
+                                    Toast.makeText(getApplicationContext(),"Location Saved",Toast.LENGTH_SHORT).show();
+                                }
+                                else if(stat.equals("false"))
+                                {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                }
+//                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if(error instanceof ClientError)
+                {
+                    try{
+                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if(stat.equals("false"))
+                        {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                }
+            }
+        }){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("customer_id",cus_id);
+                params.put("address",address);
+                return params;
+            }
+            @Override
+            public Map<String,String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
     }
 
     private void fetchmarkerLocation(double latitude, double longitude) throws IOException {
@@ -127,6 +372,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         addresses = geocoder.getFromLocation(latitude, longitude, 1);
 
         String address = addresses.get(0).getAddressLine(0);
+
+        sharedPreferences2 = getSharedPreferences("location", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences2.edit();
+        editor.putString("lat",String.valueOf(latitude));
+        editor.putString("long",String.valueOf(longitude));
+        editor.apply();
 
         map_address.setText(address);
     }
@@ -158,6 +409,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 if(location != null)
                 {
                     currentLocation = location;
+                    sharedPreferences = getSharedPreferences("location", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("lat",String.valueOf(currentLocation.getLatitude()));
+                    editor.putString("long",String.valueOf(currentLocation.getLongitude()));
+                    editor.apply();
                     mapFragment.getMapAsync(MapsActivity.this);
                     try {
                         fetchAddress(currentLocation.getLatitude(),currentLocation.getLongitude());
@@ -188,6 +444,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        LatLng latLng;
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
@@ -210,29 +467,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
-        LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+//        if(check == 1){
+//            latLng = new LatLng(slatLng.latitude,slatLng.longitude);
+//        }
+//        else{
+//            latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+//        }
+        latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+
         markerOptions.position(latLng);
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-        googleMap.addMarker(markerOptions);
-        // Add a marker in Sydney and move the camera
-//        LatLng sydney = new LatLng(-34, 151);
-//        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        googleMap.addMarker(markerOptions).setTitle("Hold the marker to drag!");
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        switch (requestCode)
-//        {
-//            case REQUEST_CODE:
-//            {
-//                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-//                {
-//                    fetchLocation();
-//                }
-//            }
-//            break;
-//        }
-//    }
 }

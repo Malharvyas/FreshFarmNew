@@ -104,6 +104,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:tint="#FFFFFF"/>
+        app:tint="#FFFFFF"
+        android:background="@color/main_color"
+        app:headerLayout="@layout/navigation_header"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

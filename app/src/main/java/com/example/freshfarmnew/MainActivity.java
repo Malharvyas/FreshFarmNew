@@ -200,7 +200,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        cartnum(cus_id);
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    cartnum(cus_id);
+                }
+            }
+        }).start();
 
         if (savedInstanceState == null) {
             HomeFragment h = new HomeFragment();

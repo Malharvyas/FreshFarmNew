@@ -356,6 +356,116 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
     }
 
     @Override
+    public void onSaved(int position, String product_id, int quantity) {
+//        progressBar.setVisibility(View.VISIBLE);
+
+        if(quantity == 1)
+        {
+//            BaseUrl b = new BaseUrl();
+//            url = b.url;
+//            url = url.concat("freshfarm/api/ApiController/addtowishlist");
+//            RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+//
+//            StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+//                    new Response.Listener<String>() {
+//                        @Override
+//                        public void onResponse(String response) {
+//                            BaseUrl b = new BaseUrl();
+//                            url = b.url;
+//                            if(response != null) {
+//                                JSONObject json = null;
+//
+//                                try {
+//                                    json = new JSONObject(String.valueOf(response));
+//                                    JSONObject json2 = json.getJSONObject("addtocart");
+//                                    Boolean status = json2.getBoolean("status");
+//                                    String stat = status.toString();
+//                                    if(stat.equals("true"))
+//                                    {
+//                                        progressBar.setVisibility(View.GONE);
+//                                        Toast.makeText(getContext(),"Product Saved",Toast.LENGTH_SHORT).show();
+//                                    }
+//                                    else if(stat.equals("false"))
+//                                    {
+//                                        progressBar.setVisibility(View.GONE);
+//                                        String msg = json2.getString("Message");
+//                                        Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+//                                    }
+////                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
+//                                } catch (Exception e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//
+//                        }
+//                    }, new Response.ErrorListener() {
+//                @Override
+//                public void onErrorResponse(VolleyError error) {
+//                    BaseUrl b = new BaseUrl();
+//                    url = b.url;
+//                    progressBar.setVisibility(View.GONE);
+//                    if(error instanceof ClientError)
+//                    {
+//                        try{
+//                            String responsebody = new String(error.networkResponse.data,"utf-8");
+//                            JSONObject data = new JSONObject(responsebody);
+//                            Boolean status = data.getBoolean("status");
+//                            String stat = status.toString();
+//                            if(stat.equals("false"))
+//                            {
+//                                String msg = data.getString("Message");
+//                                Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+//                            }
+//                        }
+//                        catch (Exception e)
+//                        {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                    else
+//                    {
+//                        Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            }){
+//                @Override
+//                protected Map<String, String> getParams() throws AuthFailureError {
+//                    Map<String, String> params = new HashMap<String, String>();
+//                    params.put("customer_id", cus_id);
+//                    params.put("product_id", product_id);
+//                    return params;
+//                }
+//
+//                @Override
+//                public Map<String,String> getHeaders() throws AuthFailureError {
+//                    Map<String, String> headers = new HashMap<>();
+//                    String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+//                    String auth = "Basic "
+//                            + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+//                    headers.put("Authorization", auth);
+////                headers.put("x-api-key","HRCETCRACKER@123");
+////                headers.put("Content-Type", "application/form-data");
+//                    return headers;
+//                }
+//
+//            };
+//            volleyRequestQueue.add(stringRequest);
+//            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+//                    10000,
+//                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+//                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+//            );
+        }
+        else if(quantity == 0)
+        {
+
+        }
+
+
+    }
+
+
+    @Override
     public void onResume() {
         super.onResume();
 //        progressBar.setVisibility(View.VISIBLE);

@@ -4,6 +4,7 @@ package com.example.freshfarmnew.Adapters;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -135,7 +136,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         onClickListener onClickListener;
-        ImageView pro_img;
+        ImageView pro_img,sav_pro;
         TextView pro_name,pro_price;
         Button trend_add;
         Spinner varspineer;
@@ -153,6 +154,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             plus = itemView.findViewById(R.id.plus);
             minus = itemView.findViewById(R.id.minus);
             quant_val = itemView.findViewById(R.id.quant_val);
+            sav_pro = itemView.findViewById(R.id.save_product);
 
             pro_img.setOnClickListener(this);
 
@@ -161,6 +163,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             plus.setOnClickListener(this);
 
             minus.setOnClickListener(this);
+
+            sav_pro.setOnClickListener(this);
         }
 
         @Override
@@ -318,6 +322,23 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                     }
                 }
                 break;
+                case R.id.save_product:
+                {
+                    Product pro = list.get(getAdapterPosition());
+                    if(((String)sav_pro.getTag()).equals("stroked"))
+                    {
+                        sav_pro.setImageResource(R.drawable.heart_asset_filled);
+                        sav_pro.setTag("filled");
+                        onClickListener.onSaved(getAdapterPosition(),pro.getProduct_id(),1);
+                    }
+                    else if(((String)sav_pro.getTag()).equals("filled"))
+                    {
+                        sav_pro.setImageResource(R.drawable.heart_asset);
+                        sav_pro.setTag("stroked");
+                        onClickListener.onSaved(getAdapterPosition(),pro.getProduct_id(),0);
+                    }
+
+                }
             }
 
         }
@@ -326,5 +347,6 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public interface onClickListener{
         void onProductClicked(int position);
         void onPAddClicked(int position,String quantity,String product_id,String v_id);
+        void onSaved(int position,String product_id,int quantity);
     }
 }

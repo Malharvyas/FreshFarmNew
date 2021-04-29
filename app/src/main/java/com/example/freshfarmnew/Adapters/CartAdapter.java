@@ -1,6 +1,7 @@
 package com.example.freshfarmnew.Adapters;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +77,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.ivRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences sharedPreferences = context.getSharedPreferences("temp",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putInt(cartModel.getProductId(),1);
+                String key2 = cartModel.getProductId()+cartModel.getvId();
+                editor.putInt(key2,0);
+                String key = key2+"quant";
+                editor.putInt(key,0);
+                editor.apply();
                 cartCallBack.updateCart(cartModel.getProductId(), cartModel.getvId(), "0");
             }
         });

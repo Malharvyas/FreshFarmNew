@@ -97,10 +97,13 @@ public class CartFragment extends Fragment {
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*CheckoutFragment checkoutFragment = new CheckoutFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString("amount", tvTotalAmount.getText().toString());
+                CheckoutFragment checkoutFragment = new CheckoutFragment();
+                checkoutFragment.setArguments(bundle);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
                 ft.replace(R.id.fragment_container, checkoutFragment);
-                ft.commit();*/
+                ft.commit();
             }
         });
 

@@ -5,8 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/tvName"
+    <EditText
+        android:id="@+id/edName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -18,8 +18,8 @@
         android:textAlignment="textStart"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/tvAddress"
+    <EditText
+        android:id="@+id/edAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -30,8 +30,8 @@
         android:padding="10dp"
         android:textSize="16sp" />
 
-    <TextView
-        android:id="@+id/tvPhone"
+    <EditText
+        android:id="@+id/edPhone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
@@ -42,6 +42,45 @@
         android:inputType="phone"
         android:padding="10dp"
         android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/background_textview_address"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:checkedButton="@id/radioBtnHome"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/radioBtnHome"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Home"
+                android:textAllCaps="false"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.AppCompatRadioButton
+                android:id="@+id/radioBtnOffice"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Office"
+                android:textAllCaps="false"
+                android:textSize="16sp" />
+
+        </RadioGroup>
+
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/btnAddAddress"

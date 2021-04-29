@@ -9,8 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,8 @@ import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Adapters.CartAdapter;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.Interfaces.CartCallBack;
+import com.example.freshfarmnew.Model.AddressDataModel;
+import com.example.freshfarmnew.Model.AddressModel;
 import com.example.freshfarmnew.Model.CartModel;
 import com.example.freshfarmnew.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -48,15 +53,14 @@ import java.util.Map;
 
 public class AddAddressFragment extends Fragment {
 
-   /* List<CartModel> cartModelList = new ArrayList<>();
-    String url = "", cus_id = "";
-    private RecyclerView recyclerView;
-    private ProgressBar progressbar;
-    private ConstraintLayout emptyCart;
-    private LinearLayout nonemptyCart;
-    CartAdapter cartAdapter;
-    private TextView tvTotalAmount;
-    private Button btnAddItem;
+    AddressModel addressModel;
+    String url = "", cus_id = "", latitude = "0.0", longitude = "0.0", address = "", type = "1";
+    private Button btnAddAddress;
+    private EditText edName, edAddress, edPhone;
+    private RadioGroup radioGroup;
+    private AddressDataModel addressDataModel;
+    private RadioButton radioBtnHome;
+    private RadioButton radioBtnOffice;
 
     public AddAddressFragment() {
         // Required empty public constructor
@@ -80,55 +84,67 @@ public class AddAddressFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_add_address, container, false);
 
-        recyclerView = v.findViewById(R.id.recyclerView);
+        edName = v.findViewById(R.id.edName);
+        edAddress = v.findViewById(R.id.edAddress);
+        edPhone = v.findViewById(R.id.edPhone);
+        btnAddAddress = v.findViewById(R.id.btnAddAddress);
+        radioGroup = v.findViewById(R.id.radioGroup);
+        radioBtnHome = v.findViewById(R.id.radioBtnHome);
+        radioBtnOffice = v.findViewById(R.id.radioBtnOffice);
+        if (getArguments() != null) {
+            if (getArguments().containsKey("data")) {
+                addressDataModel = (AddressDataModel) getArguments().getSerializable("data");
+                if (addressDataModel != null) {
+                    edAddress.setText(addressDataModel.getAddress());
+                    if (addressDataModel.getType().equals("2"))
+                        radioBtnOffice.setChecked(true);
+                    else
+                        radioBtnHome.setChecked(true);
+                }
+            }
+        }
 
-        progressbar = v.findViewById(R.id.progressbar);
-        emptyCart = v.findViewById(R.id.empty_cart);
-        nonemptyCart = v.findViewById(R.id.nonempty_cart);
-        tvTotalAmount = v.findViewById(R.id.tvTotalAmount);
-        btnAddItem = v.findViewById(R.id.add_item);
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioBtnHome:
+                        type = "1";
+                        break;
+                    case R.id.radioBtnOffice:
+                        type = "2";
+                        break;
+                }
+            }
+        });
 
-        btnAddItem.setOnClickListener(new View.OnClickListener() {
+        btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_nav);
-                bottomNavigationView.getMenu().getItem(0).setChecked(true);
-                HomeFragment h = new HomeFragment();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
-                ft.replace(R.id.fragment_container, h);
-                ft.commit();
-                //MainActivity.getInstance().goToHome();
-
-                //getActivity().getSupportFragmentManager().popBackStack();
+                getAddressDetails();
             }
         });
-
-        cartAdapter = new CartAdapter(getContext(), cartModelList, new CartCallBack() {
-            @Override
-            public void updateCart(String productId, String vId, String quantity) {
-                addToCart(productId, vId, quantity);
-            }
-        });
-        recyclerView.setAdapter(cartAdapter);
-
-        getCartDetails();
 
         return v;
     }
 
-    private void getCartDetails() {
-        progressbar.setVisibility(View.VISIBLE);
+    private void getAddressDetails() {
+        address = edAddress.getText().toString();
+        // progressbar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
-        url = url.concat("freshfarm/api/ApiController/cartdata");
+        if (addressDataModel != null)
+            url = url.concat("freshfarm/api/ApiController/updateAddress");
+        else
+            url = url.concat("freshfarm/api/ApiController/addAddress");
         RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        progressbar.setVisibility(View.GONE);
+                        //progressbar.setVisibility(View.GONE);
                         Log.e("PrintLog", "----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
@@ -137,37 +153,18 @@ public class AddAddressFragment extends Fragment {
 
                             try {
                                 json = new JSONObject(String.valueOf(response));
-                                JSONObject json2 = json.getJSONObject("cartdata");
+                                JSONObject json2;
+                                if (addressDataModel != null) {
+                                    json2 = json.getJSONObject("updateAddress");
+                                } else {
+                                    json2 = json.getJSONObject("AddAddress");
+                                }
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
-                                    cartModelList.clear();
-
-                                    JSONArray data = json2.getJSONArray("data");
-                                    String dataStr = data.toString();
-                                    Log.e("PrintLog", "----" + dataStr);
-                                    Gson gson = new Gson();
-
-                                    Type cartListType = new TypeToken<List<CartModel>>() {
-                                    }.getType();
-
-                                    cartModelList.addAll(gson.fromJson(dataStr, cartListType));
-
-                                    calculateTotalAmount(cartModelList);
-
-                                    if (cartModelList.size() > 0) {
-                                        nonemptyCart.setVisibility(View.VISIBLE);
-                                        emptyCart.setVisibility(View.GONE);
-
-                                        cartAdapter.notifyDataSetChanged();
-
-                                    } else {
-                                        emptyCart.setVisibility(View.VISIBLE);
-                                        nonemptyCart.setVisibility(View.GONE);
-                                    }
-
-                                    //Toast.makeText(getContext(), "" + userArray.size(), Toast.LENGTH_LONG).show();
-
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                    getActivity().getSupportFragmentManager().popBackStack();
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
@@ -180,7 +177,7 @@ public class AddAddressFragment extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                progressbar.setVisibility(View.GONE);
+                // progressbar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if (error instanceof ClientError) {
@@ -205,7 +202,13 @@ public class AddAddressFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
+                if (addressDataModel != null)
+                    params.put("address_id", addressDataModel.getAddressId());
                 params.put("customer_id", cus_id);
+                params.put("latitude", latitude);
+                params.put("longitude", longitude);
+                params.put("address", address);
+                params.put("type", type);
                 return params;
             }
 
@@ -228,132 +231,4 @@ public class AddAddressFragment extends Fragment {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         );
     }
-
-    private void addToCart(String productId, String vId, String quantity) {
-        progressbar.setVisibility(View.VISIBLE);
-        BaseUrl b = new BaseUrl();
-        url = b.url;
-        url = url.concat("freshfarm/api/ApiController/addtocart");
-        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        progressbar.setVisibility(View.GONE);
-                        BaseUrl b = new BaseUrl();
-                        url = b.url;
-                        if (response != null) {
-                            JSONObject json = null;
-                            try {
-                                json = new JSONObject(String.valueOf(response));
-                                JSONObject json2 = json.getJSONObject("addtocart");
-                                Boolean status = json2.getBoolean("status");
-                                String stat = status.toString();
-                                if (stat.equals("true")) {
-                                    cartModelList.clear();
-
-                                    JSONArray data = json2.getJSONArray("data");
-                                    String dataStr = data.toString();
-                                    Log.e("PrintLog", "----" + dataStr);
-                                    Gson gson = new Gson();
-
-                                    Type cartListType = new TypeToken<List<CartModel>>() {
-                                    }.getType();
-
-                                    cartModelList.addAll(gson.fromJson(dataStr, cartListType));
-                                    calculateTotalAmount(cartModelList);
-                                    if (cartModelList.size() > 0) {
-                                        nonemptyCart.setVisibility(View.VISIBLE);
-                                        emptyCart.setVisibility(View.GONE);
-                                        cartAdapter.notifyDataSetChanged();
-                                    } else {
-                                        emptyCart.setVisibility(View.VISIBLE);
-                                        nonemptyCart.setVisibility(View.GONE);
-                                    }
-
-                                    if (quantity.equals("1")) {
-                                        String msg = json2.getString("Message");
-                                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                                    }
-                                    if (quantity.equals("0")) {
-                                        String msg = "Item Removed Successfully";
-                                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                                    }
-
-                                } else if (stat.equals("false")) {
-                                    String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                                }
-//                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                progressbar.setVisibility(View.GONE);
-                BaseUrl b = new BaseUrl();
-                url = b.url;
-                if (error instanceof ClientError) {
-                    try {
-                        String responsebody = new String(error.networkResponse.data, "utf-8");
-                        JSONObject data = new JSONObject(responsebody);
-                        Boolean status = data.getBoolean("status");
-                        String stat = status.toString();
-                        if (stat.equals("false")) {
-                            String msg = data.getString("Message");
-                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
-                }
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("customer_id", cus_id);
-                params.put("product_id", productId);
-                params.put("v_id", vId);
-                params.put("quantity", quantity);
-                return params;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String, String> headers = new HashMap<>();
-                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
-                String auth = "Basic "
-                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                headers.put("Authorization", auth);
-//                headers.put("x-api-key","HRCETCRACKER@123");
-//                headers.put("Content-Type", "application/form-data");
-                return headers;
-            }
-
-        };
-        volleyRequestQueue.add(stringRequest);
-        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                10000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
-        );
-    }
-
-    private void calculateTotalAmount(List<CartModel> cartModelList) {
-        double totleAmount = 0.0;
-        for (int i = 0; i < cartModelList.size(); i++) {
-            if (cartModelList.get(i).getPrice() != null && cartModelList.get(i).getQuantity() != null) {
-                double finalPrice = Double.parseDouble(cartModelList.get(i).getPrice()) * Double.parseDouble(cartModelList.get(i).getQuantity());
-                totleAmount = totleAmount + finalPrice;
-            }
-        }
-        tvTotalAmount.setText("" + totleAmount);
-    }*/
 }

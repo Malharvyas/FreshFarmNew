@@ -57,7 +57,7 @@
             <TextView
                 android:layout_width="180dp"
                 android:layout_height="wrap_content"
-                android:text="Price(1 items)"
+                android:text="Price ( 1 items )"
                 android:textColor="@color/white"
                 android:textSize="12sp" />
 
@@ -106,6 +106,7 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btnContinue"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -115,6 +116,7 @@
                 android:textAllCaps="false" />
 
             <Button
+                android:id="@+id/btnPayment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
@@ -124,5 +126,12 @@
         </LinearLayout>
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
 
 </LinearLayout>

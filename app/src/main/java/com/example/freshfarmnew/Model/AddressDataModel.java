@@ -54,18 +54,6 @@ public class AddressDataModel implements Serializable {
     @Expose
     private String contactName;
 
-    public Boolean getSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(Boolean selected) {
-        isSelected = selected;
-    }
-
-    @SerializedName("is_selected")
-    @Expose
-    private Boolean isSelected = false;
-
     public String getAddressId() {
         return addressId;
     }

@@ -6,6 +6,8 @@ import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Base64;
@@ -34,6 +36,7 @@ import com.example.freshfarmnew.Model.CartModel;
 import com.example.freshfarmnew.Model.WishListModel;
 import com.example.freshfarmnew.Model.WishListVariation;
 import com.example.freshfarmnew.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -90,6 +93,19 @@ public class WishlistFragment extends Fragment {
             @Override
             public void updateWishList(int position, String productId, String cust_id) {
                 getRemoveWishList(position, productId, cust_id);
+            }
+        });
+
+        btnExplore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_nav);
+                bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                HomeFragment h = new HomeFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                ft.replace(R.id.fragment_container, h);
+                ft.commit();
             }
         });
         recyclerView.setAdapter(wishListAdapter);

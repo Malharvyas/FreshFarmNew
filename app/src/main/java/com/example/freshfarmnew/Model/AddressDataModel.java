@@ -7,16 +7,6 @@ import java.io.Serializable;
 
 public class AddressDataModel implements Serializable {
 
-    public boolean isSelected() {
-        return isSelected;
-    }
-
-    public void setSelected(boolean selected) {
-        isSelected = selected;
-    }
-
-    boolean isSelected = false;
-
     @SerializedName("address_id")
     @Expose
     private String addressId;

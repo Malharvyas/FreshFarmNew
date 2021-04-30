@@ -43,12 +43,10 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull CheckOutAdapter.ViewHolder holder, int position) {
-        if(position == mSelectedItem)
-        {
+        if (position == mSelectedItem) {
             holder.radioBtnItem.setChecked(true);
             mSelectedItem = -1;
-        }
-        else {
+        } else {
 
             holder.radioBtnItem.setChecked(false);
         }
@@ -73,7 +71,6 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
                 addressCallBack.updateAddress(addressDataModel);
             }
         });
-
 
 
     }

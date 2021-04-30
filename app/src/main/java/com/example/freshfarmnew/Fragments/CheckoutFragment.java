@@ -54,7 +54,7 @@ public class CheckoutFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProgressBar progressbar;
     CheckOutAdapter checkOutAdapter;
-    private TextView tvPrice, tvTotalAmount,item_details;
+    private TextView tvPrice, tvTotalAmount, item_details;
     private Button btnAddAddress;
     private Button btnContinue, btnPayment;
 
@@ -95,7 +95,7 @@ public class CheckoutFragment extends Fragment {
                 tvPrice.setText(getArguments().getString("amount"));
             }
             if (getArguments().containsKey("total_items")) {
-                item_details.setText("Price "+" ( "+getArguments().getString("total_items")+" items )");
+                item_details.setText("Price " + " ( " + getArguments().getString("total_items") + " items )");
             }
         }
 

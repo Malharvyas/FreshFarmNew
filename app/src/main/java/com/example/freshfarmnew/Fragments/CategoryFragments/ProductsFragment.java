@@ -462,7 +462,6 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
             );
     }
 
-
     @Override
     public void onResume() {
         super.onResume();

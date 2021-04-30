@@ -4,62 +4,97 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.freshfarmnew.Interfaces.CartCallBack;
+import com.example.freshfarmnew.Interfaces.WishListCallBack;
 import com.example.freshfarmnew.Model.CartModel;
+import com.example.freshfarmnew.Model.ProductVariation;
+import com.example.freshfarmnew.Model.WishListModel;
+import com.example.freshfarmnew.Model.WishListVariation;
 import com.example.freshfarmnew.R;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.ViewHolder> {
 
     private Context context;
-    private List<CartModel> list;
-    private CartCallBack cartCallBack;
+    private List<WishListModel> list;
+    private WishListCallBack wishListCallBack;
 
-    public WishListAdapter(Context context, List<CartModel> list/*, CartCallBack cartCallBack*/) {
+    public WishListAdapter(Context context, List<WishListModel> list, WishListCallBack wishListCallBack) {
         this.context = context;
-        this.cartCallBack = cartCallBack;
+        this.wishListCallBack = wishListCallBack;
         this.list = list;
     }
 
     @NonNull
     @Override
     public WishListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.item_cart, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.item_whishlist, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull WishListAdapter.ViewHolder holder, int position) {
-        CartModel cartModel = list.get(position);
-        holder.tvName.setText(cartModel.getProductName());
-        holder.tvPrice.setText("Price :" + cartModel.getPrice());
-        if (cartModel.getPrice() != null && cartModel.getQuantity() != null) {
-            double finalPrice = Double.parseDouble(cartModel.getPrice()) * Double.parseDouble(cartModel.getQuantity());
-            //holder.tvFinalPrice.setText(String.valueOf(finalPrice));
+        WishListModel wishListModel = list.get(position);
+
+        List<WishListVariation> wishListVariationList = wishListModel.getVariation();
+        ArrayList<String> stringArrayList = new ArrayList<>();
+        if (wishListVariationList != null) {
+            for (int i = 0; i < wishListVariationList.size(); i++) {
+                WishListVariation variation = wishListVariationList.get(i);
+                String unit_val = variation.getUnitVal();
+                String unit = variation.getUnit();
+                String combine = unit_val + " " + unit;
+                stringArrayList.add(combine);
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(context, R.layout.spinner_text, stringArrayList);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            holder.spinnerVer.setAdapter(adapter);
         }
 
-        Picasso.get().load(cartModel.getProductImage()).fit().into(holder.imageView);
+        //holder.tvName.setText(wishListModel);
+        //holder.tvPrice.setText("Price :" + wishListModel.);
+        /*if (cartModel.getPrice() != null &&   .getQuantity() != null) {
+            double finalPrice = Double.parseDouble(cartModel.getPrice()) * Double.parseDouble(cartModel.getQuantity());
+            //holder.tvFinalPrice.setText(String.valueOf(finalPrice));
+        }*/
+
+        Picasso.get().load(wishListModel.getProductImage()).fit().into(holder.imageView);
 
         holder.ivRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*SharedPreferences sharedPreferences = context.getSharedPreferences("temp", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putInt(cartModel.getProductId(), 1);
-                String key2 = cartModel.getProductId() + cartModel.getvId();
-                editor.putInt(key2, 0);
-                String key = key2 + "quant";
-                editor.putInt(key, 0);
-                editor.apply();*/
-                cartCallBack.updateCart(cartModel.getProductId(), cartModel.getvId(), "0");
+                wishListCallBack.updateWishList(position, wishListModel.getProductId(), wishListModel.getCustomerId());
+            }
+        });
+
+        holder.spinnerVer.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                for (int j = 0; j < stringArrayList.size(); j++) {
+                    WishListVariation wlVeriation = wishListVariationList.get(j);
+                    String item = wlVeriation.getUnitVal() + " " + wlVeriation.getUnit();
+                    String selected = holder.spinnerVer.getSelectedItem().toString();
+                    if (item.equals(selected)) {
+                        holder.tvPrice.setText("\u20B9 " + wlVeriation.getPrice());
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
     }
@@ -74,6 +109,7 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.ViewHo
         ImageView ivRemove;
         ImageView imageView;
         TextView tvName, tvPrice;
+        Spinner spinnerVer;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,7 +118,7 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.ViewHo
             imageView = itemView.findViewById(R.id.imageView);
             tvName = itemView.findViewById(R.id.tvName);
             tvPrice = itemView.findViewById(R.id.tvPrice);
-
+            spinnerVer = itemView.findViewById(R.id.spinnerVer);
         }
     }
 }

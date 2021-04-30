@@ -7,16 +7,16 @@
     tools:context=".Fragments.WishlistFragment">
 
     <include
-        android:id="@+id/emptyWhishList"
-        layout="@layout/empty_wishlist"
+        android:id="@+id/emptyMyOrders"
+        layout="@layout/empty_my_orders"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="gone" />
 
     <include
-        android:id="@+id/nonemptyWhishList"
-        layout="@layout/nonempty_wishlist"
+        android:id="@+id/nonemptyMyOrders"
+        layout="@layout/nonempty_my_orders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />

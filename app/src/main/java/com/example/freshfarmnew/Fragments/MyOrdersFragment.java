@@ -3,11 +3,6 @@ package com.example.freshfarmnew.Fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +12,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.ClientError;
@@ -30,7 +29,6 @@ import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Adapters.WishListAdapter;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.Interfaces.WishListCallBack;
-import com.example.freshfarmnew.Model.CartModel;
 import com.example.freshfarmnew.Model.WishListModel;
 import com.example.freshfarmnew.Model.WishListVariation;
 import com.example.freshfarmnew.R;
@@ -46,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WishlistFragment extends Fragment {
+public class MyOrdersFragment extends Fragment {
 
     List<WishListModel> wishListModelList = new ArrayList<>();
     List<WishListVariation> variationList;
@@ -58,12 +56,12 @@ public class WishlistFragment extends Fragment {
     private Button btnExplore;
     WishListAdapter wishListAdapter;
 
-    public WishlistFragment() {
+    public MyOrdersFragment() {
         // Required empty public constructor
     }
 
-    public static WishlistFragment newInstance(String param1, String param2) {
-        WishlistFragment fragment = new WishlistFragment();
+    public static MyOrdersFragment newInstance(String param1, String param2) {
+        MyOrdersFragment fragment = new MyOrdersFragment();
         return fragment;
     }
 
@@ -78,7 +76,7 @@ public class WishlistFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_wishlist, container, false);
+        View v = inflater.inflate(R.layout.fragment_my_orders, container, false);
 
         recyclerView = v.findViewById(R.id.recyclerView);
         progressbar = v.findViewById(R.id.progressbar);

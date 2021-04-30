@@ -43,6 +43,7 @@ import com.example.freshfarmnew.Fragments.CategoryFragment;
 import com.example.freshfarmnew.Fragments.CategoryFragments.SubCategoryFragment;
 import com.example.freshfarmnew.Fragments.ContactUsFragment;
 import com.example.freshfarmnew.Fragments.HomeFragment;
+import com.example.freshfarmnew.Fragments.MyOrdersFragment;
 import com.example.freshfarmnew.Fragments.ProfileFragment;
 import com.example.freshfarmnew.Fragments.SearchResultsFragment;
 import com.example.freshfarmnew.Fragments.WalletFragment;
@@ -70,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView navprofile, nav_location;
     BottomNavigationView bottomNavigationView;
     Boolean isLogin;
-    String cus_id = "", url = "",address="";
+    String cus_id = "", url = "", address = "";
     EditText search;
     private static final int REQUEST_CODE = 101;
     TextView head_address;
@@ -82,9 +83,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
         navigationView = findViewById(R.id.nav_view);
-        search = findViewById(R.id.search_input );
+        search = findViewById(R.id.search_input);
         headerView = navigationView.getHeaderView(0);
-        head_address = headerView.findViewById(R.id.head_address );
+        head_address = headerView.findViewById(R.id.head_address);
 
         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
         isLogin = sharedPreferences.getBoolean("islogin", false);
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String ss = search.getText().toString();
                     Bundle bundle = new Bundle();
-                    bundle.putString("search_key",ss);
+                    bundle.putString("search_key", ss);
                     SearchResultsFragment srf = new SearchResultsFragment();
                     srf.setArguments(bundle);
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("searchresults");
@@ -207,11 +208,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(true){
+                while (true) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -333,7 +333,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             break;
             case R.id.nav_side_my_orders: {
-
+                MyOrdersFragment mo = new MyOrdersFragment();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("orders");
+                ft.replace(R.id.fragment_container, mo);
+                ft.commit();
             }
             break;
             case R.id.nav_side_my_wallet: {
@@ -440,16 +443,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_location: {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this, new String[]
-                            {Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
+                            {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
                     return;
-                }
-                else{
+                } else {
                     SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
                     Boolean islogin = sharedPreferences.getBoolean("islogin", false);
                     if (islogin == false) {
                         Toast.makeText(getApplicationContext(), "Please login to continue", Toast.LENGTH_SHORT).show();
                     } else {
-                       gotomaps();
+                        gotomaps();
                     }
                 }
 
@@ -460,12 +462,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode)
-        {
-            case REQUEST_CODE:
-            {
-                if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                {
+        switch (requestCode) {
+            case REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
                     Boolean islogin = sharedPreferences.getBoolean("islogin", false);
                     if (islogin == false) {

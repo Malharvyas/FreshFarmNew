@@ -9,23 +9,23 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:fillViewport="true">
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 android:padding="10dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="10dp"
-                android:layout_marginTop="15dp"
-                app:layout_constraintTop_toTopOf="parent"
-                android:id="@+id/card1">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -120,293 +120,294 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="10dp"
-                        app:layout_constraintTop_toBottomOf="@id/text4"/>
+                        app:layout_constraintTop_toBottomOf="@id/text4" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:padding="10dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="10dp"
-                app:layout_constraintTop_toBottomOf="@id/card1"
-                android:layout_marginTop="20dp"
-                android:id="@+id/card2">
+                app:layout_constraintTop_toBottomOf="@id/card1">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <EditText
+                        android:id="@+id/promo_code"
                         android:layout_width="match_parent"
                         android:layout_height="39dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toLeftOf="@id/apply_promo"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginTop="11dp"
                         android:layout_marginLeft="10dp"
+                        android:layout_marginTop="11dp"
                         android:layout_marginRight="11dp"
-                        android:paddingRight="80dp"
+                        android:background="@drawable/border_edittext3"
                         android:hint="@string/hint_promo"
                         android:paddingLeft="10dp"
-                        android:background="@drawable/border_edittext3"
-                        android:id="@+id/promo_code"/>
+                        android:paddingRight="80dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toLeftOf="@id/apply_promo"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/apply_promo"
                         android:layout_width="60dp"
                         android:layout_height="40dp"
-                        android:text="APPLY"
-                        android:background="@drawable/border_textview"
-                        android:textColor="#FFFFFF"
-                        android:gravity="center"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
-                        android:id="@+id/apply_promo"/>
+                        android:layout_marginRight="10dp"
+                        android:background="@drawable/border_textview"
+                        android:gravity="center"
+                        android:text="APPLY"
+                        android:textColor="#FFFFFF"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/promo_warning"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:text="This coupon is expired or not available"
+                        android:textColor="#FF0000"
+                        android:visibility="gone"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/apply_promo"
-                        android:textColor="#FF0000"
-                        android:layout_marginTop="5dp"
-                        android:id="@+id/promo_warning"
-                        android:visibility="gone"/>
+                        app:layout_constraintTop_toBottomOf="@id/apply_promo" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="10dp"
-                        app:layout_constraintTop_toBottomOf="@id/promo_code"/>
+                        app:layout_constraintTop_toBottomOf="@id/promo_code" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
                 android:padding="10dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="10dp"
-                app:layout_constraintTop_toBottomOf="@id/card2"
-                android:layout_marginTop="20dp"
-                android:id="@+id/card3">
+                app:layout_constraintTop_toBottomOf="@id/card2">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <EditText
+                        android:id="@+id/order_comments"
                         android:layout_width="match_parent"
                         android:layout_height="80dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:background="@drawable/border_edittext4"
-                        android:inputType="textMultiLine"
-                        android:hint="Comments"
-                        android:padding="10dp"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:id="@+id/order_comments"/>
+                        android:background="@drawable/border_edittext4"
+                        android:hint="Comments"
+                        android:inputType="textMultiLine"
+                        android:padding="10dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="4dp"
-                        app:layout_constraintTop_toBottomOf="@id/order_comments"/>
+                        app:layout_constraintTop_toBottomOf="@id/order_comments" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
 
             <TextView
+                android:id="@+id/text5"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                app:layout_constraintTop_toBottomOf="@id/card3"
                 android:layout_marginTop="10dp"
-                android:text="Payment Method"
-                android:textColor="#FFFFFF"
                 android:background="@drawable/border_textview2"
                 android:gravity="center"
+                android:text="Payment Method"
+                android:textColor="#FFFFFF"
                 android:textSize="18dp"
-                android:id="@+id/text5"/>
+                app:layout_constraintTop_toBottomOf="@id/card3" />
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card4"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
                 android:padding="10dp"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="10dp"
-                app:layout_constraintTop_toBottomOf="@id/text5"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:id="@+id/card4">
+                app:layout_constraintTop_toBottomOf="@id/text5">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <ImageView
+                        android:id="@+id/icon1"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginLeft="5dp"
                         android:layout_marginTop="5dp"
-                        android:id="@+id/icon1"
-                        android:src="@drawable/ic_wallet"/>
+                        android:src="@drawable/ic_wallet"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/text6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
                         android:text="WALLET REDEMPTION"
                         app:layout_constraintLeft_toRightOf="@id/icon1"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:id="@+id/text6"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/wallet_amount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/wallet_amount"
-                        app:layout_constraintRight_toRightOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginTop="5dp"
-                        android:layout_marginRight="10dp"/>
+                        android:layout_marginRight="10dp"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
-                        app:layout_constraintTop_toBottomOf="@id/icon1"/>
+                        app:layout_constraintTop_toBottomOf="@id/icon1" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
                 android:padding="10dp"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="10dp"
-                app:layout_constraintTop_toBottomOf="@id/card4"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:id="@+id/card5">
+                app:layout_constraintTop_toBottomOf="@id/card4">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <ImageView
+                        android:id="@+id/icon2"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginLeft="5dp"
                         android:layout_marginTop="5dp"
-                        android:id="@+id/icon2"
-                        android:src="@drawable/ic_debit_card"/>
+                        android:src="@drawable/ic_debit_card"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/text7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
                         android:text="PAY ONLINE"
                         app:layout_constraintLeft_toRightOf="@id/icon2"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:id="@+id/text7"/>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
-                        app:layout_constraintTop_toBottomOf="@id/icon2"/>
+                        app:layout_constraintTop_toBottomOf="@id/icon2" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/card6"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="10dp"
                 android:padding="10dp"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="10dp"
-                app:layout_constraintTop_toBottomOf="@id/card5"
-                android:layout_marginTop="20dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:id="@+id/card6">
+                app:layout_constraintTop_toBottomOf="@id/card5">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <ImageView
+                        android:id="@+id/icon3"
                         android:layout_width="20dp"
                         android:layout_height="20dp"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginLeft="5dp"
                         android:layout_marginTop="5dp"
-                        android:id="@+id/icon3"
-                        android:src="@drawable/ic_cash"/>
+                        android:src="@drawable/ic_cash"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
+                        android:id="@+id/text8"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="CASH PAYMENT"
-                        app:layout_constraintLeft_toRightOf="@id/icon3"
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="5dp"
                         android:gravity="center"
-                        app:layout_constraintTop_toTopOf="parent"
-                        android:id="@+id/text8"/>
+                        android:text="CASH PAYMENT"
+                        app:layout_constraintLeft_toRightOf="@id/icon3"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="6dp"
-                        app:layout_constraintTop_toBottomOf="@id/icon3"/>
+                        app:layout_constraintTop_toBottomOf="@id/icon3" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
+
             <androidx.cardview.widget.CardView
+                android:id="@+id/card7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
                 android:padding="10dp"
+                app:cardBackgroundColor="#FF000000"
                 app:cardCornerRadius="4dp"
                 app:cardElevation="10dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="20dp"
-                app:cardBackgroundColor="#FF000000"
-                android:id="@+id/card7">
+                app:layout_constraintBottom_toBottomOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <Button
+                        android:id="@+id/place_order"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Place Order"
                         android:backgroundTint="#F44336"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintRight_toRightOf="parent"
+                        android:text="Place Order"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        android:id="@+id/place_order"/>
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintRight_toRightOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -417,13 +418,13 @@
     </ScrollView>
 
     <ProgressBar
+        android:id="@+id/progressbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/progressbar"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

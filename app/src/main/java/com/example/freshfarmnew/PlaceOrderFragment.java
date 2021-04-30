@@ -44,13 +44,15 @@ import java.util.Map;
 
 public class PlaceOrderFragment extends Fragment implements View.OnClickListener {
 
-    CardView card_wallet,card_online,card_cash;
-    ImageView icon_wallet,icon_online,icon_cash;
-    TextView text_wallet1,text_wallet2,text_online,text_cash;
+    CardView card_wallet, card_online, card_cash;
+    ImageView icon_wallet, icon_online, icon_cash;
+    TextView text_wallet1, text_wallet2, text_online, text_cash;
     EditText promo_code;
-    TextView apply_promo,promo_warning;
+    TextView apply_promo, promo_warning;
     String url = "", cus_id = "";
     ProgressBar progressBar;
+    private TextView billed_amount;
+    private String addressId = "";
 
     public PlaceOrderFragment() {
         // Required empty public constructor
@@ -96,6 +98,17 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         card_cash.setOnClickListener(this);
         card_online.setOnClickListener(this);
 
+        billed_amount = v.findViewById(R.id.billed_amount);
+
+        if (getArguments() != null) {
+            if (getArguments().containsKey("amount")) {
+                billed_amount.setText(getArguments().getString("amount"));
+            }
+            if (getArguments().containsKey("addressId")) {
+                addressId = getArguments().getString("addressId");
+            }
+        }
+
         apply_promo.setOnClickListener(this);
 
         promo_code.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -128,10 +141,8 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
-            case R.id.card4:
-            {
+        switch (v.getId()) {
+            case R.id.card4: {
                 card_cash.setCardBackgroundColor(Color.parseColor("#FFFFFF"));
                 DrawableCompat.setTint(
                         DrawableCompat.wrap(icon_cash.getDrawable()),
@@ -155,8 +166,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 text_wallet2.setTextColor(Color.parseColor("#FFFFFF"));
             }
             break;
-            case R.id.card6:
-            {
+            case R.id.card6: {
                 card_wallet.setCardBackgroundColor(Color.parseColor("#FFFFFF"));
                 DrawableCompat.setTint(
                         DrawableCompat.wrap(icon_wallet.getDrawable()),
@@ -180,8 +190,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 text_cash.setTextColor(Color.parseColor("#FFFFFF"));
             }
             break;
-            case R.id.card5:
-            {
+            case R.id.card5: {
                 card_cash.setCardBackgroundColor(Color.parseColor("#FFFFFF"));
                 DrawableCompat.setTint(
                         DrawableCompat.wrap(icon_cash.getDrawable()),
@@ -205,15 +214,12 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 text_online.setTextColor(Color.parseColor("#FFFFFF"));
             }
             break;
-            case R.id.apply_promo:
-            {
+            case R.id.apply_promo: {
                 String promo = promo_code.getText().toString();
-                if(promo == null || promo.equals(""))
-                {
-                    Toast.makeText(getContext(),"Invalid promocode",Toast.LENGTH_SHORT).show();
-                }
-                else {
-                    verifypromo(cus_id,promo);
+                if (promo == null || promo.equals("")) {
+                    Toast.makeText(getContext(), "Invalid promocode", Toast.LENGTH_SHORT).show();
+                } else {
+                    verifypromo(cus_id, promo);
                 }
             }
             break;
@@ -245,7 +251,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                 if (stat.equals("true")) {
                                     String msg = json2.getString("Message");
                                     promo_code.clearFocus();
-                                    Toast.makeText(getContext(),"Code Applied",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "Code Applied", Toast.LENGTH_SHORT).show();
                                     apply_promo.setText("Applied");
 
                                 } else if (stat.equals("false")) {
@@ -257,7 +263,6 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                 e.printStackTrace();
                             }
                         }
-
                     }
                 }, new Response.ErrorListener() {
             @Override

@@ -28,6 +28,9 @@ public class WishListModel {
     @SerializedName("product_image")
     @Expose
     private String productImage;
+    @SerializedName("product_name")
+    @Expose
+    private String productName;
 
     public String getWishId() {
         return wishId;
@@ -83,5 +86,13 @@ public class WishListModel {
 
     public void setProductImage(String productImage) {
         this.productImage = productImage;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 }

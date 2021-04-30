@@ -47,10 +47,8 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
             holder.radioBtnItem.setChecked(true);
             mSelectedItem = -1;
         } else {
-
             holder.radioBtnItem.setChecked(false);
         }
-
 
         AddressDataModel addressDataModel = list.get(position);
 
@@ -71,8 +69,6 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
                 addressCallBack.updateAddress(addressDataModel);
             }
         });
-
-
     }
 
     @Override
@@ -99,6 +95,9 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
             radioBtnItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    addressCallBack.onAddressSelect(list.get(getAdapterPosition()).getAddressId());
+
                     mSelectedItem = getAdapterPosition();
                     notifyDataSetChanged();
                 }

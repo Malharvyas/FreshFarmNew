@@ -57,6 +57,7 @@ public class CheckoutFragment extends Fragment {
     private TextView tvPrice, tvTotalAmount, item_details;
     private Button btnAddAddress;
     private Button btnContinue, btnPayment;
+    private String selectedAddressId = "";
 
     public CheckoutFragment() {
         // Required empty public constructor
@@ -129,10 +130,18 @@ public class CheckoutFragment extends Fragment {
         btnPayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlaceOrderFragment pof = new PlaceOrderFragment();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("PlacePOrder");
-                ft.replace(R.id.fragment_container, pof);
-                ft.commit();
+                if (!selectedAddressId.isEmpty()) {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("amount", tvTotalAmount.getText().toString());
+                    bundle.putString("addressId", selectedAddressId);
+                    PlaceOrderFragment pof = new PlaceOrderFragment();
+                    pof.setArguments(bundle);
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("PlacePOrder");
+                    ft.replace(R.id.fragment_container, pof);
+                    ft.commit();
+                } else {
+                    Toast.makeText(getContext(), "Please Select Address", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -151,6 +160,12 @@ public class CheckoutFragment extends Fragment {
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
                 ft.replace(R.id.fragment_container, addressFragment);
                 ft.commit();
+            }
+
+            @Override
+            public void onAddressSelect(String id) {
+
+                selectedAddressId = id;
             }
         });
         recyclerView.setAdapter(checkOutAdapter);
@@ -248,7 +263,6 @@ public class CheckoutFragment extends Fragment {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         );
     }
-
 
     private void getAddressData() {
         progressbar.setVisibility(View.VISIBLE);

@@ -98,8 +98,8 @@ public class CartFragment extends Fragment {
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
-                String total = sharedPreferences.getString("total_items","0");
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                String total = sharedPreferences.getString("total_items", "0");
                 Bundle bundle = new Bundle();
                 bundle.putString("amount", tvTotalAmount.getText().toString());
                 bundle.putString("total_items", total);
@@ -395,9 +395,9 @@ public class CartFragment extends Fragment {
                 totleAmount = totleAmount + finalPrice;
             }
         }
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("total_items",String.valueOf(cartModelList.size()));
+        editor.putString("total_items", String.valueOf(cartModelList.size()));
         editor.apply();
         tvTotalAmount.setText("" + totleAmount);
     }

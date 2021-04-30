@@ -63,12 +63,7 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.ViewHo
             holder.spinnerVer.setAdapter(adapter);
         }
 
-        //holder.tvName.setText(wishListModel);
-        //holder.tvPrice.setText("Price :" + wishListModel.);
-        /*if (cartModel.getPrice() != null &&   .getQuantity() != null) {
-            double finalPrice = Double.parseDouble(cartModel.getPrice()) * Double.parseDouble(cartModel.getQuantity());
-            //holder.tvFinalPrice.setText(String.valueOf(finalPrice));
-        }*/
+        holder.tvName.setText(wishListModel.getProductName());
 
         Picasso.get().load(wishListModel.getProductImage()).fit().into(holder.imageView);
 

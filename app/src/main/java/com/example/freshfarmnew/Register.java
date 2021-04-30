@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +49,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     String device_id,device_name,device_type,device_os;
     int check = 0, check2 = 0,check3 = 0;
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         referral = findViewById(R.id.referral);
         sign_up = findViewById(R.id.sign_up);
         term_policy = findViewById(R.id.term_policy_check);
+        progressBar = findViewById(R.id.progressbar);
 
         useremail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -213,6 +216,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void senddatatoapi(String uname, String umob, String uemail, String upass1,String upass2, String uref, String device_id, String device_name, String device_type, String device_os) {
+        progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/signup");
@@ -222,6 +226,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if(response != null) {
@@ -255,6 +260,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if(error instanceof ClientError)

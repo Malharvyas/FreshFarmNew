@@ -41,6 +41,7 @@ import com.example.freshfarmnew.Model.Category;
 import com.example.freshfarmnew.Model.Product;
 import com.example.freshfarmnew.Model.ProductVariation;
 import com.example.freshfarmnew.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -90,6 +91,9 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
         catlist = new ArrayList<>();
         prolist = new ArrayList<>();
         prolist2 = new ArrayList<>();
+
+        BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_nav);
+        bottomNavigationView.getMenu().getItem(0).setChecked(true);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
         cus_id = sharedPreferences.getString("customer_id", "");

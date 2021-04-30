@@ -8,9 +8,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -111,13 +114,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String ss = search.getText().toString();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("search_key", ss);
-                    SearchResultsFragment srf = new SearchResultsFragment();
-                    srf.setArguments(bundle);
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("searchresults");
-                    ft.replace(R.id.fragment_container, srf);
-                    ft.commit();
+                    if(ss == null || ss.equals(""))
+                    {
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                        Toast.makeText(getApplicationContext(),"Please enter a valid search input",Toast.LENGTH_SHORT).show();
+                        search.clearFocus();
+                    }
+                    else
+                    {
+                        Bundle bundle = new Bundle();
+                        bundle.putString("search_key", ss);
+                        SearchResultsFragment srf = new SearchResultsFragment();
+                        srf.setArguments(bundle);
+                        InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
+                        imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("searchresults");
+                        ft.replace(R.id.fragment_container, srf);
+                        ft.commit();
+                    }
                     return true;
                 }
                 return false;
@@ -149,6 +164,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
                         Boolean islogin = sharedPreferences.getBoolean("islogin", false);
                         if (islogin == false) {
+//                            bottomNavigationView.getMenu().setGroupCheckable(0, false, true);
+                            bottomNavigationView.setSelectedItemId(R.id.nav_home);
                             Toast.makeText(getApplicationContext(), "Please login to continue", Toast.LENGTH_SHORT).show();
                         } else {
                             WalletFragment w = new WalletFragment();
@@ -176,6 +193,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
                         Boolean islogin = sharedPreferences.getBoolean("islogin", false);
                         if (islogin == false) {
+                            bottomNavigationView.setSelectedItemId(R.id.nav_home);
                             Toast.makeText(getApplicationContext(), "Please login to continue", Toast.LENGTH_SHORT).show();
                         } else {
                             CartFragment c = new CartFragment();
@@ -190,6 +208,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
                         Boolean islogin = sharedPreferences.getBoolean("islogin", false);
                         if (islogin == false) {
+                            bottomNavigationView.setSelectedItemId(R.id.nav_home);
 //                            getSupportFragmentManager().popBackStack();
 //                            bottomNavigationView.getMenu().getItem(1).setChecked(true);
                             startActivity(new Intent(getApplicationContext(), login.class));
@@ -326,6 +345,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_side_profile: {
+                bottomNavigationView.getMenu().getItem(4).setChecked(true);
                 ProfileFragment p = new ProfileFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("profile");
                 ft.replace(R.id.fragment_container, p);
@@ -340,6 +360,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             break;
             case R.id.nav_side_my_wallet: {
+                bottomNavigationView.getMenu().getItem(2).setChecked(true);
                 WalletFragment w = new WalletFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("wallet");
                 ft.replace(R.id.fragment_container, w);
@@ -366,13 +387,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.replace(R.id.fragment_container, a);
                 ft.commit();
             }
+            case R.id.nav_contact: {
+                ContactUsFragment c = new ContactUsFragment();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("contact");
+                ft.replace(R.id.fragment_container, c);
+                ft.commit();
+            }
+            break;
+            case R.id.nav_about: {
+                AboutUsFragment a = new AboutUsFragment();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("about");
+                ft.replace(R.id.fragment_container, a);
+                ft.commit();
+            }
             break;
             case R.id.nav_side_logout: {
                 SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("islogin", false);
                 editor.apply();
+                SharedPreferences sharedPreferences1 = getSharedPreferences("userpref",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+                editor1.clear();
+                editor1.apply();
+                SharedPreferences sharedPreferences2 = getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor2 = sharedPreferences2.edit();
+                editor2.clear();
+                editor2.apply();
+                SharedPreferences sharedPreferences3 = getSharedPreferences("temp",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor3 = sharedPreferences3.edit();
+                editor3.clear();
+                editor3.apply();
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
             }
             break;
             case R.id.nav_login3: {
@@ -389,30 +436,118 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawer(GravityCompat.START);
         } else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
-            getSupportFragmentManager().popBackStack();
-//             if (getSupportFragmentManager().getBackStackEntryCount() - 2 >= 0) {
-//                if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-2).getName() != null)
-//                {
-//                    if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-2).getName().equals("sub_category"))
-//                    {
-////                        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-////                        getSupportFragmentManager().beginTransaction()
-////                                .detach(fragment)
-////                                .attach(fragment)
-////                                .commit();
-//                    }
-//                    else
-//                    {
-//                        super.onBackPressed();
-//                    }
-//                }
-//                else {
-//                    super.onBackPressed();
-//                }
-//            }
-//             else {
-//                 super.onBackPressed();
-//             }
+//            getSupportFragmentManager().popBackStack();
+             if (getSupportFragmentManager().getBackStackEntryCount() - 1 >= 0) {
+                if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName() != null)
+                {
+                    if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("category"))
+                    {
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+                        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        HomeFragment h = new HomeFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                        ft.replace(R.id.fragment_container, h);
+                        ft.commit();
+                    }
+                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("wallet"))
+                    {
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+                        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        HomeFragment h = new HomeFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                        ft.replace(R.id.fragment_container, h);
+                        ft.commit();
+                    }
+                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("cart"))
+                    {
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+                        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        HomeFragment h = new HomeFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                        ft.replace(R.id.fragment_container, h);
+                        ft.commit();
+                    }
+                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("profile"))
+                    {
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+                        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        HomeFragment h = new HomeFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                        ft.replace(R.id.fragment_container, h);
+                        ft.commit();
+                    }
+                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("orders"))
+                    {
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+                        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        HomeFragment h = new HomeFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                        ft.replace(R.id.fragment_container, h);
+                        ft.commit();
+                    }
+                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("wishlist"))
+                    {
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+                        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        HomeFragment h = new HomeFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                        ft.replace(R.id.fragment_container, h);
+                        ft.commit();
+                    }
+                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("contact"))
+                    {
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+                        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        HomeFragment h = new HomeFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                        ft.replace(R.id.fragment_container, h);
+                        ft.commit();
+                    }
+                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("about"))
+                    {
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+                        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        HomeFragment h = new HomeFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                        ft.replace(R.id.fragment_container, h);
+                        ft.commit();
+                    }
+                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("searchresults"))
+                    {
+                        search.setText("");
+                        search.clearFocus();
+                        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+//                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+                        bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        HomeFragment h = new HomeFragment();
+                        FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                        ft.replace(R.id.fragment_container, h);
+                        ft.commit();
+                    }
+                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("home"))
+                    {
+                        finish();
+                    }
+                    else
+                    {
+                        super.onBackPressed();
+                    }
+                }
+                else {
+                    super.onBackPressed();
+                }
+            }
+             else {
+                 super.onBackPressed();
+             }
         } else {
             super.onBackPressed();
         }
@@ -431,7 +566,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //                            bottomNavigationView.getMenu().getItem(1).setChecked(true);
                     startActivity(new Intent(getApplicationContext(), login.class));
                 } else {
-                    bottomNavigationView.getMenu().setGroupCheckable(0, false, true);
+                    bottomNavigationView.getMenu().getItem(4).setChecked(true);
                     ProfileFragment p = new ProfileFragment();
                     FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("profile");
                     ft.replace(R.id.fragment_container, p);

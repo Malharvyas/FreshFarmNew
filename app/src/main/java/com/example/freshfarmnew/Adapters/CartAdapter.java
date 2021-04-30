@@ -78,14 +78,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         holder.ivRemove.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /*SharedPreferences sharedPreferences = context.getSharedPreferences("temp", Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences = context.getSharedPreferences("temp", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putInt(cartModel.getProductId(), 1);
                 String key2 = cartModel.getProductId() + cartModel.getvId();
                 editor.putInt(key2, 0);
                 String key = key2 + "quant";
                 editor.putInt(key, 0);
-                editor.apply();*/
+                editor.apply();
                 cartCallBack.updateCart(cartModel.getProductId(), cartModel.getvId(), "0");
             }
         });

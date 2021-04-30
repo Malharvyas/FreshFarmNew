@@ -1,6 +1,7 @@
 package com.example.freshfarmnew;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +41,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
     int check = 0;
     String url = "";
     TextView forgot_pass;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         lpass = findViewById(R.id.l_pass);
         login = findViewById(R.id.login);
         forgot_pass = findViewById(R.id.forgot_pass);
+        progressBar = findViewById(R.id.progressbar);
 
         nav_signup.setOnClickListener(this);
         login.setOnClickListener(this);
@@ -95,6 +99,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
     }
 
     private void loginwithcredentials(String mob, String pass) {
+        progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/signin");
@@ -104,6 +109,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if(response != null) {
@@ -147,7 +153,9 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                                     editor1.apply();
 
                                     Toast.makeText(getApplicationContext(),"Login Successfull",Toast.LENGTH_SHORT).show();
-                                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                    Intent intent = new Intent(getApplicationContext(),MainActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(intent);
                                     finish();
 
                                 }
@@ -166,6 +174,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if(error instanceof ClientError)

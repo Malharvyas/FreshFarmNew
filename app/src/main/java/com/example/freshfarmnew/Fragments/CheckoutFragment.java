@@ -112,6 +112,10 @@ public class CheckoutFragment extends Fragment {
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.apply();
                 getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_nav);
                 bottomNavigationView.getMenu().getItem(0).setChecked(true);

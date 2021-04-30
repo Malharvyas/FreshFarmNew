@@ -1,5 +1,8 @@
 package com.example.freshfarmnew.Fragments;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -12,6 +15,7 @@ import android.widget.EditText;
 
 import com.example.freshfarmnew.Fragments.ProfileFragments.ChangePassword;
 import com.example.freshfarmnew.Fragments.ProfileFragments.EditProfile;
+import com.example.freshfarmnew.MainActivity;
 import com.example.freshfarmnew.R;
 
 
@@ -73,7 +77,24 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             }
             break;
             case R.id.nav_logout2: {
-
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userlogin", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putBoolean("islogin", false);
+                editor.apply();
+                SharedPreferences sharedPreferences1 = getActivity().getSharedPreferences("userpref",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor1 = sharedPreferences1.edit();
+                editor1.clear();
+                editor1.apply();
+                SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor2 = sharedPreferences2.edit();
+                editor2.clear();
+                editor2.apply();
+                SharedPreferences sharedPreferences3 = getActivity().getSharedPreferences("temp",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor3 = sharedPreferences3.edit();
+                editor3.clear();
+                editor3.apply();
+                startActivity(new Intent(getContext(), MainActivity.class));
+                getActivity().finish();
             }
             break;
         }

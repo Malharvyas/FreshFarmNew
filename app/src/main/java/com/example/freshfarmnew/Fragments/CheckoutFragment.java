@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,7 +31,10 @@ import com.example.freshfarmnew.Adapters.CheckOutAdapter;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.Interfaces.AddressCallBack;
 import com.example.freshfarmnew.Model.AddressDataModel;
+import com.example.freshfarmnew.PlaceOrderFragment;
 import com.example.freshfarmnew.R;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -50,7 +54,7 @@ public class CheckoutFragment extends Fragment {
     private RecyclerView recyclerView;
     private ProgressBar progressbar;
     CheckOutAdapter checkOutAdapter;
-    private TextView tvPrice, tvTotalAmount;
+    private TextView tvPrice, tvTotalAmount,item_details;
     private Button btnAddAddress;
     private Button btnContinue, btnPayment;
 
@@ -79,6 +83,7 @@ public class CheckoutFragment extends Fragment {
         btnAddAddress = v.findViewById(R.id.btnAddAddress);
         recyclerView = v.findViewById(R.id.recyclerView);
         tvPrice = v.findViewById(R.id.tvPrice);
+        item_details = v.findViewById(R.id.item_details);
         tvTotalAmount = v.findViewById(R.id.tvTotalAmount);
         btnContinue = v.findViewById(R.id.btnContinue);
         btnPayment = v.findViewById(R.id.btnPayment);
@@ -87,6 +92,10 @@ public class CheckoutFragment extends Fragment {
         if (getArguments() != null) {
             if (getArguments().containsKey("amount")) {
                 tvTotalAmount.setText(getArguments().getString("amount"));
+                tvPrice.setText(getArguments().getString("amount"));
+            }
+            if (getArguments().containsKey("total_items")) {
+                item_details.setText("Price "+" ( "+getArguments().getString("total_items")+" items )");
             }
         }
 
@@ -96,6 +105,29 @@ public class CheckoutFragment extends Fragment {
                 AddAddressFragment addressFragment = new AddAddressFragment();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
                 ft.replace(R.id.fragment_container, addressFragment);
+                ft.commit();
+            }
+        });
+
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_nav);
+                bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                HomeFragment h = new HomeFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                ft.replace(R.id.fragment_container, h);
+                ft.commit();
+            }
+        });
+
+        btnPayment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PlaceOrderFragment pof = new PlaceOrderFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("PlacePOrder");
+                ft.replace(R.id.fragment_container, pof);
                 ft.commit();
             }
         });

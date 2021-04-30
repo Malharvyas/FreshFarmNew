@@ -59,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:text="Price ( 1 items )"
                 android:textColor="@color/white"
-                android:textSize="12sp" />
+                android:textSize="12sp"
+                android:id="@+id/item_details"/>
 
             <TextView
                 android:id="@+id/tvPrice"

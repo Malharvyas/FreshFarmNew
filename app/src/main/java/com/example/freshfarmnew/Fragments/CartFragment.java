@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -97,12 +98,28 @@ public class CartFragment extends Fragment {
         btnCheckout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                String total = sharedPreferences.getString("total_items","0");
                 Bundle bundle = new Bundle();
                 bundle.putString("amount", tvTotalAmount.getText().toString());
+                bundle.putString("total_items", total);
                 CheckoutFragment checkoutFragment = new CheckoutFragment();
                 checkoutFragment.setArguments(bundle);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
                 ft.replace(R.id.fragment_container, checkoutFragment);
+                ft.commit();
+            }
+        });
+
+        btnContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_nav);
+                bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                HomeFragment h = new HomeFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                ft.replace(R.id.fragment_container, h);
                 ft.commit();
             }
         });
@@ -374,6 +391,10 @@ public class CartFragment extends Fragment {
                 totleAmount = totleAmount + finalPrice;
             }
         }
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("total_items",String.valueOf(cartModelList.size()));
+        editor.apply();
         tvTotalAmount.setText("" + totleAmount);
     }
 }

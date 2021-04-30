@@ -19,6 +19,7 @@
     <string name="hint_cemail"><b>Email</b></string>
     <string name="hint_cmessage"><b>Message</b></string>
     <string name="hint_otp"><b>Provide OTP</b></string>
+    <string name="hint_promo"><b>Have a Coupon Code</b></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_maps">Map</string>

@@ -484,12 +484,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         startActivity(i);
     }
 
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        finish();
-        overridePendingTransition(0, 0);
-        startActivity(getIntent());
-        overridePendingTransition(0, 0);
-    }
+//    @Override
+//    protected void onRestart() {
+//        super.onRestart();
+//        finish();
+//        overridePendingTransition(0, 0);
+//        startActivity(getIntent());
+//        overridePendingTransition(0, 0);
+//    }
 }

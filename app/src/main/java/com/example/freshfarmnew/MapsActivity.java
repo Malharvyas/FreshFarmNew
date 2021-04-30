@@ -293,6 +293,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     editor.apply();
 
                                     Toast.makeText(getApplicationContext(),"Location Saved",Toast.LENGTH_SHORT).show();
+
+                                    finish();
+                                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
                                 }
                                 else if(stat.equals("false"))
                                 {

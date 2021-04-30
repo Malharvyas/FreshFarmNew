@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentTransaction;
@@ -25,6 +26,7 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
     private Context context;
     private List<AddressDataModel> list;
     private AddressCallBack addressCallBack;
+    public int mSelectedItem = -1;
 
     public CheckOutAdapter(Context context, List<AddressDataModel> list, AddressCallBack addressCallBack) {
         this.context = context;
@@ -41,6 +43,17 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull CheckOutAdapter.ViewHolder holder, int position) {
+        if(position == mSelectedItem)
+        {
+            holder.radioBtnItem.setChecked(true);
+            mSelectedItem = -1;
+        }
+        else {
+
+            holder.radioBtnItem.setChecked(false);
+        }
+
+
         AddressDataModel addressDataModel = list.get(position);
 
         holder.tvAddress.setText(addressDataModel.getAddress());
@@ -60,6 +73,9 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
                 addressCallBack.updateAddress(addressDataModel);
             }
         });
+
+
+
     }
 
     @Override
@@ -82,6 +98,14 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
             btnUpdate = itemView.findViewById(R.id.btnUpdate);
             tvAddress = itemView.findViewById(R.id.tvAddress);
             tvPhone = itemView.findViewById(R.id.tvPhone);
+
+            radioBtnItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mSelectedItem = getAdapterPosition();
+                    notifyDataSetChanged();
+                }
+            });
         }
     }
 }

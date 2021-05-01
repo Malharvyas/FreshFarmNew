@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.R;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -36,10 +38,11 @@ import java.util.Map;
 
 public class WalletFragment extends Fragment implements View.OnClickListener {
 
-    String url = "", cus_id = "", amount = "", id = "1";
-    TextView t1000, t2000, t3000, t4000;
+    String url = "", cus_id = "", amount = "", id = "1",ref_code="";
+    TextView t1000, t2000, t3000, t4000,wall_balance;
     EditText edAmount;
     private Button addMoney;
+    ProgressBar progressBar;
 
     public WalletFragment() {
         // Required empty public constructor
@@ -76,6 +79,10 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
         t3000.setOnClickListener(this);
         t4000.setOnClickListener(this);
 
+        wall_balance = v.findViewById(R.id.wallet_ballance);
+
+        progressBar = v.findViewById(R.id.progressbar);
+
         addMoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,13 +90,104 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
             }
         });
 
+        getWalletbalance(cus_id);
+
         return v;
+    }
+
+    private void getWalletbalance(String cus_id) {
+        progressBar.setVisibility(View.VISIBLE);
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/getWallet");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        Log.e("PrintLog", "----" + response);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
+
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2;
+                                json2 = json.getJSONObject("getWallet");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                if (stat.equals("true")) {
+                                    JSONArray jsonArray = json2.getJSONArray("data");
+                                    JSONObject walobj = jsonArray.getJSONObject(0);
+                                    String wallet_balance = walobj.getString("wallet_balance");
+                                    wall_balance.setText(wallet_balance);
+                                } else if (stat.equals("false")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
     }
 
     private void getWalletDetails() {
         amount = edAmount.getText().toString();
-        SharedPreferences ss = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
-        // progressbar.setVisibility(View.VISIBLE);
+         progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/updateWallet");
@@ -99,7 +197,7 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //progressbar.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
                         Log.e("PrintLog", "----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
@@ -115,7 +213,9 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
                                 if (stat.equals("true")) {
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
-                                    getActivity().getSupportFragmentManager().popBackStack();
+                                    edAmount.setText("");
+                                    edAmount.clearFocus();
+                                    getWalletbalance(cus_id);
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
@@ -128,7 +228,7 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                // progressbar.setVisibility(View.GONE);
+                 progressBar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if (error instanceof ClientError) {

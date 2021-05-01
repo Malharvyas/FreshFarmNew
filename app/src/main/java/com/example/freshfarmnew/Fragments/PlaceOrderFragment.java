@@ -63,6 +63,8 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     private TextView billed_amount;
     private String addressId = "";
     Button place_order;
+    int deleviry,discount2;
+    Double netamount;
 
     public PlaceOrderFragment() {
         // Required empty public constructor
@@ -120,7 +122,9 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         if (getArguments() != null) {
             if (getArguments().containsKey("amount")) {
                 billed_amount.setText(getArguments().getString("amount"));
-                printreceipt();
+                deleviry = 11;
+                discount2 = 0;
+                printreceipt(deleviry,discount2);
             }
             if (getArguments().containsKey("addressId")) {
                 addressId = getArguments().getString("addressId");
@@ -158,12 +162,18 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         return v;
     }
 
-    private void printreceipt() {
-        delivery_charges.setText("11");
-        discount.setText("0");
-        Double net = Double.parseDouble(billed_amount.getText().toString())+Double.parseDouble(delivery_charges.getText().toString())+Double.parseDouble(discount.getText().toString());
-        net_amount.setText(""+net);
+    private void printreceipt(int deleviry, int discount2) {
+        netamount = Double.parseDouble(billed_amount.getText().toString())+Double.parseDouble(String.valueOf(deleviry))+Double.parseDouble(String.valueOf(discount2));
+        delivery_charges.setText(""+deleviry);
+        discount.setText(""+discount2);
+        net_amount.setText(""+netamount);
     }
+
+//    private void printreceipt(int deleviry, int discount, Double netamount) {
+//
+//        this.discount.setText("0");
+//        net_amount.setText(""+net);
+//    }
 
     @Override
     public void onClick(View v) {

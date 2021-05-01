@@ -27,5 +27,8 @@
     <string name="btn_cancle">Cancle</string>
     <string name="checkout">Checkout</string>
     <string name="payment">Payment</string>
+    <string name="cancelOrder">Cancel Order</string>
+    <string name="orderDetails">Order Details</string>
+    <string name="orderTrack">Order Track</string>
 
 </resources>

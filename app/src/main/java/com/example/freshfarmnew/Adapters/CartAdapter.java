@@ -41,11 +41,11 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull CartAdapter.ViewHolder holder, int position) {
         CartModel cartModel = list.get(position);
-        holder.tvName.setText(cartModel.getProductName()+" ( "+cartModel.getUnitVal()+" "+cartModel.getUnit()+" )");
+        holder.tvName.setText(cartModel.getProductName() + " ( " + cartModel.getUnitVal() + " " + cartModel.getUnit() + " )");
         holder.tvPrice.setText("Price :" + cartModel.getPrice());
         if (cartModel.getPrice() != null && cartModel.getQuantity() != null) {
             double finalPrice = Double.parseDouble(cartModel.getPrice()) * Double.parseDouble(cartModel.getQuantity());
-            holder.tvFinalPrice.setText("\u20B9" + String.valueOf(finalPrice));
+            holder.tvFinalPrice.setText("\u20B9" + " " + String.valueOf(finalPrice));
         }
         holder.tvQty.setText(cartModel.getQuantity());
 

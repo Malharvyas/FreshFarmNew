@@ -67,8 +67,8 @@
 
                         <Spinner
                             android:id="@+id/spinnerVer"
-                            android:layout_width="100dp"
-                            android:layout_height="40sp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:background="@drawable/spinner_background" />
 
                         <ImageView

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.WalletFragment"
-    android:background="@drawable/border">
+    android:background="@drawable/border"
+    tools:context=".Fragments.WalletFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -82,8 +82,8 @@
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 app:layout_constraintLeft_toRightOf="@id/guideline3"
-                app:layout_constraintTop_toBottomOf="@id/amount"
-                app:layout_constraintRight_toRightOf="@id/guideline4"/>
+                app:layout_constraintRight_toRightOf="@id/guideline4"
+                app:layout_constraintTop_toBottomOf="@id/amount" />
 
             <TextView
                 android:id="@+id/t4000"
@@ -126,8 +126,8 @@
             android:layout_width="wrap_content"
             android:layout_height="40sp"
             android:layout_marginTop="20sp"
-            android:text="+ Add Money"
             android:backgroundTint="#374241"
+            android:text="+ Add Money"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -137,11 +137,11 @@
             android:id="@+id/text2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10sp"
             android:text="Wallet Balance"
             android:textColor="@color/main_color"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:layout_marginTop="10sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/add_money" />
 
@@ -150,16 +150,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20sp"
-            android:text="5000"
             android:background="@drawable/border_textview2"
-            android:textSize="23sp"
-            android:textColor="#FFFFFF"
+            android:drawableStart="@drawable/ic_wallet"
+            android:drawablePadding="6sp"
+            android:drawableTint="#FFFFFF"
             android:gravity="center_vertical"
             android:paddingLeft="40sp"
-            android:drawablePadding="6sp"
             android:paddingBottom="5dp"
-            android:drawableTint="#FFFFFF"
-            android:drawableStart="@drawable/ic_wallet"
+            android:text="5000"
+            android:textColor="#FFFFFF"
+            android:textSize="23sp"
             app:layout_constraintLeft_toLeftOf="@id/add_money"
             app:layout_constraintRight_toRightOf="@id/add_money"
             app:layout_constraintTop_toBottomOf="@id/text2" />

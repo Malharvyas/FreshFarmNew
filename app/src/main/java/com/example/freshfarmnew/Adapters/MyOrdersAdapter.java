@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.freshfarmnew.Interfaces.WishListCallBack;
+import com.example.freshfarmnew.Model.OrderListModel;
 import com.example.freshfarmnew.Model.WishListModel;
 import com.example.freshfarmnew.Model.WishListVariation;
 import com.example.freshfarmnew.R;
@@ -26,10 +27,10 @@ import java.util.List;
 public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHolder> {
 
     private Context context;
-    private List<WishListModel> list;
+    private List<OrderListModel> list;
     private WishListCallBack wishListCallBack;
 
-    public MyOrdersAdapter(Context context, List<WishListModel> list, WishListCallBack wishListCallBack) {
+    public MyOrdersAdapter(Context context, List<OrderListModel> list, WishListCallBack wishListCallBack) {
         this.context = context;
         this.wishListCallBack = wishListCallBack;
         this.list = list;
@@ -38,23 +39,18 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHo
     @NonNull
     @Override
     public MyOrdersAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(context).inflate(R.layout.item_whishlist, parent, false);
+        View v = LayoutInflater.from(context).inflate(R.layout.item_my_orders, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyOrdersAdapter.ViewHolder holder, int position) {
-        WishListModel wishListModel = list.get(position);
+        OrderListModel model = list.get(position);
 
-        //holder.tvName.setText(wishListModel);
-        //holder.tvPrice.setText("Price :" + wishListModel.);
-        /*if (cartModel.getPrice() != null &&   .getQuantity() != null) {
-            double finalPrice = Double.parseDouble(cartModel.getPrice()) * Double.parseDouble(cartModel.getQuantity());
-            //holder.tvFinalPrice.setText(String.valueOf(finalPrice));
-        }*/
-
-        Picasso.get().load(wishListModel.getProductImage()).fit().into(holder.imageView);
-
+        holder.tvOrderID.setText(model.getOrderId());
+        holder.tvItem.setText(model.getProducts().size() + " Item");
+        holder.tvStatus.setText(model.getStatus());
+        holder.tvTotalPrice.setText("\u20B9" + " " + model.getTotalAmount());
     }
 
     @Override
@@ -64,21 +60,20 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView imageView;
-        TextView tvName, tvPrice, tvProductName, tvQuntity, tvTotalPrice, tvContactDetails;
-        Button btnCustomerInfo;
+        TextView tvOrderID, tvItem, tvOrderDate, tvStatus, tvTotalPrice;
+        Button btnCancelOrder, btnOrderDetails, btnOrderTrack;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            imageView = itemView.findViewById(R.id.imageView);
-            tvProductName = itemView.findViewById(R.id.tvProductName);
-            tvPrice = itemView.findViewById(R.id.tvPrice);
-            tvQuntity = itemView.findViewById(R.id.tvQuntity);
+            tvOrderID = itemView.findViewById(R.id.tvOrderID);
+            tvItem = itemView.findViewById(R.id.tvItem);
+            tvOrderDate = itemView.findViewById(R.id.tvOrderDate);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
             tvTotalPrice = itemView.findViewById(R.id.tvTotalPrice);
-            btnCustomerInfo = itemView.findViewById(R.id.btnCustomerInfo);
-            tvName = itemView.findViewById(R.id.tvName);
-            tvContactDetails = itemView.findViewById(R.id.tvContactDetails);
+            btnCancelOrder = itemView.findViewById(R.id.btnCancelOrder);
+            btnOrderDetails = itemView.findViewById(R.id.btnOrderDetails);
+            btnOrderTrack = itemView.findViewById(R.id.btnOrderTrack);
         }
     }
 }

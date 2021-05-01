@@ -20,6 +20,10 @@
             android:title="My Wishlist"
             android:icon="@drawable/ic_heart"/>
         <item
+            android:id="@+id/nav_side_referral"
+            android:title="Referral Code"
+            android:icon="@drawable/ic_referral"/>
+        <item
             android:id="@+id/nav_side_contact"
             android:title="Contact Us"
             android:icon="@drawable/ic_contact"/>

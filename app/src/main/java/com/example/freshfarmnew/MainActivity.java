@@ -51,6 +51,7 @@ import com.example.freshfarmnew.Fragments.ContactUsFragment;
 import com.example.freshfarmnew.Fragments.HomeFragment;
 import com.example.freshfarmnew.Fragments.MyOrdersFragment;
 import com.example.freshfarmnew.Fragments.ProfileFragment;
+import com.example.freshfarmnew.Fragments.ProfileFragments.ReferralFragment;
 import com.example.freshfarmnew.Fragments.SearchResultsFragment;
 import com.example.freshfarmnew.Fragments.WalletFragment;
 import com.example.freshfarmnew.Fragments.WishlistFragment;
@@ -454,6 +455,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(getApplicationContext(), login.class));
             }
             break;
+            case R.id.nav_side_referral:{
+                ReferralFragment rf = new ReferralFragment();
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("referral");
+                ft.replace(R.id.fragment_container, rf);
+                ft.commit();
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START);
         return true;

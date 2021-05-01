@@ -15,6 +15,7 @@ import android.widget.EditText;
 
 import com.example.freshfarmnew.Fragments.ProfileFragments.ChangePassword;
 import com.example.freshfarmnew.Fragments.ProfileFragments.EditProfile;
+import com.example.freshfarmnew.Fragments.ProfileFragments.ReferralFragment;
 import com.example.freshfarmnew.MainActivity;
 import com.example.freshfarmnew.R;
 
@@ -73,7 +74,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
             }
             break;
             case R.id.referral_code: {
-
+                ReferralFragment rf = new ReferralFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("referral");
+                ft.replace(R.id.fragment_container, rf);
+                ft.commit();
             }
             break;
             case R.id.nav_logout2: {

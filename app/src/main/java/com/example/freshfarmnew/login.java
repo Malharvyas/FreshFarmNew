@@ -140,6 +140,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                                     String device_type = jsonObject.getString("device_type");
                                     String os_version = jsonObject.getString("os_version");
                                     String address = jsonObject.getString("address");
+                                    String ref_code = jsonObject.getString("ref_code");
 
                                     SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -152,6 +153,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                                     editor.putString("device_type",device_type);
                                     editor.putString("os_version",os_version);
                                     editor.putString("address",address);
+                                    editor.putString("ref_code",ref_code);
                                     editor.apply();
 
                                     SharedPreferences sharedPreferences1 = getSharedPreferences("userlogin",Context.MODE_PRIVATE);

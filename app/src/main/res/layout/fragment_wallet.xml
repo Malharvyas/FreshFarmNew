@@ -31,7 +31,7 @@
             app:layout_constraintTop_toBottomOf="@id/text1">
 
             <EditText
-                android:id="@+id/amount"
+                android:id="@+id/edAmount"
                 android:layout_width="match_parent"
                 android:layout_height="40sp"
                 android:layout_marginLeft="10sp"
@@ -55,7 +55,7 @@
                 android:textSize="18sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="@id/guideline2"
-                app:layout_constraintTop_toBottomOf="@id/amount" />
+                app:layout_constraintTop_toBottomOf="@id/edAmount" />
 
             <TextView
                 android:id="@+id/t2000"
@@ -69,7 +69,7 @@
                 android:textSize="18sp"
                 app:layout_constraintLeft_toRightOf="@id/guideline2"
                 app:layout_constraintRight_toRightOf="@id/guideline3"
-                app:layout_constraintTop_toBottomOf="@id/amount" />
+                app:layout_constraintTop_toBottomOf="@id/edAmount" />
 
             <TextView
                 android:id="@+id/t3000"
@@ -83,7 +83,7 @@
                 android:textSize="18sp"
                 app:layout_constraintLeft_toRightOf="@id/guideline3"
                 app:layout_constraintRight_toRightOf="@id/guideline4"
-                app:layout_constraintTop_toBottomOf="@id/amount" />
+                app:layout_constraintTop_toBottomOf="@id/edAmount" />
 
             <TextView
                 android:id="@+id/t4000"
@@ -97,7 +97,7 @@
                 android:textSize="18sp"
                 app:layout_constraintLeft_toLeftOf="@id/guideline4"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/amount" />
+                app:layout_constraintTop_toBottomOf="@id/edAmount" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guideline2"

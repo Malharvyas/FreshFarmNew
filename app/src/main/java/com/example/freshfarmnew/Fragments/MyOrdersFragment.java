@@ -189,7 +189,7 @@ public class MyOrdersFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("customer_id", "2");
+                params.put("customer_id", cus_id);
                 return params;
             }
 

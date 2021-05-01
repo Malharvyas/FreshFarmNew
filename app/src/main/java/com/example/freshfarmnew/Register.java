@@ -32,6 +32,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONObject;
 
@@ -44,7 +45,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     TextView textView;
     Button nav_login,sign_up;
     CheckBox term_policy;
-    EditText username,mob_number,useremail,userpass1,userpass2,referral;
+    EditText username,mob_number,useremail,referral;
+    TextInputEditText userpass1,userpass2;
     String uname,umob,uemail,upass1,upass2,uref;
     String device_id,device_name,device_type,device_os;
     int check = 0, check2 = 0,check3 = 0;
@@ -154,6 +156,11 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     }
 
     boolean isEmpty(EditText text) {
+        CharSequence str = text.getText().toString();
+        return TextUtils.isEmpty(str);
+    }
+
+    boolean isEmpty(TextInputEditText text) {
         CharSequence str = text.getText().toString();
         return TextUtils.isEmpty(str);
     }

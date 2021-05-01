@@ -26,6 +26,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
+import com.google.android.material.textfield.TextInputEditText;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,7 +37,8 @@ import java.util.Map;
 public class login extends AppCompatActivity implements View.OnClickListener {
 
     Button nav_signup,login;
-    EditText l_mob,lpass;
+    EditText l_mob;
+    TextInputEditText lpass;
     String mob,pass;
     int check = 0;
     String url = "";
@@ -62,6 +64,11 @@ public class login extends AppCompatActivity implements View.OnClickListener {
     }
 
     boolean isEmpty(EditText text) {
+        CharSequence str = text.getText().toString();
+        return TextUtils.isEmpty(str);
+    }
+
+    boolean isEmpty(TextInputEditText text) {
         CharSequence str = text.getText().toString();
         return TextUtils.isEmpty(str);
     }

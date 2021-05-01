@@ -1,7 +1,9 @@
 package com.example.freshfarmnew.Fragments;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -13,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -31,9 +34,7 @@ import com.example.freshfarmnew.Adapters.CheckOutAdapter;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.Interfaces.AddressCallBack;
 import com.example.freshfarmnew.Model.AddressDataModel;
-import com.example.freshfarmnew.PlaceOrderFragment;
 import com.example.freshfarmnew.R;
-import com.google.android.libraries.places.api.model.Place;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -103,10 +104,16 @@ public class CheckoutFragment extends Fragment {
         btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddAddressFragment addressFragment = new AddAddressFragment();
-                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
-                ft.replace(R.id.fragment_container, addressFragment);
-                ft.commit();
+                if(checkPermission())
+                {
+                    AddAddressFragment addressFragment = new AddAddressFragment();
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
+                    ft.replace(R.id.fragment_container, addressFragment);
+                    ft.commit();
+                }
+                else {
+                    Toast.makeText(getContext(),"Please provide location permission to continue",Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -173,6 +180,15 @@ public class CheckoutFragment extends Fragment {
         getAddressData();
 
         return v;
+    }
+
+    private boolean checkPermission() {
+            int result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+            if (result == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                return false;
+            }
     }
 
     private void remvoeAddress(int position, String addressId) {

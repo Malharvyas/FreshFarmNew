@@ -70,33 +70,81 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/mob_number" />
 
-            <EditText
-                android:id="@+id/userpass1"
-                android:layout_width="0dp"
-                android:layout_height="50sp"
-                android:layout_marginTop="10sp"
-                android:background="@drawable/border_edittext"
-                android:hint="@string/hint_pass1"
-                android:inputType="textPassword"
-                android:paddingLeft="10dp"
-                android:textSize="18sp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/useremail" />
+<!--            <EditText-->
+<!--                android:id="@+id/userpass1"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="50sp"-->
+<!--                android:layout_marginTop="10sp"-->
+<!--                android:background="@drawable/border_edittext"-->
+<!--                android:hint="@string/hint_pass1"-->
+<!--                android:inputType="textPassword"-->
+<!--                android:paddingLeft="10dp"-->
+<!--                android:textSize="18sp"-->
+<!--                app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                app:layout_constraintRight_toRightOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/useremail" />-->
 
-            <EditText
-                android:id="@+id/userpass2"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="0dp"
                 android:layout_height="50sp"
-                android:layout_marginTop="10sp"
-                android:background="@drawable/border_edittext"
-                android:hint="@string/hint_pass2"
-                android:inputType="textPassword"
-                android:paddingLeft="10dp"
-                android:textSize="18sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/userpass1" />
+                app:layout_constraintTop_toBottomOf="@id/useremail"
+                android:layout_marginTop="10sp"
+                android:id="@+id/pass_layout1"
+                style="@style/Widget.Design.TextInputLayout"
+                app:passwordToggleEnabled="true"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textPassword"
+                    android:textSize="18sp"
+                    android:paddingLeft="10dp"
+                    android:id="@+id/userpass1"
+                    android:background="@drawable/border_edittext"
+                    android:hint="@string/hint_pass1"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            <EditText-->
+<!--                android:id="@+id/userpass2"-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="50sp"-->
+<!--                android:layout_marginTop="10sp"-->
+<!--                android:background="@drawable/border_edittext"-->
+<!--                android:hint="@string/hint_pass2"-->
+<!--                android:inputType="textPassword"-->
+<!--                android:paddingLeft="10dp"-->
+<!--                android:textSize="18sp"-->
+<!--                app:layout_constraintLeft_toLeftOf="parent"-->
+<!--                app:layout_constraintRight_toRightOf="parent"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/pass_layout1" />-->
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="50sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pass_layout1"
+                android:layout_marginTop="10sp"
+                android:id="@+id/pass_layout2"
+                style="@style/Widget.Design.TextInputLayout"
+                app:passwordToggleEnabled="true"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textPassword"
+                    android:textSize="18sp"
+                    android:paddingLeft="10dp"
+                    android:id="@+id/userpass2"
+                    android:background="@drawable/border_edittext"
+                    android:hint="@string/hint_pass1"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
 
             <EditText
                 android:id="@+id/referral"
@@ -110,7 +158,7 @@
                 android:textSize="18sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/userpass2" />
+                app:layout_constraintTop_toBottomOf="@id/pass_layout2" />
 
             <CheckBox
                 android:id="@+id/term_policy_check"

@@ -5,6 +5,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
@@ -18,8 +19,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,11 +82,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int REQUEST_CODE = 101;
     TextView head_address;
     View headerView;
+    private static final int PERMISSION_REQUEST_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (Build.VERSION.SDK_INT >= 23)
+        {
+            if (checkPermission())
+            {
+                // Code for above or equal 23 API Oriented Device
+                // Your Permission granted already .Do next code
+            } else {
+                requestPermission(); // Code for permission
+            }
+        }
 
         navigationView = findViewById(R.id.nav_view);
         search = findViewById(R.id.search_input);
@@ -249,6 +264,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
+    }
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void requestPermission() {
+        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
     }
 
     private void cartnum(String cus_id) {
@@ -575,12 +603,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             break;
 
-            case R.id.nav_location: {
-                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, new String[]
-                            {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-                    return;
-                } else {
+            case R.id.nav_location:
+            {
+                if(checkPermission())
+                {
                     SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
                     Boolean islogin = sharedPreferences.getBoolean("islogin", false);
                     if (islogin == false) {
@@ -589,7 +615,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         gotomaps();
                     }
                 }
-
+                else {
+                    Toast.makeText(getApplicationContext(),"Please provide location permission to continue",Toast.LENGTH_SHORT).show();
+                }
             }
             break;
         }
@@ -600,13 +628,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (requestCode) {
             case REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
-                    Boolean islogin = sharedPreferences.getBoolean("islogin", false);
-                    if (islogin == false) {
-                        Toast.makeText(getApplicationContext(), "Please login to continue", Toast.LENGTH_SHORT).show();
-                    } else {
-                        gotomaps();
-                    }
+                    Log.e("value", "Permission Granted, Now you can use local drive .");
+                }
+                else{
+                    Log.e("value", "Permission Denied, You cannot use local drive .");
                 }
             }
             break;

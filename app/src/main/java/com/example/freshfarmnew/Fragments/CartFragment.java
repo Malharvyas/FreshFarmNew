@@ -47,8 +47,10 @@ import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CartFragment extends Fragment {
 
@@ -388,16 +390,44 @@ public class CartFragment extends Fragment {
     }
 
     private void calculateTotalAmount(List<CartModel> cartModelList) {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        List<String> productquantity = new ArrayList<>();
+        List<String> productprice = new ArrayList<>();
+        List<String> productid = new ArrayList<>();
         double totleAmount = 0.0;
         for (int i = 0; i < cartModelList.size(); i++) {
             if (cartModelList.get(i).getPrice() != null && cartModelList.get(i).getQuantity() != null) {
                 double finalPrice = Double.parseDouble(cartModelList.get(i).getPrice()) * Double.parseDouble(cartModelList.get(i).getQuantity());
                 totleAmount = totleAmount + finalPrice;
+
+                productid.add(cartModelList.get(i).getProductId());
+                productprice.add(cartModelList.get(i).getPrice());
+                productquantity.add(cartModelList.get(i).getQuantity());
             }
         }
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
+//        Set<String> pidset = new HashSet<String>();
+//        Set<String> ppriceset = new HashSet<String>();
+//        Set<String> pquantset = new HashSet<String>();
+        Gson gson = new Gson();
+        String pidset = null,ppriceset = null,pquantset = null;
+        if(productid != null)
+        {
+            pidset = gson.toJson(productid);
+        }
+        if(productprice != null)
+        {
+            ppriceset = gson.toJson(productprice);
+        }
+        if(productquantity != null)
+        {
+            pquantset = gson.toJson(productquantity);
+        }
         editor.putString("total_items", String.valueOf(cartModelList.size()));
+        editor.putString("pidset",pidset);
+        editor.putString("ppriceset",ppriceset);
+        editor.putString("pquantset",pquantset);
+        editor.putString("totleAmount",String.valueOf(totleAmount));
         editor.apply();
         tvTotalAmount.setText("" + totleAmount);
     }

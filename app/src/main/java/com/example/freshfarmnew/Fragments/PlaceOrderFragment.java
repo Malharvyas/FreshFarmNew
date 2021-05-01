@@ -1,4 +1,4 @@
-package com.example.freshfarmnew;
+package com.example.freshfarmnew.Fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -13,9 +13,11 @@ import androidx.fragment.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -32,15 +34,22 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
-import com.example.freshfarmnew.Model.Product;
-import com.example.freshfarmnew.Model.ProductVariation;
+import com.example.freshfarmnew.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 public class PlaceOrderFragment extends Fragment implements View.OnClickListener {
 
@@ -48,11 +57,12 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     ImageView icon_wallet, icon_online, icon_cash;
     TextView text_wallet1, text_wallet2, text_online, text_cash;
     EditText promo_code;
-    TextView apply_promo, promo_warning;
+    TextView apply_promo, promo_warning,delivery_charges,discount,net_amount;
     String url = "", cus_id = "";
     ProgressBar progressBar;
     private TextView billed_amount;
     private String addressId = "";
+    Button place_order;
 
     public PlaceOrderFragment() {
         // Required empty public constructor
@@ -100,9 +110,17 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
         billed_amount = v.findViewById(R.id.billed_amount);
 
+        place_order = v.findViewById(R.id.place_order);
+
+        delivery_charges = v.findViewById(R.id.delivery_charges);
+        discount = v.findViewById(R.id.discount);
+        net_amount = v.findViewById(R.id.net_amount);
+
+
         if (getArguments() != null) {
             if (getArguments().containsKey("amount")) {
                 billed_amount.setText(getArguments().getString("amount"));
+                printreceipt();
             }
             if (getArguments().containsKey("addressId")) {
                 addressId = getArguments().getString("addressId");
@@ -110,6 +128,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         }
 
         apply_promo.setOnClickListener(this);
+        place_order.setOnClickListener(this);
 
         promo_code.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
@@ -137,6 +156,13 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
             }
         });
         return v;
+    }
+
+    private void printreceipt() {
+        delivery_charges.setText("11");
+        discount.setText("0");
+        Double net = Double.parseDouble(billed_amount.getText().toString())+Double.parseDouble(delivery_charges.getText().toString())+Double.parseDouble(discount.getText().toString());
+        net_amount.setText(""+net);
     }
 
     @Override
@@ -223,7 +249,156 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 }
             }
             break;
+            case R.id.place_order:
+            {
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                String total_amount  = net_amount.getText().toString();
+                String pidset = sharedPreferences.getString("pidset",null);
+                String pquantset = sharedPreferences.getString("pquantset",null);
+                String ppriceset = sharedPreferences.getString("ppriceset",null);
+
+                Gson gson = new Gson();
+                List<String> pidlist = null,pquantlist = null,ppricelist = null;
+                if(pidset != null)
+                {
+                    pidlist = gson.fromJson(pidset,new TypeToken<List<String>>(){}.getType());
+                }
+                if(pquantset != null)
+                {
+                    pquantlist = gson.fromJson(pquantset,new TypeToken<List<String>>(){}.getType());
+                }
+                if(ppriceset != null)
+                {
+                    ppricelist = gson.fromJson(ppriceset,new TypeToken<List<String>>(){}.getType());
+                }
+
+                Date c = Calendar.getInstance().getTime();
+                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                String formattedDate = df.format(c);
+
+                Calendar c1 = Calendar.getInstance();
+                try {
+                    c1.setTime(df.parse(formattedDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                c1.add(Calendar.DATE,2);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                Date result = new Date(c1.getTimeInMillis());
+                String delivery_date = sdf.format(result);
+
+//                Log.e("PrintLog", "----" + pidlist.size());
+
+//                Toast.makeText(getContext(),""+delivery_date,Toast.LENGTH_SHORT).show();
+                placeorder(cus_id,addressId,total_amount,pidlist,pquantlist,ppricelist,delivery_date);
+            }
+            break;
         }
+    }
+
+    private void placeorder(String cus_id, String addressId, String total_amount, List<String> pidlist, List<String> pquantlist, List<String> ppricelist, String delivery_date) {
+        progressBar.setVisibility(View.VISIBLE);
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/createOrder");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            progressBar.setVisibility(View.GONE);
+                            JSONObject json = null;
+
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2 = json.getJSONObject("createOrder");
+                                Boolean status = json2.getBoolean("Status");
+                                String stat = status.toString();
+                                if (stat.equals("true")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), ""+msg, Toast.LENGTH_SHORT).show();
+
+                                } else if (stat.equals("false")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), ""+msg, Toast.LENGTH_SHORT).show();
+                                }
+//                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                params.put("address_id", addressId);
+                params.put("payment_id", "1");
+                params.put("delivery_charge", delivery_charges.getText().toString());
+                params.put("scheduled_date", delivery_date);
+                params.put("delivery_time_id", "1");
+                params.put("total_amount", total_amount);
+                params.put("payment_status", "1");
+                for(int i = 0; i < pidlist.size(); i++)
+                {
+                    params.put("product_data["+i+"][quantity]",pquantlist.get(i));
+                    params.put("product_data["+i+"][price]",ppricelist.get(i));
+                    params.put("product_data["+i+"][product_id]",pidlist.get(i));
+
+                    Log.e("PrintLog", "----" + pidlist.get(i));
+                }
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
     }
 
     private void verifypromo(String cus_id, String promo) {

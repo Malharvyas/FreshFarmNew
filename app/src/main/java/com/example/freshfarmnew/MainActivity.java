@@ -62,6 +62,7 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
+import com.razorpay.PaymentResultListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -70,7 +71,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, PaymentResultListener {
 
     Toolbar toolbar;
     NavigationView navigationView;
@@ -90,10 +91,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (Build.VERSION.SDK_INT >= 23)
-        {
-            if (checkPermission())
-            {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkPermission()) {
                 // Code for above or equal 23 API Oriented Device
                 // Your Permission granted already .Do next code
             } else {
@@ -130,15 +129,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String ss = search.getText().toString();
-                    if(ss == null || ss.equals(""))
-                    {
+                    if (ss == null || ss.equals("")) {
                         InputMethodManager imm = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);
                         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-                        Toast.makeText(getApplicationContext(),"Please enter a valid search input",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Please enter a valid search input", Toast.LENGTH_SHORT).show();
                         search.clearFocus();
-                    }
-                    else
-                    {
+                    } else {
                         Bundle bundle = new Bundle();
                         bundle.putString("search_key", ss);
                         SearchResultsFragment srf = new SearchResultsFragment();
@@ -435,15 +431,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("islogin", false);
                 editor.apply();
-                SharedPreferences sharedPreferences1 = getSharedPreferences("userpref",Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences1 = getSharedPreferences("userpref", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor1 = sharedPreferences1.edit();
                 editor1.clear();
                 editor1.apply();
-                SharedPreferences sharedPreferences2 = getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences2 = getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor2 = sharedPreferences2.edit();
                 editor2.clear();
                 editor2.apply();
-                SharedPreferences sharedPreferences3 = getSharedPreferences("temp",Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences3 = getSharedPreferences("temp", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor3 = sharedPreferences3.edit();
                 editor3.clear();
                 editor3.apply();
@@ -455,7 +451,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(getApplicationContext(), login.class));
             }
             break;
-            case R.id.nav_side_referral:{
+            case R.id.nav_side_referral: {
                 ReferralFragment rf = new ReferralFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("referral");
                 ft.replace(R.id.fragment_container, rf);
@@ -472,11 +468,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawerLayout.closeDrawer(GravityCompat.START);
         } else if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
 //            getSupportFragmentManager().popBackStack();
-             if (getSupportFragmentManager().getBackStackEntryCount() - 1 >= 0) {
-                if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName() != null)
-                {
-                    if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("category"))
-                    {
+            if (getSupportFragmentManager().getBackStackEntryCount() - 1 >= 0) {
+                if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName() != null) {
+                    if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("category")) {
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
                         bottomNavigationView.getMenu().getItem(0).setChecked(true);
@@ -484,9 +478,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
                         ft.replace(R.id.fragment_container, h);
                         ft.commit();
-                    }
-                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("wallet"))
-                    {
+                    } else if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("wallet")) {
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
                         bottomNavigationView.getMenu().getItem(0).setChecked(true);
@@ -494,9 +486,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
                         ft.replace(R.id.fragment_container, h);
                         ft.commit();
-                    }
-                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("cart"))
-                    {
+                    } else if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("cart")) {
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
                         bottomNavigationView.getMenu().getItem(0).setChecked(true);
@@ -504,9 +494,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
                         ft.replace(R.id.fragment_container, h);
                         ft.commit();
-                    }
-                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("profile"))
-                    {
+                    } else if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("profile")) {
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
                         bottomNavigationView.getMenu().getItem(0).setChecked(true);
@@ -514,9 +502,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
                         ft.replace(R.id.fragment_container, h);
                         ft.commit();
-                    }
-                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("orders"))
-                    {
+                    } else if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("orders")) {
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
                         bottomNavigationView.getMenu().getItem(0).setChecked(true);
@@ -524,9 +510,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
                         ft.replace(R.id.fragment_container, h);
                         ft.commit();
-                    }
-                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("wishlist"))
-                    {
+                    } else if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("wishlist")) {
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
                         bottomNavigationView.getMenu().getItem(0).setChecked(true);
@@ -534,9 +518,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
                         ft.replace(R.id.fragment_container, h);
                         ft.commit();
-                    }
-                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("contact"))
-                    {
+                    } else if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("contact")) {
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
                         bottomNavigationView.getMenu().getItem(0).setChecked(true);
@@ -544,9 +526,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
                         ft.replace(R.id.fragment_container, h);
                         ft.commit();
-                    }
-                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("about"))
-                    {
+                    } else if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("about")) {
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
 //                        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
                         bottomNavigationView.getMenu().getItem(0).setChecked(true);
@@ -554,9 +534,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
                         ft.replace(R.id.fragment_container, h);
                         ft.commit();
-                    }
-                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("searchresults"))
-                    {
+                    } else if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("searchresults")) {
                         search.setText("");
                         search.clearFocus();
                         getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -566,23 +544,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("home");
                         ft.replace(R.id.fragment_container, h);
                         ft.commit();
-                    }
-                    else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount()-1).getName().equals("home"))
-                    {
+                    } else if (getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("home")) {
                         finish();
-                    }
-                    else
-                    {
+                    } else {
                         super.onBackPressed();
                     }
-                }
-                else {
+                } else {
                     super.onBackPressed();
                 }
+            } else {
+                super.onBackPressed();
             }
-             else {
-                 super.onBackPressed();
-             }
         } else {
             super.onBackPressed();
         }
@@ -610,10 +582,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             break;
 
-            case R.id.nav_location:
-            {
-                if(checkPermission())
-                {
+            case R.id.nav_location: {
+                if (checkPermission()) {
                     SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
                     Boolean islogin = sharedPreferences.getBoolean("islogin", false);
                     if (islogin == false) {
@@ -621,9 +591,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     } else {
                         gotomaps();
                     }
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"Please provide location permission to continue",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please provide location permission to continue", Toast.LENGTH_SHORT).show();
                 }
             }
             break;
@@ -636,8 +605,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.e("value", "Permission Granted, Now you can use local drive .");
-                }
-                else{
+                } else {
                     Log.e("value", "Permission Denied, You cannot use local drive .");
                 }
             }
@@ -648,6 +616,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void gotomaps() {
         Intent i = new Intent(getApplicationContext(), MapsActivity.class);
         startActivity(i);
+    }
+
+    @Override
+    public void onPaymentSuccess(String s) {
+        Toast.makeText(MainActivity.this, "MainActivity Success Payment" + s, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPaymentError(int i, String s) {
+        Toast.makeText(MainActivity.this, "MainActivity Fail" + s, Toast.LENGTH_SHORT).show();
     }
 
 //    @Override

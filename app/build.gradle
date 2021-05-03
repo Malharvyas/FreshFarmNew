@@ -26,6 +26,10 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    repositories {
+        mavenCentral()
+    }
 }
 
 dependencies {
@@ -43,4 +47,5 @@ dependencies {
     implementation 'me.relex:circleindicator:2.1.6'
     implementation 'com.google.android.libraries.places:places:2.2.0'
     implementation 'com.google.android.material:material:1.1.0-alpha09'
+    implementation 'com.razorpay:checkout:1.6.6'
 }

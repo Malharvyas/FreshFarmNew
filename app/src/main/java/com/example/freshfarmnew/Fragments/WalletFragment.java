@@ -28,6 +28,8 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.R;
+import com.razorpay.Checkout;
+import com.razorpay.PaymentResultListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,10 +38,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class WalletFragment extends Fragment implements View.OnClickListener {
+public class WalletFragment extends Fragment implements View.OnClickListener, PaymentResultListener {
 
-    String url = "", cus_id = "", amount = "", id = "1",ref_code="";
-    TextView t1000, t2000, t3000, t4000,wall_balance;
+    String url = "", cus_id = "", amount = "", id = "1", ref_code = "";
+    TextView t1000, t2000, t3000, t4000, wall_balance;
     EditText edAmount;
     private Button addMoney;
     ProgressBar progressBar;
@@ -65,6 +67,8 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_wallet, container, false);
+
+        Checkout.preload(getContext());
 
         addMoney = v.findViewById(R.id.add_money);
         edAmount = v.findViewById(R.id.edAmount);
@@ -187,7 +191,7 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
 
     private void getWalletDetails() {
         amount = edAmount.getText().toString();
-         progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/updateWallet");
@@ -211,8 +215,12 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
+
+                                    makepayment(amount);
+
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+
                                     edAmount.setText("");
                                     edAmount.clearFocus();
                                     getWalletbalance(cus_id);
@@ -228,7 +236,7 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                 progressBar.setVisibility(View.GONE);
+                progressBar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if (error instanceof ClientError) {
@@ -280,6 +288,53 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
         );
     }
 
+    private void makepayment(String amount) {
+
+        Checkout checkout = new Checkout();
+
+        checkout.setKeyID("rzp_test_q3dmr1uvAp87kX");
+
+        checkout.setImage(R.drawable.logo);
+
+        try {
+            JSONObject options = new JSONObject();
+
+            options.put("name", "Vivek Rakholiya");
+            options.put("description", "Reference No. #123456");
+            options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
+//            options.put("order_id", "order_DBJOWzybf0sJbb");//from response of step 3.
+            options.put("theme.color", "#3399cc");
+            options.put("currency", "INR");
+            //options.put("amount", "50000");//pass amount in currency subunits
+            options.put("prefill.email", "vivek_android_dev@intuitivedigitalsolution.com");
+            options.put("prefill.contact", "9724182704");
+            JSONObject retryObj = new JSONObject();
+            retryObj.put("enabled", true);
+            retryObj.put("max_count", 4);
+            options.put("retry", retryObj);
+
+            JSONObject preFill = new JSONObject();
+            preFill.put("email", "vivek_android_dev@intuitivedigitalsolution.com");
+            preFill.put("contact", "9724182704");
+            options.put("prefill", preFill);
+
+            //String payment = edAmount.getText().toString();
+
+            double total = Double.parseDouble(amount);
+            total = total * 100;
+            options.put("amount", total);
+
+            checkout.open(getActivity(), options);
+
+        } catch (Exception e) {
+
+            Log.e("TAG", "Error in starting Razorpay Checkout", e);
+            //Toast.makeText(getActivity(), "Error in payment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            //e.printStackTrace();
+
+        }
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -300,5 +355,15 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
             }
             break;
         }
+    }
+
+    @Override
+    public void onPaymentSuccess(String s) {
+        Toast.makeText(getContext(), "Success Payment" + s, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPaymentError(int i, String s) {
+        Toast.makeText(getContext(), "Fail" + s, Toast.LENGTH_SHORT).show();
     }
 }

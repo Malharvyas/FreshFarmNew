@@ -37,6 +37,8 @@ import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.razorpay.Checkout;
+import com.razorpay.PaymentResultListener;
 
 import org.json.JSONObject;
 
@@ -57,13 +59,16 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     ImageView icon_wallet, icon_online, icon_cash;
     TextView text_wallet1, text_wallet2, text_online, text_cash;
     EditText promo_code;
-    TextView apply_promo, promo_warning,delivery_charges,discount,net_amount;
+    TextView apply_promo, promo_warning, delivery_charges, discount, net_amount;
     String url = "", cus_id = "";
     ProgressBar progressBar;
     private TextView billed_amount;
-    private String addressId = "";
+    private List<String> pidlist;
+    List<String> pquantlist;
+    List<String> ppricelist;
+    private String addressId = "", total_amount = "", delivery_date = "";
     Button place_order;
-    int deleviry,discount2;
+    int deleviry, discount2;
     Double netamount;
 
     public PlaceOrderFragment() {
@@ -124,7 +129,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 billed_amount.setText(getArguments().getString("amount"));
                 deleviry = 11;
                 discount2 = 0;
-                printreceipt(deleviry,discount2);
+                printreceipt(deleviry, discount2);
             }
             if (getArguments().containsKey("addressId")) {
                 addressId = getArguments().getString("addressId");
@@ -163,10 +168,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     }
 
     private void printreceipt(int deleviry, int discount2) {
-        netamount = Double.parseDouble(billed_amount.getText().toString())+Double.parseDouble(String.valueOf(deleviry))+Double.parseDouble(String.valueOf(discount2));
-        delivery_charges.setText(""+deleviry);
-        discount.setText(""+discount2);
-        net_amount.setText(""+netamount);
+        netamount = Double.parseDouble(billed_amount.getText().toString()) + Double.parseDouble(String.valueOf(deleviry)) + Double.parseDouble(String.valueOf(discount2));
+        delivery_charges.setText("" + deleviry);
+        discount.setText("" + discount2);
+        net_amount.setText("" + netamount);
     }
 
 //    private void printreceipt(int deleviry, int discount, Double netamount) {
@@ -259,27 +264,26 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 }
             }
             break;
-            case R.id.place_order:
-            {
+            case R.id.place_order: {
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
-                String total_amount  = net_amount.getText().toString();
-                String pidset = sharedPreferences.getString("pidset",null);
-                String pquantset = sharedPreferences.getString("pquantset",null);
-                String ppriceset = sharedPreferences.getString("ppriceset",null);
+                String total_amount = net_amount.getText().toString();
+                String pidset = sharedPreferences.getString("pidset", null);
+                String pquantset = sharedPreferences.getString("pquantset", null);
+                String ppriceset = sharedPreferences.getString("ppriceset", null);
 
                 Gson gson = new Gson();
-                List<String> pidlist = null,pquantlist = null,ppricelist = null;
-                if(pidset != null)
-                {
-                    pidlist = gson.fromJson(pidset,new TypeToken<List<String>>(){}.getType());
+                List<String> pidlist = null, pquantlist = null, ppricelist = null;
+                if (pidset != null) {
+                    pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
+                    }.getType());
                 }
-                if(pquantset != null)
-                {
-                    pquantlist = gson.fromJson(pquantset,new TypeToken<List<String>>(){}.getType());
+                if (pquantset != null) {
+                    pquantlist = gson.fromJson(pquantset, new TypeToken<List<String>>() {
+                    }.getType());
                 }
-                if(ppriceset != null)
-                {
-                    ppricelist = gson.fromJson(ppriceset,new TypeToken<List<String>>(){}.getType());
+                if (ppriceset != null) {
+                    ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
+                    }.getType());
                 }
 
                 Date c = Calendar.getInstance().getTime();
@@ -293,7 +297,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                     e.printStackTrace();
                 }
 
-                c1.add(Calendar.DATE,2);
+                c1.add(Calendar.DATE, 2);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
                 Date result = new Date(c1.getTimeInMillis());
@@ -302,9 +306,49 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 //                Log.e("PrintLog", "----" + pidlist.size());
 
 //                Toast.makeText(getContext(),""+delivery_date,Toast.LENGTH_SHORT).show();
-                placeorder(cus_id,addressId,total_amount,pidlist,pquantlist,ppricelist,delivery_date);
+
+                if (total_amount == null || total_amount.equals("")) {
+                    Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                } else {
+                    makepayment(total_amount);
+                }
             }
             break;
+        }
+    }
+
+    private void makepayment(String total_amount) {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("customer_name", "");
+        String useremail = sharedPreferences.getString("customer_email", "");
+        String usermobile = sharedPreferences.getString("customer_phone", "");
+
+        Checkout checkout = new Checkout();
+
+        checkout.setKeyID("rzp_test_q3dmr1uvAp87kX");
+
+        checkout.setImage(R.drawable.logo);
+
+        try {
+            JSONObject options = new JSONObject();
+
+            options.put("name", username);
+            options.put("currency", "INR");
+            options.put("prefill.email", useremail);
+            options.put("prefill.contact", "+91" + usermobile);
+            JSONObject retryObj = new JSONObject();
+            retryObj.put("enabled", true);
+            retryObj.put("max_count", 4);
+            options.put("retry", retryObj);
+
+            double total = Double.parseDouble(total_amount);
+            total = total * 100;
+            options.put("amount", total);
+
+            checkout.open(getActivity(), options);
+
+        } catch (Exception e) {
+            Log.e("TAG", "Error in starting Razorpay Checkout", e);
         }
     }
 
@@ -332,11 +376,11 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(), ""+msg, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(), ""+msg, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
                                 }
 //                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -379,11 +423,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 params.put("delivery_time_id", "1");
                 params.put("total_amount", total_amount);
                 params.put("payment_status", "1");
-                for(int i = 0; i < pidlist.size(); i++)
-                {
-                    params.put("product_data["+i+"][quantity]",pquantlist.get(i));
-                    params.put("product_data["+i+"][price]",ppricelist.get(i));
-                    params.put("product_data["+i+"][product_id]",pidlist.get(i));
+                for (int i = 0; i < pidlist.size(); i++) {
+                    params.put("product_data[" + i + "][quantity]", pquantlist.get(i));
+                    params.put("product_data[" + i + "][price]", ppricelist.get(i));
+                    params.put("product_data[" + i + "][product_id]", pidlist.get(i));
 
                     Log.e("PrintLog", "----" + pidlist.get(i));
                 }
@@ -500,5 +543,19 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         );
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("payment_details", Context.MODE_PRIVATE);
+        String paymentdone = sharedPreferences.getString("wallet_payment", "");
+        String status = sharedPreferences.getString("wpstatus", "");
+
+        if (paymentdone.equals("1")) {
+            if (status.equals("1")) {
+                placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date);
+            }
+        }
     }
 }

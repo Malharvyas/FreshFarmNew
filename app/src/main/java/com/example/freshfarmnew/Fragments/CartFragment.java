@@ -116,7 +116,7 @@ public class CartFragment extends Fragment {
         btnContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.apply();
@@ -410,24 +410,21 @@ public class CartFragment extends Fragment {
 //        Set<String> ppriceset = new HashSet<String>();
 //        Set<String> pquantset = new HashSet<String>();
         Gson gson = new Gson();
-        String pidset = null,ppriceset = null,pquantset = null;
-        if(productid != null)
-        {
+        String pidset = null, ppriceset = null, pquantset = null;
+        if (productid != null) {
             pidset = gson.toJson(productid);
         }
-        if(productprice != null)
-        {
+        if (productprice != null) {
             ppriceset = gson.toJson(productprice);
         }
-        if(productquantity != null)
-        {
+        if (productquantity != null) {
             pquantset = gson.toJson(productquantity);
         }
         editor.putString("total_items", String.valueOf(cartModelList.size()));
-        editor.putString("pidset",pidset);
-        editor.putString("ppriceset",ppriceset);
-        editor.putString("pquantset",pquantset);
-        editor.putString("totleAmount",String.valueOf(totleAmount));
+        editor.putString("pidset", pidset);
+        editor.putString("ppriceset", ppriceset);
+        editor.putString("pquantset", pquantset);
+        editor.putString("totleAmount", String.valueOf(totleAmount));
         editor.apply();
         tvTotalAmount.setText("" + totleAmount);
     }

@@ -107,7 +107,7 @@ public class CheckoutFragment extends Fragment {
                 if(checkPermission())
                 {
                     AddAddressFragment addressFragment = new AddAddressFragment();
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("add_address");
                     ft.replace(R.id.fragment_container, addressFragment);
                     ft.commit();
                 }
@@ -143,7 +143,7 @@ public class CheckoutFragment extends Fragment {
                     bundle.putString("addressId", selectedAddressId);
                     PlaceOrderFragment pof = new PlaceOrderFragment();
                     pof.setArguments(bundle);
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("PlacePOrder");
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("PlaceOrder");
                     ft.replace(R.id.fragment_container, pof);
                     ft.commit();
                 } else {

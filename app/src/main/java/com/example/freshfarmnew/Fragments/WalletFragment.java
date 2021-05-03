@@ -38,7 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class WalletFragment extends Fragment implements View.OnClickListener, PaymentResultListener {
+public class WalletFragment extends Fragment implements View.OnClickListener {
 
     String url = "", cus_id = "", amount = "", id = "1", ref_code = "";
     TextView t1000, t2000, t3000, t4000, wall_balance;
@@ -90,7 +90,16 @@ public class WalletFragment extends Fragment implements View.OnClickListener, Pa
         addMoney.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getWalletDetails();
+                amount = edAmount.getText().toString();
+                if(amount == null || amount.equals(""))
+                {
+                    Toast.makeText(getContext(),"Please enter a valid amount",Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    makepayment(amount);
+                }
+
+//                getWalletDetails();
             }
         });
 
@@ -189,7 +198,7 @@ public class WalletFragment extends Fragment implements View.OnClickListener, Pa
         );
     }
 
-    private void getWalletDetails() {
+    public void getWalletDetails() {
         amount = edAmount.getText().toString();
         progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
@@ -215,8 +224,10 @@ public class WalletFragment extends Fragment implements View.OnClickListener, Pa
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
-
-                                    makepayment(amount);
+                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("payment_details",Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.clear();
+                                    editor.apply();
 
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
@@ -290,6 +301,11 @@ public class WalletFragment extends Fragment implements View.OnClickListener, Pa
 
     private void makepayment(String amount) {
 
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref",Context.MODE_PRIVATE);
+        String username = sharedPreferences.getString("customer_name","");
+        String useremail = sharedPreferences.getString("customer_email","");
+        String usermobile = sharedPreferences.getString("customer_phone","");
+
         Checkout checkout = new Checkout();
 
         checkout.setKeyID("rzp_test_q3dmr1uvAp87kX");
@@ -299,26 +315,14 @@ public class WalletFragment extends Fragment implements View.OnClickListener, Pa
         try {
             JSONObject options = new JSONObject();
 
-            options.put("name", "Vivek Rakholiya");
-            options.put("description", "Reference No. #123456");
-            options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
-//            options.put("order_id", "order_DBJOWzybf0sJbb");//from response of step 3.
-            options.put("theme.color", "#3399cc");
+            options.put("name", username);
             options.put("currency", "INR");
-            //options.put("amount", "50000");//pass amount in currency subunits
-            options.put("prefill.email", "vivek_android_dev@intuitivedigitalsolution.com");
-            options.put("prefill.contact", "9724182704");
+            options.put("prefill.email", useremail);
+            options.put("prefill.contact","+91"+usermobile);
             JSONObject retryObj = new JSONObject();
             retryObj.put("enabled", true);
             retryObj.put("max_count", 4);
             options.put("retry", retryObj);
-
-            JSONObject preFill = new JSONObject();
-            preFill.put("email", "vivek_android_dev@intuitivedigitalsolution.com");
-            preFill.put("contact", "9724182704");
-            options.put("prefill", preFill);
-
-            //String payment = edAmount.getText().toString();
 
             double total = Double.parseDouble(amount);
             total = total * 100;
@@ -327,11 +331,7 @@ public class WalletFragment extends Fragment implements View.OnClickListener, Pa
             checkout.open(getActivity(), options);
 
         } catch (Exception e) {
-
             Log.e("TAG", "Error in starting Razorpay Checkout", e);
-            //Toast.makeText(getActivity(), "Error in payment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            //e.printStackTrace();
-
         }
     }
 
@@ -358,12 +358,18 @@ public class WalletFragment extends Fragment implements View.OnClickListener, Pa
     }
 
     @Override
-    public void onPaymentSuccess(String s) {
-        Toast.makeText(getContext(), "Success Payment" + s, Toast.LENGTH_SHORT).show();
-    }
+    public void onResume() {
+        super.onResume();
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("payment_details",Context.MODE_PRIVATE);
+        String paymentdone = sharedPreferences.getString("wallet_payment","");
+        String status = sharedPreferences.getString("wpstatus","");
 
-    @Override
-    public void onPaymentError(int i, String s) {
-        Toast.makeText(getContext(), "Fail" + s, Toast.LENGTH_SHORT).show();
+        if (paymentdone.equals("1"))
+        {
+            if(status.equals("1"))
+            {
+                getWalletDetails();
+            }
+        }
     }
 }

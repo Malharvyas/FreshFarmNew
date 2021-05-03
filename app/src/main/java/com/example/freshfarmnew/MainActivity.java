@@ -62,7 +62,10 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
+import com.razorpay.Checkout;
+import com.razorpay.PaymentData;
 import com.razorpay.PaymentResultListener;
+import com.razorpay.PaymentResultWithDataListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -71,7 +74,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, PaymentResultListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, PaymentResultWithDataListener {
 
     Toolbar toolbar;
     NavigationView navigationView;
@@ -248,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    cartnum(cus_id);
+//                    cartnum(cus_id);
                 }
             }
         }).start();
@@ -619,14 +622,65 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onPaymentSuccess(String s) {
-        Toast.makeText(MainActivity.this, "MainActivity Success Payment" + s, Toast.LENGTH_SHORT).show();
+    public void onPaymentSuccess(String s, PaymentData paymentData) {
+        Checkout.clearUserData(getApplicationContext());
+        try{
+            if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("wallet")){
+                SharedPreferences sharedPreferences = getSharedPreferences("payment_details",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("wallet_payment","1");
+                editor.putString("wpstatus","1");
+                editor.apply();
+            }
+           else if(getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName().equals("PlaceOrder")){
+                SharedPreferences sharedPreferences = getSharedPreferences("payment_details",Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("cart_payment","1");
+                editor.putString("cpstatus","1");
+                editor.apply();
+            }
+        }
+        catch(Exception e)
+        {
+            Log.e("Exception..",""+e);
+        }
+
     }
 
     @Override
-    public void onPaymentError(int i, String s) {
-        Toast.makeText(MainActivity.this, "MainActivity Fail" + s, Toast.LENGTH_SHORT).show();
+    public void onPaymentError(int i, String s, PaymentData paymentData) {
+        Checkout.clearUserData(getApplicationContext());
+        SharedPreferences sharedPreferences = getSharedPreferences("payment_details",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("wallet_payment","1");
+        editor.putString("wpstatus","0");
+        editor.apply();
+        switch (i)
+        {
+            case Checkout.NETWORK_ERROR:
+            {
+                Toast.makeText(getApplicationContext(),"There was an network error..please try after sometime",Toast.LENGTH_SHORT).show();
+            }
+            break;
+            case Checkout.INVALID_OPTIONS:
+            {
+                Toast.makeText(getApplicationContext(),"User data is incorrect",Toast.LENGTH_SHORT).show();
+            }
+            break;
+            case Checkout.PAYMENT_CANCELED:
+            {
+                Toast.makeText(getApplicationContext(),"Canceled!!",Toast.LENGTH_SHORT).show();
+            }
+            break;
+            case Checkout.TLS_ERROR:
+            {
+                Toast.makeText(getApplicationContext(),"This device is not supported for online payment",Toast.LENGTH_SHORT).show();
+            }
+            break;
+            default: Toast.makeText(getApplicationContext(),"Error : " + s,Toast.LENGTH_SHORT).show();
+        }
     }
+
 
 //    @Override
 //    protected void onRestart() {

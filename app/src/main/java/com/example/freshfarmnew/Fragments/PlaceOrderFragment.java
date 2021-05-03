@@ -38,20 +38,18 @@ import com.example.freshfarmnew.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.razorpay.Checkout;
-import com.razorpay.PaymentResultListener;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 
 public class PlaceOrderFragment extends Fragment implements View.OnClickListener {
 
@@ -59,7 +57,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     ImageView icon_wallet, icon_online, icon_cash;
     TextView text_wallet1, text_wallet2, text_online, text_cash;
     EditText promo_code;
-    TextView apply_promo, promo_warning, delivery_charges, discount, net_amount;
+    TextView apply_promo, promo_warning, delivery_charges, discount, net_amount,wallet_amount;
     String url = "", cus_id = "";
     ProgressBar progressBar;
     private TextView billed_amount;
@@ -68,8 +66,9 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     List<String> ppricelist;
     private String addressId = "", total_amount = "", delivery_date = "";
     Button place_order;
-    int deleviry, discount2;
+    double deleviry, discount2;
     Double netamount;
+    String selected = "";
 
     public PlaceOrderFragment() {
         // Required empty public constructor
@@ -124,6 +123,9 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         net_amount = v.findViewById(R.id.net_amount);
 
 
+        wallet_amount = v.findViewById(R.id.wallet_amount);
+
+
         if (getArguments() != null) {
             if (getArguments().containsKey("amount")) {
                 billed_amount.setText(getArguments().getString("amount"));
@@ -164,11 +166,107 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 apply_promo.setText("Apply");
             }
         });
+
+        getwalletdetails(cus_id);
+
+
         return v;
+
+
     }
 
-    private void printreceipt(int deleviry, int discount2) {
-        netamount = Double.parseDouble(billed_amount.getText().toString()) + Double.parseDouble(String.valueOf(deleviry)) + Double.parseDouble(String.valueOf(discount2));
+    private void getwalletdetails(String cus_id) {
+        progressBar.setVisibility(View.VISIBLE);
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/getWallet");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        Log.e("PrintLog", "----" + response);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
+
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2;
+                                json2 = json.getJSONObject("getWallet");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                if (stat.equals("true")) {
+                                    JSONArray jsonArray = json2.getJSONArray("data");
+                                    JSONObject walobj = jsonArray.getJSONObject(0);
+                                    String wallet_balance = walobj.getString("wallet_balance");
+                                    wallet_amount.setText(wallet_balance);
+                                } else if (stat.equals("false")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+    }
+
+    private void printreceipt(double deleviry, double discount2) {
+        netamount = Double.parseDouble(billed_amount.getText().toString()) + Double.parseDouble(String.valueOf(deleviry)) - Double.parseDouble(String.valueOf(discount2));
         delivery_charges.setText("" + deleviry);
         discount.setText("" + discount2);
         net_amount.setText("" + netamount);
@@ -184,6 +282,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.card4: {
+                selected = "wallet";
                 card_cash.setCardBackgroundColor(Color.parseColor("#FFFFFF"));
                 DrawableCompat.setTint(
                         DrawableCompat.wrap(icon_cash.getDrawable()),
@@ -208,6 +307,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
             }
             break;
             case R.id.card6: {
+                selected = "cash";
                 card_wallet.setCardBackgroundColor(Color.parseColor("#FFFFFF"));
                 DrawableCompat.setTint(
                         DrawableCompat.wrap(icon_wallet.getDrawable()),
@@ -232,6 +332,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
             }
             break;
             case R.id.card5: {
+                selected = "online";
                 card_cash.setCardBackgroundColor(Color.parseColor("#FFFFFF"));
                 DrawableCompat.setTint(
                         DrawableCompat.wrap(icon_cash.getDrawable()),
@@ -265,22 +366,228 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
             }
             break;
             case R.id.place_order: {
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                 String total_amount = net_amount.getText().toString();
-
-
 //                Log.e("PrintLog", "----" + pidlist.size());
 
 //                Toast.makeText(getContext(),""+delivery_date,Toast.LENGTH_SHORT).show();
 
-                if (total_amount == null || total_amount.equals("")) {
-                    Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
-                } else {
-                    makepayment(total_amount);
+                if(selected.equals("wallet"))
+                {
+                    if (total_amount == null || total_amount.equals("")) {
+                        Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                    } else {
+                        String w_amount = wallet_amount.getText().toString();
+
+                        double order_amount = Double.parseDouble(total_amount);
+                        double wall_amnt = Double.parseDouble(w_amount);
+
+                        if(wall_amnt < order_amount)
+                        {
+                            Toast.makeText(getContext(),"Insufficient wallet balance!!",Toast.LENGTH_SHORT).show();
+                        }
+                        else {
+                            cutwallbalance(cus_id,total_amount);
+                        }
+                    }
+                }
+                else if(selected.equals("cash"))
+                {
+                    if (total_amount == null || total_amount.equals("")) {
+                        Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                    } else {
+                        SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                        String pidset = sharedPreferences2.getString("pidset", null);
+                        String pquantset = sharedPreferences2.getString("pquantset", null);
+                        String ppriceset = sharedPreferences2.getString("ppriceset", null);
+
+                        Gson gson = new Gson();
+                        List<String> pidlist = null, pquantlist = null, ppricelist = null;
+                        if (pidset != null) {
+                            pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
+                            }.getType());
+                        }
+                        if (pquantset != null) {
+                            pquantlist = gson.fromJson(pquantset, new TypeToken<List<String>>() {
+                            }.getType());
+                        }
+                        if (ppriceset != null) {
+                            ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
+                            }.getType());
+                        }
+
+                        Date c = Calendar.getInstance().getTime();
+                        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                        String formattedDate = df.format(c);
+
+                        Calendar c1 = Calendar.getInstance();
+                        try {
+                            c1.setTime(df.parse(formattedDate));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        c1.add(Calendar.DATE, 2);
+
+                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                        Date result = new Date(c1.getTimeInMillis());
+                        String delivery_date = sdf.format(result);
+                        String total_amount2 = net_amount.getText().toString();
+                        String pay_type = "3";
+                        placeorder(cus_id, addressId, total_amount2, pidlist, pquantlist, ppricelist, delivery_date,pay_type);
+                    }
+                }
+                else if(selected.equals("online"))
+                {
+                    if (total_amount == null || total_amount.equals("")) {
+                        Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                    } else {
+                        makepayment(total_amount);
+                    }
+                }
+                else{
+                    Toast.makeText(getContext(),"Please select the mode of payment",Toast.LENGTH_SHORT).show();
                 }
             }
             break;
         }
+    }
+
+    private void cutwallbalance(String cus_id, String total_amount) {
+        progressBar.setVisibility(View.VISIBLE);
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/updateWallet");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        Log.e("PrintLog", "----" + response);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
+
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2;
+                                json2 = json.getJSONObject("getWallet");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                if (stat.equals("true")) {
+                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("payment_details",Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.clear();
+                                    editor.apply();
+
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+
+                                    getwalletdetails(cus_id);
+
+                                    SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                                    String pidset = sharedPreferences2.getString("pidset", null);
+                                    String pquantset = sharedPreferences2.getString("pquantset", null);
+                                    String ppriceset = sharedPreferences2.getString("ppriceset", null);
+
+                                    Gson gson = new Gson();
+                                    List<String> pidlist = null, pquantlist = null, ppricelist = null;
+                                    if (pidset != null) {
+                                        pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
+                                        }.getType());
+                                    }
+                                    if (pquantset != null) {
+                                        pquantlist = gson.fromJson(pquantset, new TypeToken<List<String>>() {
+                                        }.getType());
+                                    }
+                                    if (ppriceset != null) {
+                                        ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
+                                        }.getType());
+                                    }
+
+                                    Date c = Calendar.getInstance().getTime();
+                                    SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                                    String formattedDate = df.format(c);
+
+                                    Calendar c1 = Calendar.getInstance();
+                                    try {
+                                        c1.setTime(df.parse(formattedDate));
+                                    } catch (ParseException e) {
+                                        e.printStackTrace();
+                                    }
+
+                                    c1.add(Calendar.DATE, 2);
+
+                                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                                    Date result = new Date(c1.getTimeInMillis());
+                                    String delivery_date = sdf.format(result);
+                                    String total_amount = net_amount.getText().toString();
+                                    String pay_type = "1";
+                                    placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date, pay_type);
+                                } else if (stat.equals("false")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+
+                params.put("customer_id", cus_id);
+                params.put("is_add", "0");
+                params.put("amount", total_amount);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
     }
 
     private void makepayment(String total_amount) {
@@ -318,7 +625,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private void placeorder(String cus_id, String addressId, String total_amount, List<String> pidlist, List<String> pquantlist, List<String> ppricelist, String delivery_date) {
+    private void placeorder(String cus_id, String addressId, String total_amount, List<String> pidlist, List<String> pquantlist, List<String> ppricelist, String delivery_date, String pay_type) {
         progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
@@ -393,12 +700,18 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("customer_id", cus_id);
                 params.put("address_id", addressId);
-                params.put("payment_id", "1");
+                params.put("payment_id", pay_type);
                 params.put("delivery_charge", delivery_charges.getText().toString());
                 params.put("scheduled_date", delivery_date);
                 params.put("delivery_time_id", "1");
                 params.put("total_amount", total_amount);
-                params.put("payment_status", "1");
+                if(pay_type.equals("3"))
+                {
+                    params.put("payment_status", "2");
+                }
+                else {
+                    params.put("payment_status", "1");
+                }
                 for (int i = 0; i < pidlist.size(); i++) {
                     params.put("product_data[" + i + "][quantity]", pquantlist.get(i));
                     params.put("product_data[" + i + "][price]", ppricelist.get(i));
@@ -457,6 +770,15 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     promo_code.clearFocus();
                                     Toast.makeText(getContext(), "Code Applied", Toast.LENGTH_SHORT).show();
                                     apply_promo.setText("Applied");
+
+                                    JSONArray data = json2.getJSONArray("data");
+                                    JSONObject mainobj = data.getJSONObject(0);
+
+                                    String discount_per = mainobj.getString("discount_per");
+                                    String min_order_amount = mainobj.getString("min_order_amount");
+                                    String max_discount = mainobj.getString("max_discount");
+
+                                    calculateamount(discount_per,min_order_amount,max_discount);
 
                                 } else if (stat.equals("false")) {
                                     promo_code.clearFocus();
@@ -521,6 +843,31 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         );
     }
 
+    private void calculateamount(String discount_per, String min_order_amount, String max_discount) {
+        String order_amount = billed_amount.getText().toString();
+
+        double dis_per = Double.parseDouble(discount_per);
+        double min_order = Double.parseDouble(min_order_amount);
+        double max_dis = Double.parseDouble(max_discount);
+        double order_amnt = Double.parseDouble(order_amount);
+        double dis = 0;
+
+        if(order_amnt >= min_order)
+        {
+            dis = (order_amnt * dis_per) / 100;
+            if(dis < max_dis)
+            {
+                printreceipt(11,dis);
+            }
+            else{
+                printreceipt(11,max_dis);
+            }
+        }
+        else{
+            Toast.makeText(getContext(),"Order Should be greater than "+min_order_amount,Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -567,7 +914,8 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 Date result = new Date(c1.getTimeInMillis());
                 String delivery_date = sdf.format(result);
                 String total_amount = net_amount.getText().toString();
-                placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date);
+                String pay_type = "2";
+                placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date, pay_type);
             }
         }
     }

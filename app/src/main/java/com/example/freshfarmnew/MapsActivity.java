@@ -193,7 +193,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
 //                                    Toast.makeText(getApplicationContext(),"latlon set",Toast.LENGTH_SHORT).show();
-                                    saveadress(address);
+                                    saveadress(address,latitude,longitude);
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
@@ -258,7 +258,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         );
     }
 
-    private void saveadress(String address) {
+    private void saveadress(String address, String latitude, String longitude) {
         progressBar.setVisibility(View.VISIBLE);
 
         BaseUrl b = new BaseUrl();
@@ -292,10 +292,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                     editor.putString("address",cusadd);
                                     editor.apply();
 
-                                    Toast.makeText(getApplicationContext(),"Location Saved",Toast.LENGTH_SHORT).show();
+                                    addaddress(cus_id,address,latitude,longitude);
 
-                                    finish();
-                                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
                                 }
                                 else if(stat.equals("false"))
                                 {
@@ -358,6 +356,106 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 return headers;
             }
 
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+    }
+
+    private void addaddress(String cus_id, String address, String latitude, String longitude) {
+        progressBar.setVisibility(View.VISIBLE);
+        SharedPreferences ss = getSharedPreferences("userpref",Context.MODE_PRIVATE);
+        String phoneNumber = ss.getString("customer_phone","");
+        String name = ss.getString("customer_name","");
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/addAddress");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        Log.e("PrintLog", "----" + response);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
+
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2;
+                                json2 = json.getJSONObject("AddAddress");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                if (stat.equals("true")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getApplicationContext(),"Location Saved",Toast.LENGTH_SHORT).show();
+
+                                    finish();
+                                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                } else if (stat.equals("false")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                params.put("latitude", latitude);
+                params.put("longitude", longitude);
+                params.put("address", address);
+                params.put("type", "1");
+                params.put("phone_number", phoneNumber);
+                params.put("contact_name", name);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
         };
         volleyRequestQueue.add(stringRequest);
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(

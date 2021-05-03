@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import android.util.Base64;
@@ -34,6 +35,7 @@ import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.Model.Product;
 import com.example.freshfarmnew.Model.ProductVariation;
 import com.example.freshfarmnew.R;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -104,7 +106,16 @@ public class ProductDetailsFragment extends Fragment {
         pdbuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                String amount = sharedPreferences.getString("totleAmount", "0");
+                Bundle bundle = new Bundle();
+                bundle.putString("amount", amount);
+                bundle.putString("total_items", "1");
+                CheckoutFragment checkoutFragment = new CheckoutFragment();
+                checkoutFragment.setArguments(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
+                ft.replace(R.id.fragment_container, checkoutFragment);
+                ft.commit();
             }
         });
 
@@ -312,6 +323,7 @@ public class ProductDetailsFragment extends Fragment {
                                     pdvariant.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                         @Override
                                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
                                             for(int j = 0; j < stringArrayList.size(); j++)
                                             {
                                                 ProductVariation pv = variantionlist.get(j);
@@ -319,6 +331,7 @@ public class ProductDetailsFragment extends Fragment {
                                                 String selected = pdvariant.getSelectedItem().toString();
                                                 if(item.equals(selected))
                                                 {
+                                                    savedetailstopref(prolist);
                                                     SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pdtemp",Context.MODE_PRIVATE);
                                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                                     editor.putString("v_id",pv.getV_id());
@@ -333,6 +346,8 @@ public class ProductDetailsFragment extends Fragment {
 
                                         }
                                     });
+
+
                                 }
                                 else if(stat.equals("false"))
                                 {
@@ -406,5 +421,61 @@ public class ProductDetailsFragment extends Fragment {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         );
+    }
+
+    private void savedetailstopref(List<Product> prolist) {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        List<String> productquantity2 = new ArrayList<>();
+        List<String> productprice2 = new ArrayList<>();
+        List<String> productid2= new ArrayList<>();
+
+        String price = productprice.getText().toString();
+        char c = '\0';
+        StringBuffer sf = new StringBuffer();
+        for(int i = 0 ; i < price.length(); i++)
+        {
+            c = price.charAt(i);
+            if(c == '\u20B9'){
+
+            }
+            else{
+                sf.append(c);
+            }
+        }
+
+        String newprice = String.valueOf(sf);
+//        Toast.makeText(getContext(),""+price,Toast.LENGTH_SHORT).show();
+        if(prolist != null)
+        {
+            for (int i = 0; i < prolist.size(); i++) {
+                    productid2.add(prolist.get(i).getProduct_id());
+                    productprice2.add(newprice);
+                    productquantity2.add("1");
+            }
+        }
+
+        Gson gson = new Gson();
+        String pidset = null,ppriceset = null,pquantset = null;
+        if(productid2 != null)
+        {
+            pidset = gson.toJson(productid2);
+        }
+        if(productprice2 != null)
+        {
+            ppriceset = gson.toJson(productprice2);
+        }
+        if(productquantity2 != null)
+        {
+            pquantset = gson.toJson(productquantity2);
+        }
+
+        editor.putString("pidset",pidset);
+        editor.putString("ppriceset",ppriceset);
+        editor.putString("pquantset",pquantset);
+        editor.putString("totleAmount",newprice);
+        editor.apply();
+
     }
 }

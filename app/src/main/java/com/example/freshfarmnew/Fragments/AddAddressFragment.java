@@ -342,9 +342,17 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
 
         addresses = geocoder.getFromLocation(latitude, longitude, 1);
 
-        String address = addresses.get(0).getAddressLine(0);
+        String address = "";
 
-        edAddress.setText(address);
+        if(addresses != null)
+        {
+            address = addresses.get(0).getAddressLine(0);
+        }
+
+        if(address != null)
+        {
+            edAddress.setText(address);
+        }
     }
 
     private void fetchmarkerLocation(double latitude, double longitude) throws IOException {

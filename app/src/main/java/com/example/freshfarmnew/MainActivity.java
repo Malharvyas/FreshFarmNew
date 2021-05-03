@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-//                    cartnum(cus_id);
+                    cartnum(cus_id);
                 }
             }
         }).start();
@@ -371,8 +371,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        bottomNavigationView.getMenu().setGroupCheckable(0, false, true);
         switch (item.getItemId()) {
             case R.id.nav_side_profile: {
+                bottomNavigationView.getMenu().setGroupCheckable(0, true, true);
                 bottomNavigationView.getMenu().getItem(4).setChecked(true);
                 ProfileFragment p = new ProfileFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("profile");
@@ -388,6 +390,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
             break;
             case R.id.nav_side_my_wallet: {
+                bottomNavigationView.getMenu().setGroupCheckable(0, true, true);
                 bottomNavigationView.getMenu().getItem(2).setChecked(true);
                 WalletFragment w = new WalletFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("wallet");

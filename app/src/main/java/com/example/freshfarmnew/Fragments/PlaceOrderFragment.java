@@ -267,41 +267,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
             case R.id.place_order: {
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                 String total_amount = net_amount.getText().toString();
-                String pidset = sharedPreferences.getString("pidset", null);
-                String pquantset = sharedPreferences.getString("pquantset", null);
-                String ppriceset = sharedPreferences.getString("ppriceset", null);
 
-                Gson gson = new Gson();
-                List<String> pidlist = null, pquantlist = null, ppricelist = null;
-                if (pidset != null) {
-                    pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
-                    }.getType());
-                }
-                if (pquantset != null) {
-                    pquantlist = gson.fromJson(pquantset, new TypeToken<List<String>>() {
-                    }.getType());
-                }
-                if (ppriceset != null) {
-                    ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
-                    }.getType());
-                }
-
-                Date c = Calendar.getInstance().getTime();
-                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-                String formattedDate = df.format(c);
-
-                Calendar c1 = Calendar.getInstance();
-                try {
-                    c1.setTime(df.parse(formattedDate));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-
-                c1.add(Calendar.DATE, 2);
-
-                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-                Date result = new Date(c1.getTimeInMillis());
-                String delivery_date = sdf.format(result);
 
 //                Log.e("PrintLog", "----" + pidlist.size());
 
@@ -375,6 +341,16 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                 Boolean status = json2.getBoolean("Status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
+                                    SharedPreferences sh1 = getActivity().getSharedPreferences("payment_details",Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sh1.edit();
+                                    editor.clear();
+                                    editor.apply();
+
+                                    SharedPreferences sh2 = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor2 = sh2.edit();
+                                    editor2.clear();
+                                    editor2.apply();
+
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
 
@@ -549,11 +525,48 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     public void onResume() {
         super.onResume();
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("payment_details", Context.MODE_PRIVATE);
-        String paymentdone = sharedPreferences.getString("wallet_payment", "");
-        String status = sharedPreferences.getString("wpstatus", "");
+        String paymentdone = sharedPreferences.getString("cart_payment", "");
+        String status = sharedPreferences.getString("cpstatus", "");
 
         if (paymentdone.equals("1")) {
             if (status.equals("1")) {
+                SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                String pidset = sharedPreferences2.getString("pidset", null);
+                String pquantset = sharedPreferences2.getString("pquantset", null);
+                String ppriceset = sharedPreferences2.getString("ppriceset", null);
+
+                Gson gson = new Gson();
+                List<String> pidlist = null, pquantlist = null, ppricelist = null;
+                if (pidset != null) {
+                    pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
+                if (pquantset != null) {
+                    pquantlist = gson.fromJson(pquantset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
+                if (ppriceset != null) {
+                    ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
+
+                Date c = Calendar.getInstance().getTime();
+                SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                String formattedDate = df.format(c);
+
+                Calendar c1 = Calendar.getInstance();
+                try {
+                    c1.setTime(df.parse(formattedDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                c1.add(Calendar.DATE, 2);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                Date result = new Date(c1.getTimeInMillis());
+                String delivery_date = sdf.format(result);
+                String total_amount = net_amount.getText().toString();
                 placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date);
             }
         }

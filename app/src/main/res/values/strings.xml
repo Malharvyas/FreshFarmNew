@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">FreshFarmNew</string>
+    <string name="app_name">Farm FreshWale</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="hint_mobile"><b>Mobile Number</b></string>

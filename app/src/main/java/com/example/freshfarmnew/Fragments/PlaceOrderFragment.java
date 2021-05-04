@@ -1,5 +1,6 @@
 package com.example.freshfarmnew.Fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -9,10 +10,13 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Base64;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,12 +39,14 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.razorpay.Checkout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -50,6 +56,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import static android.content.Context.LAYOUT_INFLATER_SERVICE;
 
 public class PlaceOrderFragment extends Fragment implements View.OnClickListener {
 
@@ -648,6 +656,8 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                 Boolean status = json2.getBoolean("Status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
+                                    int order_id = json2.getInt("data");
+
                                     SharedPreferences sh1 = getActivity().getSharedPreferences("payment_details",Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sh1.edit();
                                     editor.clear();
@@ -658,8 +668,40 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     editor2.clear();
                                     editor2.apply();
 
-                                    String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
+//                                    String msg = json2.getString("Message");
+//                                    Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
+                                    LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);
+                                    View popupView = inflater.inflate(R.layout.alert_popup, null);
+
+                                    DisplayMetrics displayMetrics = new DisplayMetrics();
+                                    getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                                    int height = displayMetrics.heightPixels;
+                                    int width = displayMetrics.widthPixels;
+
+
+                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                            getContext());
+                                    alertDialogBuilder.setView(popupView);
+                                    alertDialogBuilder.setCancelable(false);
+                                    AlertDialog alertDialog = alertDialogBuilder.create();
+                                    alertDialog.show();
+                                    alertDialog.getWindow().setLayout(width,ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    Button ok = popupView.findViewById(R.id.ok);
+                                    TextView message = popupView.findViewById(R.id.popup_message);
+                                    message.setText("Your order id is "+order_id+". Please refer to the My Order Section for more details..");
+                                    ok.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            alertDialog.dismiss();
+                                            getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                            BottomNavigationView bottomNavigationView = getActivity().findViewById(R.id.bottom_nav);
+                                            bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                                            HomeFragment h = new HomeFragment();
+                                            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("home");
+                                            ft.replace(R.id.fragment_container, h);
+                                            ft.commit();
+                                        }
+                                    });
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");

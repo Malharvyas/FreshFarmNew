@@ -111,16 +111,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
         isLogin = sharedPreferences.getBoolean("islogin", false);
 
+        if (isLogin == false) {
+            navigationView.inflateMenu(R.menu.side_nav_logout);
+        } else {
+            navigationView.inflateMenu(R.menu.side_nav_login);
+        }
+
         SharedPreferences sharedPreferences2 = getSharedPreferences("userpref", Context.MODE_PRIVATE);
         cus_id = sharedPreferences2.getString("customer_id", "");
         address = sharedPreferences2.getString("address", "");
 
         head_address.setText(address);
 
-        if (isLogin == false) {
-            navigationView.inflateMenu(R.menu.side_nav_logout);
-        } else {
-            navigationView.inflateMenu(R.menu.side_nav_login);
+        if (isLogin == true && address.equals(""))
+        {
+            finish();
+            startActivity(new Intent(getApplicationContext(),MapsActivity.class));
         }
 
         toolbar = findViewById(R.id.toolbar);
@@ -247,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void run() {
                 while (true) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

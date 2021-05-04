@@ -104,15 +104,13 @@ public class CheckoutFragment extends Fragment {
         btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(checkPermission())
-                {
+                if (checkPermission()) {
                     AddAddressFragment addressFragment = new AddAddressFragment();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("add_address");
                     ft.replace(R.id.fragment_container, addressFragment);
                     ft.commit();
-                }
-                else {
-                    Toast.makeText(getContext(),"Please provide location permission to continue",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Please provide location permission to continue", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -183,12 +181,12 @@ public class CheckoutFragment extends Fragment {
     }
 
     private boolean checkPermission() {
-            int result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-            if (result == PackageManager.PERMISSION_GRANTED) {
-                return true;
-            } else {
-                return false;
-            }
+        int result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     private void remvoeAddress(int position, String addressId) {

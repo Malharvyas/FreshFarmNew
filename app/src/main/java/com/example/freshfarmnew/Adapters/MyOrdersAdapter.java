@@ -12,8 +12,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.freshfarmnew.Fragments.AddAddressFragment;
+import com.example.freshfarmnew.Fragments.CancelOrderFragment;
+import com.example.freshfarmnew.Interfaces.CancelOrderCallBack;
 import com.example.freshfarmnew.Interfaces.WishListCallBack;
 import com.example.freshfarmnew.Model.OrderListModel;
 import com.example.freshfarmnew.Model.WishListModel;
@@ -21,18 +25,22 @@ import com.example.freshfarmnew.Model.WishListVariation;
 import com.example.freshfarmnew.R;
 import com.squareup.picasso.Picasso;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHolder> {
 
     private Context context;
     private List<OrderListModel> list;
-    private WishListCallBack wishListCallBack;
+    private CancelOrderCallBack cancelOrderCallBack;
 
-    public MyOrdersAdapter(Context context, List<OrderListModel> list, WishListCallBack wishListCallBack) {
+    public MyOrdersAdapter(Context context, List<OrderListModel> list, CancelOrderCallBack cancelOrderCallBack) {
         this.context = context;
-        this.wishListCallBack = wishListCallBack;
+        this.cancelOrderCallBack = cancelOrderCallBack;
         this.list = list;
     }
 
@@ -51,6 +59,21 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHo
         holder.tvItem.setText(model.getProducts().size() + " Item");
         holder.tvStatus.setText(model.getStatus());
         holder.tvTotalPrice.setText("\u20B9" + " " + model.getTotalAmount());
+        holder.tvOrderDate.setText(parseDateToddMMyyyy(model.getOrderTime()));
+
+        holder.btnCancelOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelOrderCallBack.cancelOrder(model.getOrderId());
+            }
+        });
+
+        holder.btnOrderDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancelOrderCallBack.orderDetails(model.getOrderId());
+            }
+        });
     }
 
     @Override
@@ -75,6 +98,24 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHo
             btnOrderDetails = itemView.findViewById(R.id.btnOrderDetails);
             btnOrderTrack = itemView.findViewById(R.id.btnOrderTrack);
         }
+    }
+
+    public String parseDateToddMMyyyy(String time) {
+        String inputPattern = "yyyy-MM-dd HH:mm:ss";
+        String outputPattern = "dd MMM yyyy";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date = null;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 }
 

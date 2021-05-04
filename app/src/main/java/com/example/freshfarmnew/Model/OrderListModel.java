@@ -16,9 +16,12 @@ public class OrderListModel {
     @SerializedName("status")
     @Expose
     private String status;
+    @SerializedName("order_time")
+    @Expose
+    private String orderTime;
     @SerializedName("products")
     @Expose
-    private List<OrderProduct> products = null;
+    private List<Product> products = null;
 
     public String getOrderId() {
         return orderId;
@@ -44,11 +47,20 @@ public class OrderListModel {
         this.status = status;
     }
 
-    public List<OrderProduct> getProducts() {
+    public String getOrderTime() {
+        return orderTime;
+    }
+
+    public void setOrderTime(String orderTime) {
+        this.orderTime = orderTime;
+    }
+
+    public List<Product> getProducts() {
         return products;
     }
 
-    public void setProducts(List<OrderProduct> products) {
+    public void setProducts(List<Product> products) {
         this.products = products;
     }
+
 }

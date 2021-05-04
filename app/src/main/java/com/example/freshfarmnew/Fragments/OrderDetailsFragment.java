@@ -1,18 +1,25 @@
 package com.example.freshfarmnew.Fragments;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.ClientError;
@@ -23,9 +30,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.freshfarmnew.Adapters.CheckOutAdapter;
+import com.example.freshfarmnew.Adapters.OrderDetailsAdapter;
 import com.example.freshfarmnew.Class.BaseUrl;
+import com.example.freshfarmnew.Interfaces.AddressCallBack;
+import com.example.freshfarmnew.Model.AddressDataModel;
 import com.example.freshfarmnew.Model.CartModel;
+import com.example.freshfarmnew.Model.OrderDetailsModel;
 import com.example.freshfarmnew.R;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -33,70 +46,77 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ContactUsFragment extends Fragment {
+public class OrderDetailsFragment extends Fragment {
 
-    String url = "", cus_name = "", contact = "", email = "", msg = "";
-    private EditText c_name, c_mob, c_email, c_message;
-    private Button send_message;
+    List<OrderDetailsModel> odList = new ArrayList<>();
+    String url = "", cus_id = "";
+    OrderDetailsAdapter orderDetailsAdapter;
+    private RecyclerView recyclerView;
+    private ProgressBar progressbar;
+    private TextView tvOrderID, tvUserName, tvEmail, tvContactNumber, tvUserName1, tvAddres, tvTotalAmount, tvDeliveryCharge, tvFinalPayAmount;
 
-    public ContactUsFragment() {
+    public OrderDetailsFragment() {
         // Required empty public constructor
     }
 
-    public static ContactUsFragment newInstance(String param1, String param2) {
-        ContactUsFragment fragment = new ContactUsFragment();
+    public static OrderDetailsFragment newInstance(String param1, String param2) {
+        OrderDetailsFragment fragment = new OrderDetailsFragment();
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
+        cus_id = sharedPreferences.getString("customer_id", "");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_contact_us, container, false);
+        View v = inflater.inflate(R.layout.fragment_order_details, container, false);
 
-        c_name = v.findViewById(R.id.c_name);
-        c_mob = v.findViewById(R.id.c_mob);
-        c_email = v.findViewById(R.id.c_email);
-        c_message = v.findViewById(R.id.c_message);
-        send_message = v.findViewById(R.id.send_message);
+        progressbar = v.findViewById(R.id.progressbar);
+        recyclerView = v.findViewById(R.id.recyclerView);
+        tvOrderID = v.findViewById(R.id.tvOrderID);
+        tvUserName = v.findViewById(R.id.tvUserName);
+        tvEmail = v.findViewById(R.id.tvEmail);
+        tvContactNumber = v.findViewById(R.id.tvContactNumber);
+        tvUserName1 = v.findViewById(R.id.tvUserName1);
+        tvAddres = v.findViewById(R.id.tvAddres);
+        tvTotalAmount = v.findViewById(R.id.tvTotalAmount);
+        tvDeliveryCharge = v.findViewById(R.id.tvDeliveryCharge);
+        tvFinalPayAmount = v.findViewById(R.id.tvFinalPayAmount);
 
-        send_message.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                getContactDetails();
-
+        if (getArguments() != null) {
+            if (getArguments().containsKey("OrderId")) {
+                tvOrderID.setText(getArguments().getString("OrderId"));
             }
-        });
+        }
+
+        getOrderDetails();
 
         return v;
     }
 
-    private void getContactDetails() {
-        cus_name = c_name.getText().toString();
-        contact = c_mob.getText().toString();
-        email = c_email.getText().toString();
-        msg = c_message.getText().toString();
-
-        //progressbar.setVisibility(View.VISIBLE);
+    private void getOrderDetails() {
+        progressbar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
-        url = url.concat("freshfarm/api/ApiController/createCustomerQuery");
+        url = url.concat("freshfarm/api/ApiController/cartdata");
         RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        //progressbar.setVisibility(View.GONE);
+                        progressbar.setVisibility(View.GONE);
                         Log.e("PrintLog", "----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
@@ -105,13 +125,36 @@ public class ContactUsFragment extends Fragment {
 
                             try {
                                 json = new JSONObject(String.valueOf(response));
-                                JSONObject json2 = json.getJSONObject("createCustomerQuery");
-                                Boolean status = json2.getBoolean("Status");
+                                JSONObject json2 = json.getJSONObject("cartdata");
+                                Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
+                                    odList.clear();
 
-                                    String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                    JSONArray data = json2.getJSONArray("data");
+                                    String dataStr = data.toString();
+                                    Log.e("PrintLog", "----" + dataStr);
+                                    Gson gson = new Gson();
+
+                                    Type cartListType = new TypeToken<List<OrderDetailsModel>>() {
+                                    }.getType();
+
+                                    odList.addAll(gson.fromJson(dataStr, cartListType));
+
+                                    orderDetailsAdapter.notifyDataSetChanged();
+
+                                    /*if (cartModelList.size() > 0) {
+                                        nonemptyCart.setVisibility(View.VISIBLE);
+                                        emptyCart.setVisibility(View.GONE);
+
+                                        cartAdapter.notifyDataSetChanged();
+
+                                    } else {
+                                        emptyCart.setVisibility(View.VISIBLE);
+                                        nonemptyCart.setVisibility(View.GONE);
+                                    }*/
+
+                                    //Toast.makeText(getContext(), "" + userArray.size(), Toast.LENGTH_LONG).show();
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
@@ -125,7 +168,7 @@ public class ContactUsFragment extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //progressbar.setVisibility(View.GONE);
+                progressbar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if (error instanceof ClientError) {
@@ -150,10 +193,7 @@ public class ContactUsFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("customer_name", cus_name);
-                params.put("contact_no", contact);
-                params.put("email", email);
-                params.put("message", msg);
+                params.put("customer_id", cus_id);
                 return params;
             }
 

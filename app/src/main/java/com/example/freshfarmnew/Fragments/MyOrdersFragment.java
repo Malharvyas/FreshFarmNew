@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
@@ -29,6 +30,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Adapters.MyOrdersAdapter;
 import com.example.freshfarmnew.Adapters.WishListAdapter;
 import com.example.freshfarmnew.Class.BaseUrl;
+import com.example.freshfarmnew.Interfaces.CancelOrderCallBack;
 import com.example.freshfarmnew.Interfaces.WishListCallBack;
 import com.example.freshfarmnew.Model.OrderListModel;
 import com.example.freshfarmnew.Model.WishListModel;
@@ -85,10 +87,27 @@ public class MyOrdersFragment extends Fragment {
         nonemptyMyOrders = v.findViewById(R.id.nonemptyMyOrders);
         btnExplore = v.findViewById(R.id.btnExplore);
 
-        myOrdersAdapter = new MyOrdersAdapter(getContext(), list, new WishListCallBack() {
+        myOrdersAdapter = new MyOrdersAdapter(getContext(), list, new CancelOrderCallBack() {
             @Override
-            public void updateWishList(int position, String productId, String cust_id) {
+            public void cancelOrder(String orderId) {
+                Bundle bundle = new Bundle();
+                bundle.putString("OrderId", orderId);
+                CancelOrderFragment cof = new CancelOrderFragment();
+                cof.setArguments(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("PlaceOrder");
+                ft.replace(R.id.fragment_container, cof);
+                ft.commit();
+            }
 
+            @Override
+            public void orderDetails(String orderId) {
+                Bundle bundle = new Bundle();
+                bundle.putString("OrderId", orderId);
+                OrderDetailsFragment odf = new OrderDetailsFragment();
+                odf.setArguments(bundle);
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("PlaceOrder");
+                ft.replace(R.id.fragment_container, odf);
+                ft.commit();
             }
         });
         recyclerView.setAdapter(myOrdersAdapter);

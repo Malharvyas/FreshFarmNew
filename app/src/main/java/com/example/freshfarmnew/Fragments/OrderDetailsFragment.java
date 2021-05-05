@@ -62,7 +62,7 @@ public class OrderDetailsFragment extends Fragment {
     OrderDetailsAdapter orderDetailsAdapter;
     private RecyclerView recyclerView;
     private ProgressBar progressbar;
-    private TextView tvOrderID, tvUserName, tvEmail, tvContactNumber, tvUserName1, tvAddres, tvTotalAmount, tvDeliveryCharge, tvFinalPayAmount;
+    private TextView tvDiscount, tvOrderID, tvUserName, tvEmail, tvContactNumber, tvUserName1, tvAddres, tvTotalAmount, tvDeliveryCharge, tvFinalPayAmount;
 
     public OrderDetailsFragment() {
         // Required empty public constructor
@@ -97,6 +97,7 @@ public class OrderDetailsFragment extends Fragment {
         tvTotalAmount = v.findViewById(R.id.tvTotalAmount);
         tvDeliveryCharge = v.findViewById(R.id.tvDeliveryCharge);
         tvFinalPayAmount = v.findViewById(R.id.tvFinalPayAmount);
+        tvDiscount = v.findViewById(R.id.tvDiscount);
 
         if (getArguments() != null) {
             if (getArguments().containsKey("OrderId")) {
@@ -162,11 +163,13 @@ public class OrderDetailsFragment extends Fragment {
                                     tvEmail.setText(orderDetailsModel.getCustomerDetail().getCustomerEmail());
                                     tvContactNumber.setText(orderDetailsModel.getCustomerDetail().getCustomerPhone());
                                     tvUserName1.setText(orderDetailsModel.getCustomerDetail().getCustomerName());
-                                    tvTotalAmount.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getTotalAmount());
+                                    tvFinalPayAmount.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getTotalAmount());
                                     tvDeliveryCharge.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getDeliveryCharge());
-                                    if (orderDetailsModel.getTotalAmount() != null && orderDetailsModel.getDeliveryCharge() != null) {
-                                        double total = Double.parseDouble(orderDetailsModel.getTotalAmount()) + Double.parseDouble(orderDetailsModel.getDeliveryCharge());
-                                        tvFinalPayAmount.setText(getContext().getResources().getString(R.string.rs) + " " + String.valueOf(total));
+                                    tvDiscount.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getDiscount());
+
+                                    if (orderDetailsModel.getTotalAmount() != null && orderDetailsModel.getDeliveryCharge() != null && orderDetailsModel.getDiscount() != null) {
+                                        double total = Double.parseDouble(orderDetailsModel.getTotalAmount()) - Double.parseDouble(orderDetailsModel.getDeliveryCharge()) - Double.parseDouble(orderDetailsModel.getDiscount());
+                                        tvTotalAmount.setText(getContext().getResources().getString(R.string.rs) + " " + String.valueOf(total));
                                     }
 
                                     if (orderDetailsModel.getAddressDetail() != null) {

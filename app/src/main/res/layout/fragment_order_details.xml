@@ -19,6 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -67,12 +68,14 @@
                     android:id="@+id/tvUserName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -93,6 +96,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal">
 
                     <ImageView
@@ -114,6 +118,7 @@
                     android:id="@+id/tvUserName1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -121,6 +126,7 @@
                     android:id="@+id/tvAddres"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -130,7 +136,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginBottom="10dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="10dp"
                 android:orientation="vertical">
@@ -212,12 +217,13 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="10dp"
                         android:layout_marginEnd="10dp"
+                        android:layout_marginBottom="10dp"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="180dp"
                             android:layout_height="wrap_content"
-                            android:text="Final Amount Payable"
+                            android:text="Final Pay Amount "
                             android:textAllCaps="true"
                             android:textColor="@color/white"
                             android:textSize="14sp"
@@ -235,10 +241,10 @@
                             android:textStyle="bold" />
 
                     </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
-
 
         </LinearLayout>
 

@@ -34,9 +34,11 @@ import com.example.freshfarmnew.Adapters.CheckOutAdapter;
 import com.example.freshfarmnew.Adapters.OrderDetailsAdapter;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.example.freshfarmnew.Interfaces.AddressCallBack;
+import com.example.freshfarmnew.Interfaces.CartCallBack;
 import com.example.freshfarmnew.Model.AddressDataModel;
 import com.example.freshfarmnew.Model.CartModel;
 import com.example.freshfarmnew.Model.OrderDetailsModel;
+import com.example.freshfarmnew.Model.ProductDetail;
 import com.example.freshfarmnew.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
@@ -54,7 +56,9 @@ import java.util.Map;
 public class OrderDetailsFragment extends Fragment {
 
     List<OrderDetailsModel> odList = new ArrayList<>();
-    String url = "", cus_id = "";
+    List<ProductDetail> productDetailList = new ArrayList<>();
+    String url = "", cus_id = "", orderId = "";
+
     OrderDetailsAdapter orderDetailsAdapter;
     private RecyclerView recyclerView;
     private ProgressBar progressbar;
@@ -96,9 +100,18 @@ public class OrderDetailsFragment extends Fragment {
 
         if (getArguments() != null) {
             if (getArguments().containsKey("OrderId")) {
+                orderId = getArguments().getString("OrderId");
                 tvOrderID.setText(getArguments().getString("OrderId"));
             }
         }
+
+        orderDetailsAdapter = new OrderDetailsAdapter(getContext(), productDetailList, new CartCallBack() {
+            @Override
+            public void updateCart(String productId, String vId, String quantity) {
+
+            }
+        });
+        recyclerView.setAdapter(orderDetailsAdapter);
 
         getOrderDetails();
 
@@ -109,7 +122,7 @@ public class OrderDetailsFragment extends Fragment {
         progressbar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
-        url = url.concat("freshfarm/api/ApiController/cartdata");
+        url = url.concat("freshfarm/api/ApiController/getOrderDetail");
         RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -117,7 +130,7 @@ public class OrderDetailsFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         progressbar.setVisibility(View.GONE);
-                        Log.e("PrintLog", "----" + response);
+                        Log.e("PrintLog", "----response----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -125,15 +138,17 @@ public class OrderDetailsFragment extends Fragment {
 
                             try {
                                 json = new JSONObject(String.valueOf(response));
-                                JSONObject json2 = json.getJSONObject("cartdata");
+                                JSONObject json2 = json.getJSONObject("getOrderDetail");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
+                                Log.e("PrintLog", "----stat----" + stat);
                                 if (stat.equals("true")) {
+
                                     odList.clear();
 
                                     JSONArray data = json2.getJSONArray("data");
                                     String dataStr = data.toString();
-                                    Log.e("PrintLog", "----" + dataStr);
+                                    Log.e("PrintLog", "----dataStr----" + dataStr);
                                     Gson gson = new Gson();
 
                                     Type cartListType = new TypeToken<List<OrderDetailsModel>>() {
@@ -141,20 +156,27 @@ public class OrderDetailsFragment extends Fragment {
 
                                     odList.addAll(gson.fromJson(dataStr, cartListType));
 
+                                    OrderDetailsModel orderDetailsModel = odList.get(0);
+
+                                    tvUserName.setText(orderDetailsModel.getCustomerDetail().getCustomerName());
+                                    tvEmail.setText(orderDetailsModel.getCustomerDetail().getCustomerEmail());
+                                    tvContactNumber.setText(orderDetailsModel.getCustomerDetail().getCustomerPhone());
+                                    tvUserName1.setText(orderDetailsModel.getCustomerDetail().getCustomerName());
+                                    tvTotalAmount.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getTotalAmount());
+                                    tvDeliveryCharge.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getDeliveryCharge());
+                                    if (orderDetailsModel.getTotalAmount() != null && orderDetailsModel.getDeliveryCharge() != null) {
+                                        double total = Double.parseDouble(orderDetailsModel.getTotalAmount()) + Double.parseDouble(orderDetailsModel.getDeliveryCharge());
+                                        tvFinalPayAmount.setText(getContext().getResources().getString(R.string.rs) + " " + String.valueOf(total));
+                                    }
+
+                                    if (orderDetailsModel.getAddressDetail() != null) {
+                                        tvAddres.setText(orderDetailsModel.getAddressDetail().getAddress());
+                                    }
+
+                                    productDetailList.clear();
+                                    productDetailList.addAll(orderDetailsModel.getProductDetail());
+
                                     orderDetailsAdapter.notifyDataSetChanged();
-
-                                    /*if (cartModelList.size() > 0) {
-                                        nonemptyCart.setVisibility(View.VISIBLE);
-                                        emptyCart.setVisibility(View.GONE);
-
-                                        cartAdapter.notifyDataSetChanged();
-
-                                    } else {
-                                        emptyCart.setVisibility(View.VISIBLE);
-                                        nonemptyCart.setVisibility(View.GONE);
-                                    }*/
-
-                                    //Toast.makeText(getContext(), "" + userArray.size(), Toast.LENGTH_LONG).show();
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
@@ -162,6 +184,7 @@ public class OrderDetailsFragment extends Fragment {
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         }
                     }
@@ -193,7 +216,7 @@ public class OrderDetailsFragment extends Fragment {
             @Override
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
-                params.put("customer_id", cus_id);
+                params.put("order_id", orderId);
                 return params;
             }
 

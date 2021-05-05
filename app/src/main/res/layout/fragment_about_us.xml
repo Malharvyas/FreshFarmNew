@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.AboutUsFragment"
-    android:background="@drawable/border">
+    android:background="@drawable/border"
+    tools:context=".Fragments.AboutUsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,19 +15,17 @@
             android:id="@+id/text1"
             android:layout_width="match_parent"
             android:layout_height="50sp"
-            android:text="About Us"
             android:background="@drawable/border_textview3"
-            app:layout_constraintTop_toTopOf="parent"
             android:gravity="center"
-            android:textSize="22sp"/>
+            android:text="About Us"
+            android:textSize="22sp"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/about_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/text1"
             android:layout_marginTop="10dp"
-            android:textSize="15sp"
-            android:id="@+id/about_text"
             android:text="This is dummy about text.This is dummy about
             text.This is dummy about text.This is dummy about text.This
             is dummy about text.This is dummy about text.This is dummy
@@ -37,7 +35,9 @@
             This is dummy about text.This is dummy about text.This is dummy
              about text.This is dummy about text.This is dummy about text.
              This is dummy about text.This is dummy about text.This is dummy
-              about text.This is dummy about text.This is dummy about text."/>
+              about text.This is dummy about text.This is dummy about text."
+            android:textSize="15sp"
+            app:layout_constraintTop_toBottomOf="@id/text1" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </ScrollView>

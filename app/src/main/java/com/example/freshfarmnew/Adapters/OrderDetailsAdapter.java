@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.freshfarmnew.Interfaces.CartCallBack;
 import com.example.freshfarmnew.Model.CartModel;
 import com.example.freshfarmnew.Model.OrderDetailsModel;
+import com.example.freshfarmnew.Model.ProductDetail;
 import com.example.freshfarmnew.R;
 import com.squareup.picasso.Picasso;
 
@@ -22,10 +23,10 @@ import java.util.List;
 public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapter.ViewHolder> {
 
     private Context context;
-    private List<OrderDetailsModel> list;
+    private List<ProductDetail> list;
     private CartCallBack cartCallBack;
 
-    public OrderDetailsAdapter(Context context, List<OrderDetailsModel> list, CartCallBack cartCallBack) {
+    public OrderDetailsAdapter(Context context, List<ProductDetail> list, CartCallBack cartCallBack) {
         this.context = context;
         this.cartCallBack = cartCallBack;
         this.list = list;
@@ -40,18 +41,12 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull OrderDetailsAdapter.ViewHolder holder, int position) {
-        OrderDetailsModel model = list.get(position);
+        ProductDetail model = list.get(position);
 
-        //holder.tvName.setText(cartModel.getProductName() + " ( " + cartModel.getUnitVal() + " " + cartModel.getUnit() + " )");
-        //holder.tvPrice.setText("Price :" + cartModel.getPrice());
-       /* if (cartModel.getPrice() != null && cartModel.getQuantity() != null) {
-            double finalPrice = Double.parseDouble(cartModel.getPrice()) * Double.parseDouble(cartModel.getQuantity());
-            holder.tvFinalPrice.setText("\u20B9" + " " + String.valueOf(finalPrice));
-        }*/
-        //holder.tvQty.setText(cartModel.getQuantity());
-
-        //Picasso.get().load(cartModel.getProductImage()).fit().into(holder.imageView);
-
+        holder.tvName.setText(model.getProductName());
+        holder.tvQty.setText(model.getQuantity());
+        holder.tvFinalPrice.setText(context.getResources().getString(R.string.rs) + " " + model.getPrice());
+        Picasso.get().load(model.getProductImage()).fit().into(holder.imageView);
     }
 
     @Override
@@ -62,7 +57,7 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView imageView;
-        TextView tvName, tvPrice, tvFinalPrice, tvQty;
+        TextView tvName, tvFinalPrice, tvQty;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

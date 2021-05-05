@@ -61,6 +61,12 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHo
         holder.tvTotalPrice.setText("\u20B9" + " " + model.getTotalAmount());
         holder.tvOrderDate.setText(parseDateToddMMyyyy(model.getOrderTime()));
 
+        if (model.getStatus().equals("cancel")) {
+            holder.btnCancelOrder.setVisibility(View.GONE);
+        } else {
+            holder.btnCancelOrder.setVisibility(View.VISIBLE);
+        }
+
         holder.btnCancelOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

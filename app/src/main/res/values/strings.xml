@@ -30,5 +30,6 @@
     <string name="cancelOrder">Cancel Order</string>
     <string name="orderDetails">Order Details</string>
     <string name="orderTrack">Order Track</string>
+    <string name="rs">₹</string>
 
 </resources>

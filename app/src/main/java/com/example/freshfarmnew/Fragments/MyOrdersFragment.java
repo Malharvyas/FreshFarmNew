@@ -1,6 +1,8 @@
 package com.example.freshfarmnew.Fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Base64;
@@ -90,13 +92,30 @@ public class MyOrdersFragment extends Fragment {
         myOrdersAdapter = new MyOrdersAdapter(getContext(), list, new CancelOrderCallBack() {
             @Override
             public void cancelOrder(String orderId) {
-                Bundle bundle = new Bundle();
+                /*Bundle bundle = new Bundle();
                 bundle.putString("OrderId", orderId);
                 CancelOrderFragment cof = new CancelOrderFragment();
                 cof.setArguments(bundle);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("PlaceOrder");
                 ft.replace(R.id.fragment_container, cof);
-                ft.commit();
+                ft.commit();*/
+
+                new AlertDialog.Builder(getContext())
+                        .setMessage("Are you sure you want to cancel your orders?")
+
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                getCancelOrder(orderId);
+                            }
+                        })
+
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
 
             @Override
@@ -117,6 +136,98 @@ public class MyOrdersFragment extends Fragment {
         return v;
     }
 
+    private void getCancelOrder(String orderId) {
+        progressbar.setVisibility(View.VISIBLE);
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/cancelOrderDetail");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("PrintLog", "----response----" + response);
+                        progressbar.setVisibility(View.GONE);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2 = json.getJSONObject("cancelOrderDetail");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                Log.e("PrintLog", "--dataStr--" + stat);
+                                if (stat.equals("true")) {
+
+                                    getMyOrderData();
+
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                } else if (stat.equals("false")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                }
+//                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressbar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("order_id", orderId);
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+    }
+
     private void getMyOrderData() {
         progressbar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
@@ -129,7 +240,7 @@ public class MyOrdersFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         progressbar.setVisibility(View.GONE);
-                        Log.e("PrintLog", "----" + response);
+                        //Log.e("PrintLog", "----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -145,7 +256,7 @@ public class MyOrdersFragment extends Fragment {
 
                                     JSONArray data = json2.getJSONArray("data");
                                     String dataStr = data.toString();
-                                    Log.e("PrintLog", "--dataStr--" + dataStr);
+                                    //Log.e("PrintLog", "--dataStr--" + dataStr);
                                     Gson gson = new Gson();
 
                                     Type cartListType = new TypeToken<List<OrderListModel>>() {
@@ -153,7 +264,7 @@ public class MyOrdersFragment extends Fragment {
 
                                     list.addAll(gson.fromJson(dataStr, cartListType));
 
-                                    Log.e("PrintLog", "--list--" + list.size());
+                                    //Log.e("PrintLog", "--list--" + list.size());
 
                                     if (list.size() > 0) {
                                         nonemptyMyOrders.setVisibility(View.VISIBLE);

@@ -64,7 +64,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     CardView card_wallet, card_online, card_cash;
     ImageView icon_wallet, icon_online, icon_cash;
     TextView text_wallet1, text_wallet2, text_online, text_cash;
-    EditText promo_code;
+    EditText promo_code,order_comments;
     TextView apply_promo, promo_warning, delivery_charges, discount, net_amount,wallet_amount;
     String url = "", cus_id = "";
     ProgressBar progressBar;
@@ -132,6 +132,8 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
 
         wallet_amount = v.findViewById(R.id.wallet_amount);
+
+        order_comments = v.findViewById(R.id.order_comments);
 
 
         if (getArguments() != null) {
@@ -606,7 +608,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
         Checkout checkout = new Checkout();
 
-        checkout.setKeyID("rzp_test_q3dmr1uvAp87kX");
+        checkout.setKeyID("rzp_test_cGPUVHG9E6EaKV");
 
         checkout.setImage(R.drawable.logo);
 
@@ -634,6 +636,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     }
 
     private void placeorder(String cus_id, String addressId, String total_amount, List<String> pidlist, List<String> pquantlist, List<String> ppricelist, String delivery_date, String pay_type) {
+        String comments = order_comments.getText().toString();
         progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
@@ -747,6 +750,12 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 params.put("scheduled_date", delivery_date);
                 params.put("delivery_time_id", "1");
                 params.put("total_amount", total_amount);
+                if(order_comments.equals(null) || order_comments.equals("")){
+
+                }
+                else {
+                    params.put("comments",comments);
+                }
                 if(pay_type.equals("3"))
                 {
                     params.put("payment_status", "2");

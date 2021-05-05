@@ -310,7 +310,7 @@ public class WalletFragment extends Fragment implements View.OnClickListener {
 
         Checkout checkout = new Checkout();
 
-        checkout.setKeyID("rzp_test_q3dmr1uvAp87kX");
+        checkout.setKeyID("rzp_test_cGPUVHG9E6EaKV");
 
         checkout.setImage(R.drawable.logo);
 

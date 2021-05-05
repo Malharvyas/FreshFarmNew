@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     TextView head_address;
     View headerView;
     private static final int PERMISSION_REQUEST_CODE = 1;
+    Thread thread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -248,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-        new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
@@ -260,7 +261,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     cartnum(cus_id);
                 }
             }
-        }).start();
+        });
+        thread.start();
 
         if (savedInstanceState == null) {
             HomeFragment h = new HomeFragment();
@@ -418,12 +420,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 ft.commit();
             }
             break;
-            case R.id.nav_side_about: {
+            case R.id.nav_about2: {
                 AboutUsFragment a = new AboutUsFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("about");
                 ft.replace(R.id.fragment_container, a);
                 ft.commit();
             }
+            break;
             case R.id.nav_contact: {
                 ContactUsFragment c = new ContactUsFragment();
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction().addToBackStack("contact");
@@ -692,4 +695,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        startActivity(getIntent());
 //        overridePendingTransition(0, 0);
 //    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        thread.stop();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        thread.start();
+    }
 }

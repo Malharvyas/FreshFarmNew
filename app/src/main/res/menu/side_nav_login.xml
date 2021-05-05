@@ -28,7 +28,7 @@
             android:title="Contact Us"
             android:icon="@drawable/ic_contact"/>
         <item
-            android:id="@+id/nav_side_about"
+            android:id="@+id/nav_about2"
             android:title="About Us"
             android:icon="@drawable/ic_about"/>
         <item

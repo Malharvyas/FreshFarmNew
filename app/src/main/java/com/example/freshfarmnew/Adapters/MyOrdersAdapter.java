@@ -96,7 +96,7 @@ public class MyOrdersAdapter extends RecyclerView.Adapter<MyOrdersAdapter.ViewHo
             tvTotalPrice = itemView.findViewById(R.id.tvTotalPrice);
             btnCancelOrder = itemView.findViewById(R.id.btnCancelOrder);
             btnOrderDetails = itemView.findViewById(R.id.btnOrderDetails);
-            btnOrderTrack = itemView.findViewById(R.id.btnOrderTrack);
+//            btnOrderTrack = itemView.findViewById(R.id.btnOrderTrack);
         }
     }
 

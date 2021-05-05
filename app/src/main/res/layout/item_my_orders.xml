@@ -143,18 +143,18 @@
                     android:textAllCaps="false"
                     android:textSize="12sp" />
 
-                <Button
-                    android:id="@+id/btnOrderTrack"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_weight="1"
-                    android:backgroundTint="#F44336"
-                    android:padding="0dp"
-                    android:text="@string/orderTrack"
-                    android:textAllCaps="false"
-                    android:textSize="12sp" />
+<!--                <Button-->
+<!--                    android:id="@+id/btnOrderTrack"-->
+<!--                    android:layout_width="0dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="10dp"-->
+<!--                    android:layout_marginEnd="10dp"-->
+<!--                    android:layout_weight="1"-->
+<!--                    android:backgroundTint="#F44336"-->
+<!--                    android:padding="0dp"-->
+<!--                    android:text="@string/orderTrack"-->
+<!--                    android:textAllCaps="false"-->
+<!--                    android:textSize="12sp" />-->
 
             </LinearLayout>
 

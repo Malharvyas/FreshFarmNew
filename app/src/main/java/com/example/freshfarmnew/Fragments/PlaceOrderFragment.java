@@ -66,7 +66,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     TextView text_wallet1, text_wallet2, text_online, text_cash;
     EditText promo_code,order_comments;
     TextView apply_promo, promo_warning, delivery_charges, discount, net_amount,wallet_amount;
-    String url = "", cus_id = "";
+    String url = "", cus_id = "",product_delivery;
     ProgressBar progressBar;
     private TextView billed_amount;
     private List<String> pidlist;
@@ -135,6 +135,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
         order_comments = v.findViewById(R.id.order_comments);
 
+        getdeliverycharges();
 
         if (getArguments() != null) {
             if (getArguments().containsKey("amount")) {
@@ -183,6 +184,9 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         return v;
 
 
+    }
+
+    private void getdeliverycharges() {
     }
 
     private void getwalletdetails(String cus_id) {
@@ -897,6 +901,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     private void calculateamount(String discount_per, String min_order_amount, String max_discount) {
         String order_amount = billed_amount.getText().toString();
 
+        double deli = Double.parseDouble(delivery_charges.getText().toString());
         double dis_per = Double.parseDouble(discount_per);
         double min_order = Double.parseDouble(min_order_amount);
         double max_dis = Double.parseDouble(max_discount);
@@ -908,10 +913,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
             dis = (order_amnt * dis_per) / 100;
             if(dis < max_dis)
             {
-                printreceipt(11,dis);
+                printreceipt(deli,dis);
             }
             else{
-                printreceipt(11,max_dis);
+                printreceipt(deli,max_dis);
             }
         }
         else{

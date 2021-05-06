@@ -79,7 +79,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     Double netamount;
     String selected = "";
 
-    public PlaceOrderFragment() {
+    public PlaceOrderFragment()  {
         // Required empty public constructor
     }
 

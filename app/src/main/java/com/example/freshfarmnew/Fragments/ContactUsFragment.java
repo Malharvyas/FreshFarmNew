@@ -78,19 +78,33 @@ public class ContactUsFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                getContactDetails();
+                cus_name = c_name.getText().toString();
+                contact = c_mob.getText().toString();
+                email = c_email.getText().toString();
+                msg = c_message.getText().toString();
 
+                if (cus_name.isEmpty()) {
+                    Toast.makeText(getContext(), "Please Enter Name.", Toast.LENGTH_LONG).show();
+                } else if (contact.isEmpty()) {
+                    Toast.makeText(getContext(), "Please Enter Contact.", Toast.LENGTH_LONG).show();
+                } else if (email.isEmpty()) {
+                    Toast.makeText(getContext(), "Please Enter Email.", Toast.LENGTH_LONG).show();
+                } else if (msg.isEmpty()) {
+                    Toast.makeText(getContext(), "Please Enter Message.", Toast.LENGTH_LONG).show();
+                } else {
+                    getContactDetails(cus_name, contact, email, msg);
+                }
             }
         });
 
         return v;
     }
 
-    private void getContactDetails() {
-        cus_name = c_name.getText().toString();
-        contact = c_mob.getText().toString();
-        email = c_email.getText().toString();
-        msg = c_message.getText().toString();
+    private void getContactDetails(String cus_name, String contact, String email, String msg) {
+        this.cus_name = c_name.getText().toString();
+        this.contact = c_mob.getText().toString();
+        this.email = c_email.getText().toString();
+        this.msg = c_message.getText().toString();
 
         //progressbar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();

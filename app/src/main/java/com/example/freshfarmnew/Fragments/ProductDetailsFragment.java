@@ -50,12 +50,12 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class ProductDetailsFragment extends Fragment {
 
-    String url = "",product_id,cus_id;
+    String url = "", product_id, cus_id;
     ViewPager viewPager;
     CircleIndicator circleIndicator;
-    TextView productname,productprice,productdesc;
+    TextView productname, productprice, productdesc;
     Spinner pdvariant;
-    Button pdbuy,pdadd;
+    Button pdbuy, pdadd;
     List<Product> prolist;
     List<ProductVariation> variantionlist;
     ArrayList<String> stringArrayList = new ArrayList<String>();
@@ -79,7 +79,7 @@ public class ProductDetailsFragment extends Fragment {
         prolist = new ArrayList<>();
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
-        cus_id = sharedPreferences.getString("customer_id","");
+        cus_id = sharedPreferences.getString("customer_id", "");
     }
 
     @Override
@@ -96,8 +96,7 @@ public class ProductDetailsFragment extends Fragment {
         pdadd = v.findViewById(R.id.pd_add);
         progressBar = v.findViewById(R.id.progressbar);
 
-        if(getArguments() != null)
-        {
+        if (getArguments() != null) {
             product_id = getArguments().getString("product_id");
         }
 
@@ -123,8 +122,8 @@ public class ProductDetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 progressBar.setVisibility(View.VISIBLE);
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pdtemp",Context.MODE_PRIVATE);
-                String v_id = sharedPreferences.getString("v_id","0");
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pdtemp", Context.MODE_PRIVATE);
+                String v_id = sharedPreferences.getString("v_id", "0");
                 addtocart(v_id);
             }
         });
@@ -143,7 +142,7 @@ public class ProductDetailsFragment extends Fragment {
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -151,18 +150,15 @@ public class ProductDetailsFragment extends Fragment {
                                 JSONObject json2 = json.getJSONObject("addtocart");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     progressBar.setVisibility(View.GONE);
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     progressBar.setVisibility(View.GONE);
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -177,30 +173,24 @@ public class ProductDetailsFragment extends Fragment {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 progressBar.setVisibility(View.GONE);
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -212,7 +202,7 @@ public class ProductDetailsFragment extends Fragment {
             }
 
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -244,7 +234,7 @@ public class ProductDetailsFragment extends Fragment {
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -252,12 +242,10 @@ public class ProductDetailsFragment extends Fragment {
                                 JSONObject json2 = json.getJSONObject("cartdata");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     prolist.clear();
                                     JSONArray data = json2.getJSONArray("data");
-                                    for(int i = 0; i < data.length(); i++ )
-                                    {
+                                    for (int i = 0; i < data.length(); i++) {
                                         Product product = new Product();
                                         JSONObject catobj = data.getJSONObject(i);
                                         String pro_id = catobj.getString("product_id");
@@ -267,8 +255,7 @@ public class ProductDetailsFragment extends Fragment {
                                         String pro_desc = catobj.getString("product_discription");
                                         variantionlist = new ArrayList<>();
                                         JSONArray variant = catobj.getJSONArray("variation");
-                                        for(int j = 0; j < variant.length(); j++)
-                                        {
+                                        for (int j = 0; j < variant.length(); j++) {
                                             ProductVariation pv = new ProductVariation();
                                             JSONObject varobj = variant.getJSONObject(j);
                                             String v_id = varobj.getString("v_id");
@@ -286,8 +273,7 @@ public class ProductDetailsFragment extends Fragment {
                                         }
                                         imageslist = new ArrayList<>();
                                         JSONArray images = catobj.getJSONArray("product_image");
-                                        for (int k = 0; k < images.length(); k++)
-                                        {
+                                        for (int k = 0; k < images.length(); k++) {
                                             JSONObject imgobj = images.getJSONObject(k);
                                             String img = imgobj.getString("product_image");
                                             imageslist.add(img);
@@ -300,8 +286,7 @@ public class ProductDetailsFragment extends Fragment {
                                         product.setProduct_discription(pro_desc);
                                         prolist.add(product);
                                     }
-                                    for (int i = 0; i < variantionlist.size(); i++)
-                                    {
+                                    for (int i = 0; i < variantionlist.size(); i++) {
                                         ProductVariation variation = variantionlist.get(i);
                                         String unit_val = variation.getUnit_val();
                                         String unit = variation.getUnit();
@@ -309,11 +294,11 @@ public class ProductDetailsFragment extends Fragment {
                                         stringArrayList.add(combine);
                                     }
 
-                                    productImageAdapter = new ProductImageAdapter(getContext(),imageslist);
+                                    productImageAdapter = new ProductImageAdapter(getContext(), imageslist);
                                     viewPager.setAdapter(productImageAdapter);
                                     circleIndicator.setViewPager(viewPager);
 
-                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_text,stringArrayList);
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_text, stringArrayList);
                                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                     pdvariant.setAdapter(adapter);
                                     Product p = prolist.get(0);
@@ -324,17 +309,15 @@ public class ProductDetailsFragment extends Fragment {
                                         @Override
                                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                                            for(int j = 0; j < stringArrayList.size(); j++)
-                                            {
+                                            for (int j = 0; j < stringArrayList.size(); j++) {
                                                 ProductVariation pv = variantionlist.get(j);
-                                                String item = pv.getUnit_val()+" "+pv.getUnit();
+                                                String item = pv.getUnit_val() + " " + pv.getUnit();
                                                 String selected = pdvariant.getSelectedItem().toString();
-                                                if(item.equals(selected))
-                                                {
+                                                if (item.equals(selected)) {
                                                     savedetailstopref(prolist);
-                                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pdtemp",Context.MODE_PRIVATE);
+                                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pdtemp", Context.MODE_PRIVATE);
                                                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                                                    editor.putString("v_id",pv.getV_id());
+                                                    editor.putString("v_id", pv.getV_id());
                                                     editor.apply();
                                                     productprice.setText("\u20B9 " + pv.getPrice());
                                                 }
@@ -348,11 +331,9 @@ public class ProductDetailsFragment extends Fragment {
                                     });
 
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -372,38 +353,33 @@ public class ProductDetailsFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("product_id",product_id);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("product_id", product_id);
                 return params;
             }
+
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -429,52 +405,52 @@ public class ProductDetailsFragment extends Fragment {
 
         List<String> productquantity2 = new ArrayList<>();
         List<String> productprice2 = new ArrayList<>();
-        List<String> productid2= new ArrayList<>();
+        List<String> productid2 = new ArrayList<>();
+        List<String> productcategoryid2 = new ArrayList<>();
 
         String price = productprice.getText().toString();
         char c = '\0';
         StringBuffer sf = new StringBuffer();
-        for(int i = 0 ; i < price.length(); i++)
-        {
+        for (int i = 0; i < price.length(); i++) {
             c = price.charAt(i);
-            if(c == '\u20B9'){
+            if (c == '\u20B9') {
 
-            }
-            else{
+            } else {
                 sf.append(c);
             }
         }
 
         String newprice = String.valueOf(sf);
 //        Toast.makeText(getContext(),""+price,Toast.LENGTH_SHORT).show();
-        if(prolist != null)
-        {
+        if (prolist != null) {
             for (int i = 0; i < prolist.size(); i++) {
-                    productid2.add(prolist.get(i).getProduct_id());
-                    productprice2.add(newprice);
-                    productquantity2.add("1");
+                productid2.add(prolist.get(i).getProduct_id());
+                productprice2.add(newprice);
+                productquantity2.add("1");
+                productcategoryid2.add(prolist.get(i).getCategory_id());
             }
         }
 
         Gson gson = new Gson();
-        String pidset = null,ppriceset = null,pquantset = null;
-        if(productid2 != null)
-        {
+        String pidset = null, ppriceset = null, pquantset = null, pcategoryset = null;
+        if (productid2 != null) {
             pidset = gson.toJson(productid2);
         }
-        if(productprice2 != null)
-        {
+        if (productprice2 != null) {
             ppriceset = gson.toJson(productprice2);
         }
-        if(productquantity2 != null)
-        {
+        if (productquantity2 != null) {
             pquantset = gson.toJson(productquantity2);
         }
+        if (productcategoryid2 != null) {
+            pcategoryset = gson.toJson(productcategoryid2);
+        }
 
-        editor.putString("pidset",pidset);
-        editor.putString("ppriceset",ppriceset);
-        editor.putString("pquantset",pquantset);
-        editor.putString("totleAmount",newprice);
+        editor.putString("pidset", pidset);
+        editor.putString("ppriceset", ppriceset);
+        editor.putString("pquantset", pquantset);
+        editor.putString("totleAmount", newprice);
+        editor.putString("pcatset", pcategoryset);
         editor.apply();
 
     }

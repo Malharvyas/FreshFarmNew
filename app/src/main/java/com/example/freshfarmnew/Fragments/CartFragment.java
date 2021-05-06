@@ -395,6 +395,7 @@ public class CartFragment extends Fragment {
         List<String> productquantity = new ArrayList<>();
         List<String> productprice = new ArrayList<>();
         List<String> productid = new ArrayList<>();
+        List<String> productcategoryid = new ArrayList<>();
         double totleAmount = 0.0;
         for (int i = 0; i < cartModelList.size(); i++) {
             if (cartModelList.get(i).getPrice() != null && cartModelList.get(i).getQuantity() != null) {
@@ -404,13 +405,14 @@ public class CartFragment extends Fragment {
                 productid.add(cartModelList.get(i).getProductId());
                 productprice.add(cartModelList.get(i).getPrice());
                 productquantity.add(cartModelList.get(i).getQuantity());
+                productcategoryid.add(cartModelList.get(i).getCategoryId());
             }
         }
 //        Set<String> pidset = new HashSet<String>();
 //        Set<String> ppriceset = new HashSet<String>();
 //        Set<String> pquantset = new HashSet<String>();
         Gson gson = new Gson();
-        String pidset = null, ppriceset = null, pquantset = null;
+        String pidset = null, ppriceset = null, pquantset = null, pcategoryset = null;
         if (productid != null) {
             pidset = gson.toJson(productid);
         }
@@ -420,11 +422,15 @@ public class CartFragment extends Fragment {
         if (productquantity != null) {
             pquantset = gson.toJson(productquantity);
         }
+        if (productcategoryid != null) {
+            pcategoryset = gson.toJson(productcategoryid);
+        }
         editor.putString("total_items", String.valueOf(cartModelList.size()));
         editor.putString("pidset", pidset);
         editor.putString("ppriceset", ppriceset);
         editor.putString("pquantset", pquantset);
         editor.putString("totleAmount", String.valueOf(totleAmount));
+        editor.putString("pcatset", pcategoryset);
         editor.apply();
         tvTotalAmount.setText("" + totleAmount);
     }

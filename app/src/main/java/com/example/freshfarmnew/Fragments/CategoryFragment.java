@@ -41,7 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CategoryFragment extends Fragment implements CategoryAdapter.onClickListener{
+public class CategoryFragment extends Fragment implements CategoryAdapter.onClickListener {
 
     RecyclerView category_recycler;
     RecyclerView.Adapter adapter;
@@ -64,7 +64,7 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.onClic
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         catlist = new ArrayList<>();
-        adapter = new CategoryAdapter(getContext(),catlist,this,"Category");
+        adapter = new CategoryAdapter(getContext(), catlist, this, "Category");
 //        gridLayoutManager = new GridLayoutManager(getContext(), 3, LinearLayoutManager.VERTICAL, false);
     }
 
@@ -72,8 +72,8 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.onClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_category, container, false);
-        category_recycler  = v.findViewById(R.id.category_recycler);
-        progressBar  = v.findViewById(R.id.progressbar);
+        category_recycler = v.findViewById(R.id.category_recycler);
+        progressBar = v.findViewById(R.id.progressbar);
 
 
         category_recycler.setHasFixedSize(true);
@@ -86,8 +86,7 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.onClic
 
         getCategory();
 
-        if(c1 ==1)
-        {
+        if (c1 == 1) {
             progressBar.setVisibility(View.GONE);
         }
         return v;
@@ -105,7 +104,7 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.onClic
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -113,12 +112,10 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.onClic
                                 JSONObject json2 = json.getJSONObject("CatData");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     catlist.clear();
                                     JSONArray data = json2.getJSONArray("data");
-                                    for(int i = 0; i < data.length(); i++ )
-                                    {
+                                    for (int i = 0; i < data.length(); i++) {
                                         Category category = new Category();
                                         JSONObject catobj = data.getJSONObject(i);
                                         String cat_id = catobj.getString("category_id");
@@ -130,11 +127,9 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.onClic
                                         catlist.add(category);
                                     }
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -142,8 +137,7 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.onClic
                             }
                             adapter.notifyDataSetChanged();
                             c1 = 1;
-                            if(c1 ==1)
-                            {
+                            if (c1 == 1) {
                                 progressBar.setVisibility(View.GONE);
                             }
                         }
@@ -154,32 +148,26 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.onClic
             public void onErrorResponse(VolleyError error) {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -204,11 +192,11 @@ public class CategoryFragment extends Fragment implements CategoryAdapter.onClic
         Category cat = catlist.get(position);
         String cat_id = cat.getCategory_id();
         Bundle b = new Bundle();
-        b.putString("category_id",cat_id);
+        b.putString("category_id", cat_id);
         SubCategoryFragment s = new SubCategoryFragment();
         s.setArguments(b);
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("sub_category");
-        ft.replace(R.id.fragment_container,s);
+        ft.replace(R.id.fragment_container, s);
         ft.commit();
     }
 

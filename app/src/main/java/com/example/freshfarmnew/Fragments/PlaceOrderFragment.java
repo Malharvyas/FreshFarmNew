@@ -64,9 +64,9 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     CardView card_wallet, card_online, card_cash;
     ImageView icon_wallet, icon_online, icon_cash;
     TextView text_wallet1, text_wallet2, text_online, text_cash;
-    EditText promo_code,order_comments;
-    TextView apply_promo, promo_warning, delivery_charges, discount, net_amount,wallet_amount;
-    String url = "", cus_id = "",product_delivery;
+    EditText promo_code, order_comments;
+    TextView apply_promo, promo_warning, delivery_charges, discount, net_amount, wallet_amount;
+    String url = "", cus_id = "", product_delivery;
     ProgressBar progressBar;
     private TextView billed_amount;
     private List<String> pidlist;
@@ -180,13 +180,133 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
         getwalletdetails(cus_id);
 
-
         return v;
-
-
     }
 
     private void getdeliverycharges() {
+        progressBar.setVisibility(View.VISIBLE);
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/getDeliveryCharge");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            progressBar.setVisibility(View.GONE);
+                            JSONObject json = null;
+
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                Log.e("PrintLog", "-----DeliveryResponse----" + response);
+
+                                JSONObject json2 = json.getJSONObject("getDeliveryCharge");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                Log.e("PrintLog", "-----stat----" + stat);
+                                if (stat.equals("true")) {
+
+                                    JSONObject dataJson = json2.getJSONObject("data");
+                                    delivery_charges.setText("" + dataJson.getInt("deliverycharge"));
+
+                                    Log.e("PrintLog", "-----DeliveryResponse----" + dataJson.getInt("deliverycharge"));
+
+                                } else if (stat.equals("false")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.e("PrintLog", "-----getMessage----" + e.getMessage());
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                String pidset = sharedPreferences2.getString("pidset", null);
+                String pquantset = sharedPreferences2.getString("pquantset", null);
+                String ppriceset = sharedPreferences2.getString("ppriceset", null);
+                String pcatset = sharedPreferences2.getString("pcatset", null);
+
+                Gson gson = new Gson();
+                List<String> pidlist = null, pquantlist = null, ppricelist = null, pcatelist = null;
+                if (pidset != null) {
+                    pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
+                if (pquantset != null) {
+                    pquantlist = gson.fromJson(pquantset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
+                if (ppriceset != null) {
+                    ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
+                if (pcatset != null) {
+                    pcatelist = gson.fromJson(pcatset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
+
+                for (int i = 0; i < pidlist.size(); i++) {
+                    params.put("product_data[" + i + "][quantity]", pquantlist.get(i));
+                    params.put("product_data[" + i + "][price]", ppricelist.get(i));
+                    params.put("product_data[" + i + "][product_id]", pidlist.get(i));
+                    params.put("product_data[" + i + "][category_id]", pcatelist.get(i));
+
+                    Log.e("PrintLog", "----" + pidlist.get(i));
+                }
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
     }
 
     private void getwalletdetails(String cus_id) {
@@ -385,8 +505,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
 //                Toast.makeText(getContext(),""+delivery_date,Toast.LENGTH_SHORT).show();
 
-                if(selected.equals("wallet"))
-                {
+                if (selected.equals("wallet")) {
                     if (total_amount == null || total_amount.equals("")) {
                         Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
                     } else {
@@ -395,17 +514,13 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                         double order_amount = Double.parseDouble(total_amount);
                         double wall_amnt = Double.parseDouble(w_amount);
 
-                        if(wall_amnt < order_amount)
-                        {
-                            Toast.makeText(getContext(),"Insufficient wallet balance!!",Toast.LENGTH_SHORT).show();
-                        }
-                        else {
-                            cutwallbalance(cus_id,total_amount);
+                        if (wall_amnt < order_amount) {
+                            Toast.makeText(getContext(), "Insufficient wallet balance!!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            cutwallbalance(cus_id, total_amount);
                         }
                     }
-                }
-                else if(selected.equals("cash"))
-                {
+                } else if (selected.equals("cash")) {
                     if (total_amount == null || total_amount.equals("")) {
                         Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
                     } else {
@@ -447,19 +562,16 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                         String delivery_date = sdf.format(result);
                         String total_amount2 = net_amount.getText().toString();
                         String pay_type = "3";
-                        placeorder(cus_id, addressId, total_amount2, pidlist, pquantlist, ppricelist, delivery_date,pay_type);
+                        placeorder(cus_id, addressId, total_amount2, pidlist, pquantlist, ppricelist, delivery_date, pay_type);
                     }
-                }
-                else if(selected.equals("online"))
-                {
+                } else if (selected.equals("online")) {
                     if (total_amount == null || total_amount.equals("")) {
                         Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
                     } else {
                         makepayment(total_amount);
                     }
-                }
-                else{
-                    Toast.makeText(getContext(),"Please select the mode of payment",Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Please select the mode of payment", Toast.LENGTH_SHORT).show();
                 }
             }
             break;
@@ -491,7 +603,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
-                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("payment_details",Context.MODE_PRIVATE);
+                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("payment_details", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.clear();
                                     editor.apply();
@@ -665,12 +777,12 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                 if (stat.equals("true")) {
                                     int order_id = json2.getInt("data");
 
-                                    SharedPreferences sh1 = getActivity().getSharedPreferences("payment_details",Context.MODE_PRIVATE);
+                                    SharedPreferences sh1 = getActivity().getSharedPreferences("payment_details", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sh1.edit();
                                     editor.clear();
                                     editor.apply();
 
-                                    SharedPreferences sh2 = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                                    SharedPreferences sh2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor2 = sh2.edit();
                                     editor2.clear();
                                     editor2.apply();
@@ -692,10 +804,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     alertDialogBuilder.setCancelable(false);
                                     AlertDialog alertDialog = alertDialogBuilder.create();
                                     alertDialog.show();
-                                    alertDialog.getWindow().setLayout(width,ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    alertDialog.getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
                                     Button ok = popupView.findViewById(R.id.ok);
                                     TextView message = popupView.findViewById(R.id.popup_message);
-                                    message.setText("Your order id is "+order_id+". Please refer to the My Order Section for more details..");
+                                    message.setText("Your order id is " + order_id + ". Please refer to the My Order Section for more details..");
                                     ok.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -754,17 +866,14 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 params.put("scheduled_date", delivery_date);
                 params.put("delivery_time_id", "1");
                 params.put("total_amount", total_amount);
-                if(order_comments.equals(null) || order_comments.equals("")){
+                if (order_comments.equals(null) || order_comments.equals("")) {
 
+                } else {
+                    params.put("comments", comments);
                 }
-                else {
-                    params.put("comments",comments);
-                }
-                if(pay_type.equals("3"))
-                {
+                if (pay_type.equals("3")) {
                     params.put("payment_status", "2");
-                }
-                else {
+                } else {
                     params.put("payment_status", "1");
                 }
                 for (int i = 0; i < pidlist.size(); i++) {
@@ -833,7 +942,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     String min_order_amount = mainobj.getString("min_order_amount");
                                     String max_discount = mainobj.getString("max_discount");
 
-                                    calculateamount(discount_per,min_order_amount,max_discount);
+                                    calculateamount(discount_per, min_order_amount, max_discount);
 
                                 } else if (stat.equals("false")) {
                                     promo_code.clearFocus();
@@ -908,19 +1017,15 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         double order_amnt = Double.parseDouble(order_amount);
         double dis = 0;
 
-        if(order_amnt >= min_order)
-        {
+        if (order_amnt >= min_order) {
             dis = (order_amnt * dis_per) / 100;
-            if(dis < max_dis)
-            {
-                printreceipt(deli,dis);
+            if (dis < max_dis) {
+                printreceipt(deli, dis);
+            } else {
+                printreceipt(deli, max_dis);
             }
-            else{
-                printreceipt(deli,max_dis);
-            }
-        }
-        else{
-            Toast.makeText(getContext(),"Order Should be greater than "+min_order_amount,Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getContext(), "Order Should be greater than " + min_order_amount, Toast.LENGTH_SHORT).show();
         }
     }
 

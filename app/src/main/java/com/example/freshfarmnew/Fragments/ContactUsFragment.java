@@ -106,7 +106,7 @@ public class ContactUsFragment extends Fragment {
                             try {
                                 json = new JSONObject(String.valueOf(response));
                                 JSONObject json2 = json.getJSONObject("createCustomerQuery");
-                                Boolean status = json2.getBoolean("Status");
+                                Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
 

@@ -168,7 +168,7 @@ public class OrderDetailsFragment extends Fragment {
                                     tvDiscount.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getDiscount());
 
                                     if (orderDetailsModel.getTotalAmount() != null && orderDetailsModel.getDeliveryCharge() != null && orderDetailsModel.getDiscount() != null) {
-                                        double total = Double.parseDouble(orderDetailsModel.getTotalAmount()) - Double.parseDouble(orderDetailsModel.getDeliveryCharge()) - Double.parseDouble(orderDetailsModel.getDiscount());
+                                        double total = Double.parseDouble(orderDetailsModel.getTotalAmount()) - Double.parseDouble(orderDetailsModel.getDeliveryCharge()) + Double.parseDouble(orderDetailsModel.getDiscount());
                                         tvTotalAmount.setText(getContext().getResources().getString(R.string.rs) + " " + String.valueOf(total));
                                     }
 

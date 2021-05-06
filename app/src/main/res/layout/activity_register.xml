@@ -142,7 +142,7 @@
                     android:paddingLeft="10dp"
                     android:id="@+id/userpass2"
                     android:background="@drawable/border_edittext"
-                    android:hint="@string/hint_pass1"/>
+                    android:hint="@string/hint_pass2"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 

@@ -48,6 +48,12 @@ public class SearchProductAdapter extends RecyclerView.Adapter<SearchProductAdap
     @Override
     public void onBindViewHolder(@NonNull SearchProductAdapter.ViewHolder holder, int position) {
         Product pro = list.get(position);
+
+        if(pro.getLiked() == true){
+            holder. sav_pro.setImageResource(R.drawable.heart_asset_filled);
+            holder.sav_pro.setTag("filled");
+        }
+
         holder.pro_name.setText(pro.getProduct_name());
 //        holder.pro_price.setText("\u20B9 " + pro.getProduct_price());
 

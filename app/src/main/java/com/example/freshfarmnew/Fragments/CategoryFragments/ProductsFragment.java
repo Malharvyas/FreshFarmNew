@@ -130,6 +130,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                                         String pro_id = catobj.getString("product_id");
                                         String pro_name = catobj.getString("product_name");
                                         String pro_img = catobj.getString("product_image");
+                                        Boolean liked = catobj.getBoolean("liked");
                                         variantionlist = new ArrayList<>();
                                         JSONArray variant = catobj.getJSONArray("variation");
                                         for(int j = 0; j < variant.length(); j++)
@@ -153,6 +154,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                                         product.setProduct_name(pro_name);
                                         product.setProduct_image(pro_img);
                                         product.setVariations(variantionlist);
+                                        product.setLiked(liked);
                                         prolist.add(product);
                                     }
 
@@ -210,6 +212,11 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                 params.put("category_id",category_id);
                 params.put("subcat_id",sub_cat_id);
                 params.put("product_type",all_pro_id);
+                if(cus_id.equals(null) || cus_id.equals(""))
+                {
+
+                }
+                params.put("customer_id",cus_id);
                 return params;
             }
             @Override

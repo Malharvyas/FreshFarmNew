@@ -11,12 +11,13 @@ public class Product {
     public String product_name;
     public String product_image;
     public String product_price;
+    public Boolean liked;
     public List<ProductVariation> variations;
 
     public Product() {
     }
 
-    public Product(String product_id, String SKU, String product_discription, String category_id, String subcat_id, String product_name, String product_image, String product_price, List<ProductVariation> variations) {
+    public Product(String product_id, String SKU, String product_discription, String category_id, String subcat_id, String product_name, String product_image, String product_price, Boolean liked, List<ProductVariation> variations) {
         this.product_id = product_id;
         this.SKU = SKU;
         this.product_discription = product_discription;
@@ -25,7 +26,16 @@ public class Product {
         this.product_name = product_name;
         this.product_image = product_image;
         this.product_price = product_price;
+        this.liked = liked;
         this.variations = variations;
+    }
+
+    public Boolean getLiked() {
+        return liked;
+    }
+
+    public void setLiked(Boolean liked) {
+        this.liked = liked;
     }
 
     public List<ProductVariation> getVariations() {

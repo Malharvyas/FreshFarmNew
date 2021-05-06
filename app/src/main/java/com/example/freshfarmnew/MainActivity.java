@@ -317,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                     badgeDrawable.setBadgeTextColor(Color.parseColor("#FFFFFF"));
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -339,13 +339,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         String stat = status.toString();
                         if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+//                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
-                    Toast.makeText(getApplicationContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
         }) {

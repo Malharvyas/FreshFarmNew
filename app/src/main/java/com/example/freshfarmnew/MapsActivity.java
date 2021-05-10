@@ -41,9 +41,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
@@ -103,7 +105,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        markerOptions = new MarkerOptions().draggable(true);
+
 
         fetchLocation();
 
@@ -113,55 +115,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 savelatlng();
             }
         });
-
-
-//        search = findViewById(R.id.search_map);
-//
-//        Places.initialize(getApplicationContext(),"AIzaSyBA-7g_bDEkgac2Xf6fdajux8Bq9Mk8UqA");
-//
-//        search.setFocusable(false);
-//        search.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS,
-//                        Place.Field.LAT_LNG,Place.Field.NAME);
-//
-//                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY,fieldList).build(MapsActivity.this);
-//                startActivityForResult(intent,100);
-//            }
-//        });
-
-
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                String location = searchView.getQuery().toString();
-//                List<Address> addressList = null;
-//
-//                if (location != null || !location.equals("")) {
-//                    Geocoder geocoder = new Geocoder(MapsActivity.this);
-//                    try {
-//                        addressList = geocoder.getFromLocationName(location, 1);
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Address address = addressList.get(0);
-//                    slatLng = new LatLng(address.getLatitude(), address.getLongitude());
-////                    mMap.addMarker(markerOptions.position(slatLng));
-////                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(slatLng, 10));
-//                    check = 1;
-//                    mapFragment.getMapAsync(MapsActivity.this);
-//
-//                }
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//                return false;
-//            }
-//        });
-//        mapFragment.getMapAsync(this);
     }
 
     private void savelatlng() {
@@ -515,6 +468,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     editor.putString("lat",String.valueOf(currentLocation.getLatitude()));
                     editor.putString("long",String.valueOf(currentLocation.getLongitude()));
                     editor.apply();
+                    Toast.makeText(getApplicationContext(),""+currentLocation.getLongitude(),Toast.LENGTH_SHORT).show();
                     mapFragment.getMapAsync(MapsActivity.this);
                     try {
                         fetchAddress(currentLocation.getLatitude(),currentLocation.getLongitude());
@@ -522,30 +476,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         e.printStackTrace();
                     }
                 }
+                else {
+                    Toast.makeText(getApplicationContext(),"Location null ",Toast.LENGTH_LONG).show();
+                }
             }
-        });
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getApplicationContext(),"Exception : "+e,Toast.LENGTH_LONG).show();
+            }
+        })
+        ;
     }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if(requestCode == 100 && resultCode == RESULT_OK)
-//        {
-//            Place place = Autocomplete.getPlaceFromIntent(data);
-//
-//            Toast.makeText(getApplicationContext(),""+place.getLatLng(),Toast.LENGTH_SHORT).show();
-//        }
-//        else if(resultCode == AutocompleteActivity.RESULT_ERROR)
-//        {
-//            Status status = Autocomplete.getStatusFromIntent(data);
-//            Toast.makeText(getApplicationContext(),""+status.getStatusMessage(),Toast.LENGTH_SHORT).show();
-//        }
-//    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         LatLng latLng;
+        markerOptions = new MarkerOptions().draggable(true);
 
         mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
@@ -579,7 +527,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         markerOptions.position(latLng);
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
-        googleMap.addMarker(markerOptions).setTitle("Hold the marker to drag!");
+        Marker marker = googleMap.addMarker(markerOptions);
+        marker.setTitle("Hold the marker to drag!");
+        marker.setVisible(true);
+        marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
     }
 
 }

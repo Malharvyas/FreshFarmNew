@@ -2,6 +2,7 @@ package com.example.freshfarmnew;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -14,7 +15,11 @@ import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Base64;
+import android.util.DisplayMetrics;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -171,8 +176,9 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         {
             case R.id.nav_login:
             {
-                Intent i = new Intent(getApplicationContext(),login.class);
-                startActivity(i);
+//                Intent i = new Intent(getApplicationContext(),login.class);
+//                startActivity(i);
+                sendotp("5522");
             }
             break;
             case R.id.sign_up:
@@ -248,9 +254,10 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                                 {
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
-                                    Intent i = new Intent(getApplicationContext(),login.class);
-                                    startActivity(i);
-                                    finish();
+//                                    Intent i = new Intent(getApplicationContext(),login.class);
+//                                    startActivity(i);
+//                                    finish();
+                                    sendotp(umob);
                                 }
                                 else if(stat.equals("false"))
                                 {
@@ -327,6 +334,33 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         );
+    }
+
+    private void sendotp(String umob) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupOTPView = inflater.inflate(R.layout.otp_popup, null);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Register.this);
+        alertDialogBuilder.setView(popupOTPView);
+        alertDialogBuilder.setCancelable(false);
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        alertDialog.getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
+        alertDialog.getWindow().setGravity(Gravity.TOP);
+        EditText otp = popupOTPView.findViewById(R.id.reg_otp);
+        Button verify = popupOTPView.findViewById(R.id.reg_verify_otp);
+        verify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userotp = otp.getText().toString();
+            }
+        });
     }
 
     private void checkdata() {

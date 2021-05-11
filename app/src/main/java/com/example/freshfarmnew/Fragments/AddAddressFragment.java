@@ -249,6 +249,7 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // progressbar.setVisibility(View.GONE);
+                Log.e("PrintLog", "----" + error);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if (error instanceof ClientError) {

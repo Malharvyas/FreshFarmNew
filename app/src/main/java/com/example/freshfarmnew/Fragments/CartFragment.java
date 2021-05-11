@@ -316,8 +316,8 @@ public class CartFragment extends Fragment {
                                     }
 
                                     if (quantity.equals("1")) {
-                                        String msg = json2.getString("Message");
-                                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                        //String msg = json2.getString("Message");
+                                        //Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                     }
                                     if (quantity.equals("0")) {
                                         String msg = "Item Removed Successfully";

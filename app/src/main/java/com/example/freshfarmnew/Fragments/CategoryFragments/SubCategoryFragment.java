@@ -42,13 +42,13 @@ import java.util.List;
 import java.util.Map;
 
 
-public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.onClickListener{
+public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.onClickListener {
 
     RecyclerView subcategory_recycler;
     RecyclerView.Adapter adapter;
     List<SubCategory> catlist;
     GridLayoutManager gridLayoutManager;
-    String url = "",category_id;
+    String url = "", category_id;
     ProgressBar progressBar;
     int c1 = 0;
 
@@ -66,7 +66,7 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         catlist = new ArrayList<>();
-        adapter = new SubCategoryAdapter(getContext(),catlist,this,"SubCategory");
+        adapter = new SubCategoryAdapter(getContext(), catlist, this, "SubCategory");
 //        gridLayoutManager = new GridLayoutManager(getContext(), 3, LinearLayoutManager.VERTICAL, false);
     }
 
@@ -74,8 +74,8 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_sub_category, container, false);
-        subcategory_recycler  = v.findViewById(R.id.subcategory_recycler);
-        progressBar  = v.findViewById(R.id.progressbar);
+        subcategory_recycler = v.findViewById(R.id.subcategory_recycler);
+        progressBar = v.findViewById(R.id.progressbar);
 
 
         subcategory_recycler.setHasFixedSize(true);
@@ -84,8 +84,7 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
         subcategory_recycler.setAdapter(adapter);
         subcategory_recycler.addItemDecoration(new GridSpacing(12));
 
-        if(getArguments() != null)
-        {
+        if (getArguments() != null) {
             category_id = getArguments().getString("category_id");
         }
 
@@ -93,13 +92,11 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
 
         getSubCategory(category_id);
 
-        if(c1 == 1)
-        {
+        if (c1 == 1) {
             progressBar.setVisibility(View.GONE);
         }
         return v;
     }
-
 
 
     private void getSubCategory(String category_id) {
@@ -114,7 +111,7 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -122,12 +119,10 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
                                 JSONObject json2 = json.getJSONObject("CatData");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     catlist.clear();
                                     JSONArray data = json2.getJSONArray("data");
-                                    for(int i = 0; i < data.length(); i++ )
-                                    {
+                                    for (int i = 0; i < data.length(); i++) {
                                         SubCategory category = new SubCategory();
                                         JSONObject catobj = data.getJSONObject(i);
                                         String cat_id = catobj.getString("category_id");
@@ -141,20 +136,17 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
                                         catlist.add(category);
                                     }
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                             adapter.notifyDataSetChanged();
-                            c1 =1;
-                            if(c1 == 1)
-                            {
+                            c1 = 1;
+                            if (c1 == 1) {
                                 progressBar.setVisibility(View.GONE);
                             }
 
@@ -166,39 +158,33 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
             public void onErrorResponse(VolleyError error) {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("category_id",category_id);
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("category_id", category_id);
                 return params;
             }
 
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -224,12 +210,12 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
         String cat_id = cat.getCategory_id();
         String sub_cat_id = cat.getSubcat_id();
         Bundle b = new Bundle();
-        b.putString("category_id",cat_id);
-        b.putString("sub_cat_id",sub_cat_id);
+        b.putString("category_id", cat_id);
+        b.putString("sub_cat_id", sub_cat_id);
         ProductsFragment p = new ProductsFragment();
         p.setArguments(b);
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("products");
-        ft.replace(R.id.fragment_container,p);
+        ft.replace(R.id.fragment_container, p);
         ft.commit();
     }
 

@@ -79,7 +79,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     Double netamount;
     String selected = "";
 
-    public PlaceOrderFragment()  {
+    public PlaceOrderFragment() {
         // Required empty public constructor
     }
 
@@ -218,7 +218,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     int deli = dataJson.getInt("deliverycharge");
                                     Double deli2 = new Double(deli);
 
-                                    printreceipt(deli2,0);
+                                    printreceipt(deli2, 0);
 
                                     Log.e("PrintLog", "-----DeliveryResponse----" + dataJson.getInt("deliverycharge"));
 
@@ -865,7 +865,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("customer_id", cus_id);
                 params.put("address_id", addressId);
@@ -874,12 +874,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 params.put("scheduled_date", delivery_date);
                 params.put("delivery_time_id", "1");
                 params.put("total_amount", total_amount);
-                if(sharedPreferences.getString("promo_id","").equals(null) || sharedPreferences.getString("promo_id","").equals(""))
-                {
+                if (sharedPreferences.getString("promo_id", "").equals(null) || sharedPreferences.getString("promo_id", "").equals("")) {
 
-                }
-                else{
-                    params.put("promo_id", sharedPreferences.getString("promo_id",""));
+                } else {
+                    params.put("promo_id", sharedPreferences.getString("promo_id", ""));
                 }
                 params.put("discount", discount.getText().toString());
                 if (order_comments.equals(null) || order_comments.equals("")) {
@@ -955,9 +953,9 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     JSONObject mainobj = data.getJSONObject(0);
 
                                     String promo_id = mainobj.getString("promo_id");
-                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
+                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("promo_id",promo_id);
+                                    editor.putString("promo_id", promo_id);
                                     editor.apply();
 
                                     String discount_per = mainobj.getString("discount_per");

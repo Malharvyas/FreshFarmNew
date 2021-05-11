@@ -39,6 +39,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.google.android.material.textfield.TextInputEditText;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -251,12 +252,15 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                                 String stat = status.toString();
                                 if(stat.equals("true"))
                                 {
+                                    JSONArray jsonArray = json2.getJSONArray("data");
+                                    JSONObject obj = jsonArray.getJSONObject(0);
+                                    String login_token = obj.getString("login_token");
 //                                    String msg = json2.getString("Message");
 //                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
 //                                    Intent i = new Intent(getApplicationContext(),login.class);
 //                                    startActivity(i);
 //                                    finish();
-                                    sendotp(umob);
+                                    sendotp(umob,login_token);
                                 }
                                 else if(stat.equals("false"))
                                 {
@@ -335,7 +339,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         );
     }
 
-    private void sendotp(String umob) {
+    private void sendotp(String umob, String login_token) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupOTPView = inflater.inflate(R.layout.otp_popup, null);
 
@@ -354,6 +358,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         alertDialog.getWindow().setGravity(Gravity.TOP);
         EditText otp = popupOTPView.findViewById(R.id.reg_otp);
         Button verify = popupOTPView.findViewById(R.id.reg_verify_otp);
+        otp.setText(login_token);
         verify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -376,7 +381,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
                                     try {
                                         json = new JSONObject(String.valueOf(response));
-                                        JSONObject json2 = json.getJSONObject("userSignup");
+                                        JSONObject json2 = json.getJSONObject("checkOtp");
                                         Boolean status = json2.getBoolean("status");
                                         String stat = status.toString();
                                         if(stat.equals("true"))
@@ -386,7 +391,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                                             Intent i = new Intent(getApplicationContext(),login.class);
                                             startActivity(i);
                                             finish();
-                                            sendotp(umob);
+                                            sendotp(umob, login_token);
                                         }
                                         else if(stat.equals("false"))
                                         {

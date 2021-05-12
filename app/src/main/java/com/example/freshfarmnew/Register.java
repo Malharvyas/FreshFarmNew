@@ -57,6 +57,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     String device_id,device_name,device_type,device_os;
     int check = 0, check2 = 0,check3 = 0;
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+    String emailPattern1 = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     ProgressBar progressBar;
 
     @Override
@@ -90,7 +91,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable s) {
                 String email = useremail.getText().toString();
-                if(email.matches(emailPattern))
+                if(email.matches(emailPattern1))
                 {
                     check2 = 1;
                 }

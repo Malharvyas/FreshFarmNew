@@ -7,122 +7,144 @@
     tools:context=".login"
     android:background="@drawable/border">
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-    <TextView
-        android:id="@+id/text1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Login"
-        android:textColor="@color/main_color"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/l_mob_number"
-        android:layout_width="0dp"
-        android:layout_height="50sp"
-        android:layout_marginTop="10sp"
-        android:background="@drawable/border_edittext"
-        android:hint="@string/hint_mobile"
-        android:paddingLeft="10dp"
-        android:textSize="18sp"
-        android:inputType="number"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text1" />
-
-<!--    <EditText-->
-<!--        android:id="@+id/l_pass"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="50sp"-->
-<!--        android:layout_marginTop="10sp"-->
-<!--        android:background="@drawable/border_edittext"-->
-<!--        android:hint="@string/hint_pass1"-->
-<!--        android:paddingLeft="10dp"-->
-<!--        android:textSize="18sp"-->
-<!--        android:inputType="textPassword"-->
-<!--        app:layout_constraintLeft_toLeftOf="parent"-->
-<!--        app:layout_constraintRight_toRightOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/l_mob_number" />-->
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="0dp"
-        android:layout_height="50sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/l_mob_number"
-        android:layout_marginTop="10sp"
-        android:id="@+id/pass_layout"
-        style="@style/Widget.Design.TextInputLayout"
-        app:passwordToggleEnabled="true"
-        app:hintEnabled="false">
-
-        <com.google.android.material.textfield.TextInputEditText
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:inputType="textPassword"
-            android:textSize="18sp"
-            android:paddingLeft="10dp"
-            android:id="@+id/l_pass"
-            android:background="@drawable/border_edittext"
-            android:hint="@string/hint_pass1"/>
+            android:layout_height="match_parent">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:id="@+id/logo_image"
+                android:src="@drawable/logo"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Forgot Password?"
-        android:textColor="@color/main_color"
-        app:layout_constraintTop_toBottomOf="@id/pass_layout"
-        android:layout_marginTop="10sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        android:id="@+id/forgot_pass"
-        android:textSize="15sp"/>
 
-    <Button
-        android:id="@+id/login"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15sp"
-        android:text="Login"
-        android:textSize="18sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/forgot_pass" />
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:textColor="@color/main_color"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/logo_image" />
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:src="@drawable/or_image"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/login"
-        android:layout_marginTop="10sp"
-        android:id="@+id/or_image"/>
+            <EditText
+                android:id="@+id/l_mob_number"
+                android:layout_width="0dp"
+                android:layout_height="50sp"
+                android:layout_marginTop="10sp"
+                android:background="@drawable/border_edittext"
+                android:hint="@string/hint_mobile"
+                android:paddingLeft="10dp"
+                android:textSize="18sp"
+                android:inputType="number"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text1" />
 
-    <Button
-        android:id="@+id/nav_signup"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10sp"
-        android:backgroundTint="#374241"
-        android:text="Sign Up"
-        android:textSize="18sp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/or_image" />
+            <!--    <EditText-->
+            <!--        android:id="@+id/l_pass"-->
+            <!--        android:layout_width="0dp"-->
+            <!--        android:layout_height="50sp"-->
+            <!--        android:layout_marginTop="10sp"-->
+            <!--        android:background="@drawable/border_edittext"-->
+            <!--        android:hint="@string/hint_pass1"-->
+            <!--        android:paddingLeft="10dp"-->
+            <!--        android:textSize="18sp"-->
+            <!--        android:inputType="textPassword"-->
+            <!--        app:layout_constraintLeft_toLeftOf="parent"-->
+            <!--        app:layout_constraintRight_toRightOf="parent"-->
+            <!--        app:layout_constraintTop_toBottomOf="@id/l_mob_number" />-->
 
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:id="@+id/progressbar"
-        android:visibility="gone"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="0dp"
+                android:layout_height="50sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/l_mob_number"
+                android:layout_marginTop="10sp"
+                android:id="@+id/pass_layout"
+                style="@style/Widget.Design.TextInputLayout"
+                app:passwordToggleEnabled="true"
+                app:hintEnabled="false">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textPassword"
+                    android:textSize="18sp"
+                    android:paddingLeft="10dp"
+                    android:id="@+id/l_pass"
+                    android:background="@drawable/border_edittext"
+                    android:hint="@string/hint_pass1"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Password?"
+                android:textColor="@color/main_color"
+                app:layout_constraintTop_toBottomOf="@id/pass_layout"
+                android:layout_marginTop="10sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:id="@+id/forgot_pass"
+                android:textSize="15sp"/>
+
+            <Button
+                android:id="@+id/login"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15sp"
+                android:text="Login"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/forgot_pass" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/or_image"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/login"
+                android:layout_marginTop="10sp"
+                android:id="@+id/or_image"/>
+
+            <Button
+                android:id="@+id/nav_signup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10sp"
+                android:backgroundTint="#374241"
+                android:text="Sign Up"
+                android:textSize="18sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/or_image" />
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/progressbar"
+                android:visibility="gone"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

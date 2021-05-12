@@ -6,6 +6,7 @@ import androidx.fragment.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -27,6 +28,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -44,6 +46,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
     String url = "";
     TextView forgot_pass;
     ProgressBar progressBar;
+    TextInputLayout passlayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +59,19 @@ public class login extends AppCompatActivity implements View.OnClickListener {
         login = findViewById(R.id.login);
         forgot_pass = findViewById(R.id.forgot_pass);
         progressBar = findViewById(R.id.progressbar);
+        passlayout = findViewById(R.id.pass_layout);
 
         nav_signup.setOnClickListener(this);
         login.setOnClickListener(this);
         forgot_pass.setOnClickListener(this);
+
+        lpass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                lpass.setBackgroundResource(R.drawable.border_edittext);
+                passlayout.setError(null);
+            }
+        });
 
     }
 
@@ -171,7 +183,9 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                                 else if(stat.equals("false"))
                                 {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+//                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                    passlayout.setError(msg);
+                                    lpass.setBackgroundResource(R.drawable.border_edittext);
                                 }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {

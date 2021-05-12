@@ -167,6 +167,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         nav_location = findViewById(R.id.nav_location);
         navigationView.setNavigationItemSelectedListener(this);
 
+        drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);

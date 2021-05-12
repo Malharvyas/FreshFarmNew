@@ -16,25 +16,34 @@
         android:id="@+id/text1"
         android:textSize="18sp"/>
 
-    <EditText
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/text1"
-        android:background="#eeeeee"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="10dp"
+        android:id="@+id/otp_layout"
+        app:hintEnabled="false"
+        app:errorEnabled="true">
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/border_edittext"
         android:hint="OTP"
-        android:paddingLeft="10dp"
+        android:gravity="center_vertical"
         android:textSize="18sp"
         android:id="@+id/reg_otp"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/reg_otp"
-        app:layout_constraintRight_toRightOf="@id/reg_otp"
-        app:layout_constraintTop_toBottomOf="@id/reg_otp"
+        app:layout_constraintLeft_toLeftOf="@id/otp_layout"
+        app:layout_constraintRight_toRightOf="@id/otp_layout"
+        app:layout_constraintTop_toBottomOf="@id/otp_layout"
         android:layout_marginTop="10dp"
         android:text="Verify"
         android:gravity="center"

@@ -44,14 +44,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Delivery Location"
+                        android:textSize="18sp"
                         android:textColor="#FFFFFF"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
                         android:id="@+id/nav_location"
-                        android:layout_width="15dp"
-                        android:layout_height="15dp"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
                         android:layout_alignTop="@id/text11"
                         android:src="@drawable/ic_baseline_mode_edit_24"
                         app:layout_constraintLeft_toLeftOf="parent"

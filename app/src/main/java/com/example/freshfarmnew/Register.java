@@ -38,6 +38,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -59,6 +60,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     String emailPattern1 = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     ProgressBar progressBar;
+    TextInputLayout otp_layout;
+    TextInputEditText otp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +79,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         sign_up = findViewById(R.id.sign_up);
         term_policy = findViewById(R.id.term_policy_check);
         progressBar = findViewById(R.id.progressbar);
+        otp_layout = findViewById(R.id.otp_layout);
+
 
         useremail.addTextChangedListener(new TextWatcher() {
             @Override
@@ -357,9 +362,15 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         alertDialog.show();
         alertDialog.getWindow().setLayout(width, ViewGroup.LayoutParams.WRAP_CONTENT);
         alertDialog.getWindow().setGravity(Gravity.TOP);
-        EditText otp = popupOTPView.findViewById(R.id.reg_otp);
+        otp = popupOTPView.findViewById(R.id.reg_otp);
         Button verify = popupOTPView.findViewById(R.id.reg_verify_otp);
         otp.setText(login_token);
+        otp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                otp_layout.setError(null);
+            }
+        });
         verify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -392,12 +403,13 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                                             Intent i = new Intent(getApplicationContext(),login.class);
                                             startActivity(i);
                                             finish();
-                                            sendotp(umob, login_token);
                                         }
                                         else if(stat.equals("false"))
                                         {
                                             String msg = json2.getString("Message");
-                                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+//                                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                            otp_layout.setError(msg);
+                                            otp.setBackgroundResource(R.drawable.border_edittext);
                                         }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                                     } catch (Exception e) {

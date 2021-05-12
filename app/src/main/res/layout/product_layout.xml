@@ -16,6 +16,20 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="19% OFF"
+        android:textSize="11sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="20dp"
+        android:background="#228B22"
+        android:textColor="#FFFFFF"
+        android:padding="5dp"
+        android:id="@+id/pro_discount_percent"/>
+
+    <TextView
         android:id="@+id/pro_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,15 +41,35 @@
         app:layout_constraintTop_toBottomOf="@id/pro_img" />
 
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="₹75"
+        android:layout_marginLeft="15sp"
+        android:layout_marginTop="5sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pro_name"
+        android:id="@+id/pro_effective_price"
+        android:textSize="16sp"/>
+
+    <View
+        android:layout_width="35dp"
+        android:layout_height="2dp"
+        android:background="#757575"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pro_name"
+        android:layout_marginLeft="10sp"
+        android:layout_marginTop="15sp"/>
+
+    <TextView
         android:id="@+id/pro_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15sp"
+        android:layout_marginLeft="5sp"
         android:layout_marginTop="5sp"
         android:text=""
         android:textColor="@color/main_color"
         android:textSize="16sp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/pro_effective_price"
         app:layout_constraintTop_toBottomOf="@id/pro_name" />
 
     <TextView

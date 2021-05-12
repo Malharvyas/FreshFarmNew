@@ -14,6 +14,7 @@ import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -40,6 +41,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
     String url = "";
     ConstraintLayout otp_layot,reset_pass;
     int check = 0, check2 = 0;
+    ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +57,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
         f_pass1 = reset_pass.findViewById(R.id.f_pass1);
         f_pass2 = reset_pass.findViewById(R.id.f_pass2);
         f_change = reset_pass.findViewById(R.id.f_change);
+        progressBar = findViewById(R.id.progressbar);
 
 
         f_send.setOnClickListener(this);
@@ -141,6 +144,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
     }
 
     private void sendtoapi(String upass1, String upass2, String c_id) {
+        progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/resetPassword");
@@ -150,6 +154,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if(response != null) {
@@ -167,6 +172,10 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
                                     startActivity(new Intent(getApplicationContext(),login.class));
                                     finish();
                                 }
+                                else if(stat.equals("false")){
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -177,6 +186,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if(error instanceof ClientError)
@@ -248,6 +258,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
     }
 
     private void sendverfication(String email) {
+        progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/forgotPassword");
@@ -257,6 +268,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if(response != null) {
@@ -283,6 +295,11 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
                                     reset_pass.setVisibility(View.GONE);
                                     otp_layot.setVisibility(View.VISIBLE);
                                 }
+                                else if(stat.equals("false"))
+                                {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -293,6 +310,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                progressBar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if(error instanceof ClientError)

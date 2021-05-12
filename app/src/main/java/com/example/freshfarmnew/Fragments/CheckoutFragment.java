@@ -48,6 +48,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class CheckoutFragment extends Fragment {
 
     List<AddressDataModel> addressDataModels = new ArrayList<>();
@@ -59,6 +61,7 @@ public class CheckoutFragment extends Fragment {
     private Button btnAddAddress;
     private Button btnContinue, btnPayment;
     private String selectedAddressId = "";
+    GifImageView nodata;
 
     public CheckoutFragment() {
         // Required empty public constructor
@@ -90,6 +93,7 @@ public class CheckoutFragment extends Fragment {
         btnContinue = v.findViewById(R.id.btnContinue);
         btnPayment = v.findViewById(R.id.btnPayment);
         progressbar = v.findViewById(R.id.progressbar);
+        nodata = v.findViewById(R.id.nodata);
 
         if (getArguments() != null) {
             if (getArguments().containsKey("amount")) {
@@ -214,7 +218,14 @@ public class CheckoutFragment extends Fragment {
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                     addressDataModels.remove(position);
-                                    checkOutAdapter.notifyDataSetChanged();
+                                    if(addressDataModels.isEmpty()){
+//                                        recyclerView.setVisibility(View.GONE);
+                                        nodata.setVisibility(View.VISIBLE);
+                                        checkOutAdapter.notifyDataSetChanged();
+                                    }
+                                    else{
+                                        checkOutAdapter.notifyDataSetChanged();
+                                    }
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
@@ -313,7 +324,14 @@ public class CheckoutFragment extends Fragment {
                                     }.getType();
 
                                     addressDataModels.addAll(gson.fromJson(dataStr, cartListType));
-                                    checkOutAdapter.notifyDataSetChanged();
+                                    if(addressDataModels.isEmpty()){
+//                                        recyclerView.setVisibility(View.GONE);
+                                        nodata.setVisibility(View.VISIBLE);
+                                    }
+                                    else{
+                                        checkOutAdapter.notifyDataSetChanged();
+                                    }
+
 
                                     //calculateTotalAmount(addressDataModels);
 
@@ -321,7 +339,8 @@ public class CheckoutFragment extends Fragment {
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+//                                    recyclerView.setVisibility(View.GONE);
+                                    nodata.setVisibility(View.VISIBLE);
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();

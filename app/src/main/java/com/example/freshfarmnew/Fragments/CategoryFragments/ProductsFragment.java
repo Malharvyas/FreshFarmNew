@@ -41,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pl.droidsonroids.gif.GifImageView;
+
 public class ProductsFragment extends Fragment implements ProductAdapter.onClickListener{
 
     String url = "",cus_id="";
@@ -51,6 +53,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
     String category_id,sub_cat_id,all_pro_id="1";
     ProgressBar progressBar;
     int c1 = 0;
+    GifImageView nodata;
 
     public ProductsFragment() {
         // Required empty public constructor
@@ -77,6 +80,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
         View v = inflater.inflate(R.layout.fragment_products, container, false);
         product_recycler = v.findViewById(R.id.product_recycler);
         progressBar = v.findViewById(R.id.progressbar);
+        nodata = v.findViewById(R.id.nodata);
 
         product_recycler.setHasFixedSize(true);
         product_recycler.setItemAnimator(new DefaultItemAnimator());
@@ -168,7 +172,14 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            adapter.notifyDataSetChanged();
+                            if(prolist.isEmpty()){
+                                product_recycler.setVisibility(View.GONE);
+                                nodata.setVisibility(View.VISIBLE);
+                            }
+                            else {
+                                adapter.notifyDataSetChanged();
+                            }
+
                             c1 = 1;
                             if(c1 == 1)
                             {

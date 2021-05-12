@@ -41,6 +41,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import pl.droidsonroids.gif.GifImageView;
+
 
 public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.onClickListener {
 
@@ -51,6 +53,7 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
     String url = "", category_id;
     ProgressBar progressBar;
     int c1 = 0;
+    GifImageView nodata;
 
     public SubCategoryFragment() {
         // Required empty public constructor
@@ -76,6 +79,8 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
         View v = inflater.inflate(R.layout.fragment_sub_category, container, false);
         subcategory_recycler = v.findViewById(R.id.subcategory_recycler);
         progressBar = v.findViewById(R.id.progressbar);
+
+        nodata = v.findViewById(R.id.nodata);
 
 
         subcategory_recycler.setHasFixedSize(true);
@@ -144,7 +149,14 @@ public class SubCategoryFragment extends Fragment implements SubCategoryAdapter.
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            adapter.notifyDataSetChanged();
+                            if(catlist.isEmpty())
+                            {
+                                subcategory_recycler.setVisibility(View.GONE);
+                                nodata.setVisibility(View.VISIBLE);
+                            }
+                            else {
+                                adapter.notifyDataSetChanged();
+                            }
                             c1 = 1;
                             if (c1 == 1) {
                                 progressBar.setVisibility(View.GONE);

@@ -484,7 +484,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 progressBar.setVisibility(View.VISIBLE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                url = url.concat("freshfarm/api/ApiController/checkOtp");
+                url = url.concat("freshfarm/api/ApiController/resendOtp");
                 RequestQueue volleyRequestQueue = Volley.newRequestQueue(getApplicationContext());
 
                 StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -499,16 +499,15 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
                                     try {
                                         json = new JSONObject(String.valueOf(response));
-                                        JSONObject json2 = json.getJSONObject("checkOtp");
+                                        JSONObject json2 = json.getJSONObject("resendOtp");
                                         Boolean status = json2.getBoolean("status");
                                         String stat = status.toString();
                                         if(stat.equals("true"))
                                         {
-                                            String msg = json2.getString("Message");
-                                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
-                                            Intent i = new Intent(getApplicationContext(),login.class);
-                                            startActivity(i);
-                                            finish();
+                                            JSONObject data = json2.getJSONObject("data");
+                                            String login_token = data.getString("login_token");
+                                            otp.setText(login_token);
+                                            Toast.makeText(getApplicationContext(),"OTP sent successfully",Toast.LENGTH_LONG).show();
                                         }
                                         else if(stat.equals("false"))
                                         {

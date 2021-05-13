@@ -52,8 +52,8 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public void onBindViewHolder(@NonNull ProductAdapter.ViewHolder holder, int position) {
         Product pro = list.get(position);
 
-        if(pro.getLiked() == true){
-            holder. sav_pro.setImageResource(R.drawable.heart_asset_filled);
+        if (pro.getLiked() == true) {
+            holder.sav_pro.setImageResource(R.drawable.heart_asset_filled);
             holder.sav_pro.setTag("filled");
         }
 
@@ -86,6 +86,23 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                     String selected = holder.varspineer.getSelectedItem().toString();
                     if (item.equals(selected)) {
                         holder.pro_price.setText("\u20B9 " + pv.getPrice());
+
+                        if (!pv.getProduct_discount().equals("null")) {
+                            holder.pro_discount_percent.setVisibility(View.VISIBLE);
+                            holder.pro_discount_percent.setText(pv.getProduct_discount() + "% OFF");
+                        } else {
+                            holder.pro_discount_percent.setVisibility(View.GONE);
+                        }
+
+                        if (!pv.getMarket_price().equals("null")) {
+                            holder.product_effective_price.setVisibility(View.VISIBLE);
+                            holder.view.setVisibility(View.VISIBLE);
+                            holder.product_effective_price.setText(pv.getMarket_price());
+                        } else {
+                            holder.product_effective_price.setVisibility(View.INVISIBLE);
+                            holder.view.setVisibility(View.INVISIBLE);
+                        }
+
                         SharedPreferences sharedPreferences = context.getSharedPreferences("temp", Context.MODE_PRIVATE);
                         int proidcheck = sharedPreferences.getInt(pv.getProduct_id(), 0);
                         if (proidcheck == 1) {
@@ -141,6 +158,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Button trend_add;
         Spinner varspineer;
         TextView plus, minus, quant_val;
+        TextView pro_discount_percent;
+        TextView product_effective_price;
+        View view;
 
         public ViewHolder(@NonNull View itemView, onClickListener onClickListener) {
             super(itemView);
@@ -155,6 +175,9 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             minus = itemView.findViewById(R.id.minus);
             quant_val = itemView.findViewById(R.id.quant_val);
             sav_pro = itemView.findViewById(R.id.save_product);
+            pro_discount_percent = itemView.findViewById(R.id.pro_discount_percent);
+            product_effective_price = itemView.findViewById(R.id.product_effective_price);
+            view = itemView.findViewById(R.id.view);
 
             pro_img.setOnClickListener(this);
 

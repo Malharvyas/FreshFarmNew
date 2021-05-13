@@ -77,6 +77,22 @@ public class TrendingAdapter extends RecyclerView.Adapter<TrendingAdapter.ViewHo
                     if (item.equals(selected)) {
 
                         holder.pro_price.setText("\u20B9 " + pv.getPrice());
+
+                        if (!pv.getProduct_discount().equals("null")) {
+                            holder.pro_discount_percent.setVisibility(View.VISIBLE);
+                            holder.pro_discount_percent.setText(pv.getProduct_discount() + "% OFF");
+                        } else {
+                            holder.pro_discount_percent.setVisibility(View.GONE);
+                        }
+
+                        if (!pv.getMarket_price().equals("null")) {
+                            holder.pro_effective_price.setVisibility(View.VISIBLE);
+                            holder.view.setVisibility(View.VISIBLE);
+                            holder.pro_effective_price.setText(pv.getMarket_price());
+                        } else {
+                            holder.pro_effective_price.setVisibility(View.INVISIBLE);
+                            holder.view.setVisibility(View.INVISIBLE);
+                        }
                         SharedPreferences sharedPreferences = context.getSharedPreferences("temp", Context.MODE_PRIVATE);
                         int proidcheck = sharedPreferences.getInt(pv.getProduct_id(), 0);
                         if (proidcheck == 1) {
@@ -131,6 +147,8 @@ public class TrendingAdapter extends RecyclerView.Adapter<TrendingAdapter.ViewHo
         TextView pro_name, pro_price, trend_add;
         Spinner varspineer;
         TextView plus, minus, quant_val;
+        TextView pro_discount_percent, pro_effective_price;
+        View view;
 
         public ViewHolder(@NonNull View itemView, onClickListener onClickListener) {
             super(itemView);
@@ -144,6 +162,9 @@ public class TrendingAdapter extends RecyclerView.Adapter<TrendingAdapter.ViewHo
             plus = itemView.findViewById(R.id.plus);
             minus = itemView.findViewById(R.id.minus);
             quant_val = itemView.findViewById(R.id.quant_val);
+            pro_discount_percent = itemView.findViewById(R.id.pro_discount_percent);
+            pro_effective_price = itemView.findViewById(R.id.pro_effective_price);
+            view = itemView.findViewById(R.id.view);
 
             pro_img.setOnClickListener(this);
 

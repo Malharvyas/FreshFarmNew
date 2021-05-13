@@ -43,14 +43,14 @@ import java.util.Map;
 
 import pl.droidsonroids.gif.GifImageView;
 
-public class ProductsFragment extends Fragment implements ProductAdapter.onClickListener{
+public class ProductsFragment extends Fragment implements ProductAdapter.onClickListener {
 
-    String url = "",cus_id="";
+    String url = "", cus_id = "";
     RecyclerView product_recycler;
     RecyclerView.Adapter adapter;
     List<Product> prolist;
     List<ProductVariation> variantionlist;
-    String category_id,sub_cat_id,all_pro_id="1";
+    String category_id, sub_cat_id, all_pro_id = "1";
     ProgressBar progressBar;
     int c1 = 0;
     GifImageView nodata;
@@ -68,10 +68,10 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prolist = new ArrayList<>();
-        adapter = new ProductAdapter(getContext(),prolist,this);
+        adapter = new ProductAdapter(getContext(), prolist, this);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
-        cus_id = sharedPreferences.getString("customer_id","");
+        cus_id = sharedPreferences.getString("customer_id", "");
     }
 
     @Override
@@ -86,18 +86,16 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
         product_recycler.setItemAnimator(new DefaultItemAnimator());
         product_recycler.setAdapter(adapter);
 
-        if(getArguments() != null)
-        {
+        if (getArguments() != null) {
             category_id = getArguments().getString("category_id");
             sub_cat_id = getArguments().getString("sub_cat_id");
         }
 
         progressBar.setVisibility(View.VISIBLE);
 
-        getProducts(category_id,sub_cat_id,all_pro_id);
+        getProducts(category_id, sub_cat_id, all_pro_id);
 
-        if(c1 == 1)
-        {
+        if (c1 == 1) {
             progressBar.setVisibility(View.GONE);
         }
         return v;
@@ -115,7 +113,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -123,12 +121,10 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                                 JSONObject json2 = json.getJSONObject("getProduct");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     prolist.clear();
                                     JSONArray data = json2.getJSONArray("data");
-                                    for(int i = 0; i < data.length(); i++ )
-                                    {
+                                    for (int i = 0; i < data.length(); i++) {
                                         Product product = new Product();
                                         JSONObject catobj = data.getJSONObject(i);
                                         String pro_id = catobj.getString("product_id");
@@ -137,8 +133,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                                         Boolean liked = catobj.getBoolean("liked");
                                         variantionlist = new ArrayList<>();
                                         JSONArray variant = catobj.getJSONArray("variation");
-                                        for(int j = 0; j < variant.length(); j++)
-                                        {
+                                        for (int j = 0; j < variant.length(); j++) {
                                             ProductVariation pv = new ProductVariation();
                                             JSONObject varobj = variant.getJSONObject(j);
                                             String v_id = varobj.getString("v_id");
@@ -146,11 +141,15 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                                             String price = varobj.getString("price");
                                             String product_id = varobj.getString("product_id");
                                             String unit_val = varobj.getString("unit_val");
+                                            String market_price = varobj.getString("market_price");
+                                            String product_discount = varobj.getString("product_discount");
                                             pv.setV_id(v_id);
                                             pv.setProduct_id(product_id);
                                             pv.setPrice(price);
                                             pv.setUnit(unit);
                                             pv.setUnit_val(unit_val);
+                                            pv.setMarket_price(market_price);
+                                            pv.setProduct_discount(product_discount);
 //                                            Toast.makeText(getContext(),""+unit,Toast.LENGTH_SHORT).show();
                                             variantionlist.add(pv);
                                         }
@@ -162,27 +161,23 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                                         prolist.add(product);
                                     }
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getContext(),""+catlist.size(),Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            if(prolist.isEmpty()){
+                            if (prolist.isEmpty()) {
                                 product_recycler.setVisibility(View.GONE);
                                 nodata.setVisibility(View.VISIBLE);
-                            }
-                            else {
+                            } else {
                                 adapter.notifyDataSetChanged();
                             }
 
                             c1 = 1;
-                            if(c1 == 1)
-                            {
+                            if (c1 == 1) {
                                 progressBar.setVisibility(View.GONE);
                             }
                         }
@@ -193,45 +188,39 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
             public void onErrorResponse(VolleyError error) {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("category_id",category_id);
-                params.put("subcat_id",sub_cat_id);
-                params.put("product_type",all_pro_id);
-                if(cus_id.equals(null) || cus_id.equals(""))
-                {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("category_id", category_id);
+                params.put("subcat_id", sub_cat_id);
+                params.put("product_type", all_pro_id);
+                if (cus_id.equals(null) || cus_id.equals("")) {
 
                 }
-                params.put("customer_id",cus_id);
+                params.put("customer_id", cus_id);
                 return params;
             }
+
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -256,11 +245,11 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
         Product p = prolist.get(position);
         String p_id = p.getProduct_id();
         Bundle b = new Bundle();
-        b.putString("product_id",p_id);
+        b.putString("product_id", p_id);
         ProductDetailsFragment pdf = new ProductDetailsFragment();
         pdf.setArguments(b);
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("product_details");
-        ft.replace(R.id.fragment_container,pdf);
+        ft.replace(R.id.fragment_container, pdf);
         ft.commit();
     }
 
@@ -278,7 +267,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -286,24 +275,21 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                                 JSONObject json2 = json.getJSONObject("addtocart");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     progressBar.setVisibility(View.GONE);
-                                    if(quantity.equals("1")){
+                                    if (quantity.equals("1")) {
                                         String msg = json2.getString("Message");
-                                        Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                     }
-                                    if(quantity.equals("0")){
+                                    if (quantity.equals("0")) {
                                         String msg = "Item Removed Successfully";
-                                        Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                     }
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     progressBar.setVisibility(View.GONE);
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -318,30 +304,24 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 progressBar.setVisibility(View.GONE);
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
@@ -353,7 +333,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
             }
 
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -375,109 +355,98 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
 
     @Override
     public void onSaved(int position, String product_id, int quantity) {
-            progressBar.setVisibility(View.VISIBLE);
-            BaseUrl b = new BaseUrl();
-            url = b.url;
-            url = url.concat("freshfarm/api/ApiController/addtowishlist");
-            RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+        progressBar.setVisibility(View.VISIBLE);
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/addtowishlist");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
 
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            progressBar.setVisibility(View.GONE);
-                            BaseUrl b = new BaseUrl();
-                            url = b.url;
-                            if(response != null) {
-                                JSONObject json = null;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        progressBar.setVisibility(View.GONE);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
 
-                                try {
-                                    json = new JSONObject(String.valueOf(response));
-                                    JSONObject json2 = json.getJSONObject("addtocart");
-                                    Boolean status = json2.getBoolean("status");
-                                    String stat = status.toString();
-                                    if(stat.equals("true"))
-                                    {
-                                        progressBar.setVisibility(View.GONE);
-                                        if(quantity == 1)
-                                        {
-                                            Toast.makeText(getContext(),"Product Saved",Toast.LENGTH_SHORT).show();
-                                        }
-                                        else if(quantity == 0){
-                                            Toast.makeText(getContext(),"Product UnSaved",Toast.LENGTH_SHORT).show();
-                                        }
-
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2 = json.getJSONObject("addtocart");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                if (stat.equals("true")) {
+                                    progressBar.setVisibility(View.GONE);
+                                    if (quantity == 1) {
+                                        Toast.makeText(getContext(), "Product Saved", Toast.LENGTH_SHORT).show();
+                                    } else if (quantity == 0) {
+                                        Toast.makeText(getContext(), "Product UnSaved", Toast.LENGTH_SHORT).show();
                                     }
-                                    else if(stat.equals("false"))
-                                    {
-                                        progressBar.setVisibility(View.GONE);
-                                        String msg = json2.getString("Message");
-                                        Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
-                                    }
-//                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+
+                                } else if (stat.equals("false")) {
+                                    progressBar.setVisibility(View.GONE);
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
-                            }
-
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    BaseUrl b = new BaseUrl();
-                    url = b.url;
-                    progressBar.setVisibility(View.GONE);
-                    if(error instanceof ClientError)
-                    {
-                        try{
-                            String responsebody = new String(error.networkResponse.data,"utf-8");
-                            JSONObject data = new JSONObject(responsebody);
-                            Boolean status = data.getBoolean("status");
-                            String stat = status.toString();
-                            if(stat.equals("false"))
-                            {
-                                String msg = data.getString("Message");
-                                Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+//                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
                         }
-                        catch (Exception e)
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                    else
-                    {
-                        Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }){
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> params = new HashMap<String, String>();
-                    params.put("customer_id", cus_id);
-                    params.put("product_id", product_id);
-                    return params;
-                }
 
-                @Override
-                public Map<String,String> getHeaders() throws AuthFailureError {
-                    Map<String, String> headers = new HashMap<>();
-                    String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
-                    String auth = "Basic "
-                            + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                    headers.put("Authorization", auth);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                progressBar.setVisibility(View.GONE);
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                params.put("product_id", product_id);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
 //                headers.put("x-api-key","HRCETCRACKER@123");
 //                headers.put("Content-Type", "application/form-data");
-                    return headers;
-                }
+                return headers;
+            }
 
-            };
-            volleyRequestQueue.add(stringRequest);
-            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
-                    10000,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
-            );
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
     }
 
     @Override

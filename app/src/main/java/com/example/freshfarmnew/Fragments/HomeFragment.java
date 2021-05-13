@@ -193,11 +193,16 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                             String price = varobj.getString("price");
                                             String product_id = varobj.getString("product_id");
                                             String unit_val = varobj.getString("unit_val");
+                                            String market_price = varobj.getString("market_price");
+                                            String product_discount = varobj.getString("product_discount");
                                             pv.setV_id(v_id);
                                             pv.setProduct_id(product_id);
                                             pv.setPrice(price);
                                             pv.setUnit(unit);
                                             pv.setUnit_val(unit_val);
+                                            pv.setMarket_price(market_price);
+                                            pv.setProduct_discount(product_discount);
+
 //                                            Toast.makeText(getContext(),""+unit,Toast.LENGTH_SHORT).show();
                                             variantionlist.add(pv);
                                         }
@@ -316,11 +321,15 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                             String price = varobj.getString("price");
                                             String product_id = varobj.getString("product_id");
                                             String unit_val = varobj.getString("unit_val");
+                                            String market_price = varobj.getString("market_price");
+                                            String product_discount = varobj.getString("product_discount");
                                             pv.setV_id(v_id);
                                             pv.setProduct_id(product_id);
                                             pv.setPrice(price);
                                             pv.setUnit(unit);
                                             pv.setUnit_val(unit_val);
+                                            pv.setMarket_price(market_price);
+                                            pv.setProduct_discount(product_discount);
 //                                            Toast.makeText(getContext(),""+unit,Toast.LENGTH_SHORT).show();
                                             variantionlist2.add(pv);
                                         }

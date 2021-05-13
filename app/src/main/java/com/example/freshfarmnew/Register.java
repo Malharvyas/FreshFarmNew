@@ -16,7 +16,6 @@ import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.util.Base64;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,13 +50,13 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
     String url = "";
     TextView textView;
-    Button nav_login, sign_up;
+    Button nav_login,sign_up;
     CheckBox term_policy;
-    EditText username, mob_number, useremail, referral;
-    TextInputEditText userpass1, userpass2;
-    String uname, umob, uemail, upass1, upass2, uref;
-    String device_id, device_name, device_type, device_os;
-    int check = 0, check2 = 0, check3 = 0;
+    EditText username,mob_number,useremail,referral;
+    TextInputEditText userpass1,userpass2;
+    String uname,umob,uemail,upass1,upass2,uref;
+    String device_id,device_name,device_type,device_os;
+    int check = 0, check2 = 0,check3 = 0;
     String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     String emailPattern1 = "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     ProgressBar progressBar;
@@ -97,9 +96,12 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable s) {
                 String email = useremail.getText().toString();
-                if (email.matches(emailPattern1)) {
+                if(email.matches(emailPattern1))
+                {
                     check2 = 1;
-                } else {
+                }
+                else
+                {
                     check2 = 0;
                     useremail.setError("Please enter a valid email");
                 }
@@ -116,9 +118,12 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String pass1 = userpass1.getText().toString();
                 String pass2 = userpass2.getText().toString();
-                if (pass2.equals(pass1)) {
+                if(pass2.equals(pass1))
+                {
                     check3 = 1;
-                } else {
+                }
+                else
+                {
                     check3 = 0;
                     userpass2.setError("Password does not matches");
                 }
@@ -144,18 +149,18 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         ClickableSpan firstwordClick = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
-                startActivity(new Intent(getApplicationContext(), Terms.class));
+                startActivity(new Intent(getApplicationContext(),Terms.class));
             }
         };
         ClickableSpan secondwordClick = new ClickableSpan() {
             @Override
             public void onClick(View widget) {
-                startActivity(new Intent(getApplicationContext(), PrivacyPolicy.class));
+                startActivity(new Intent(getApplicationContext(),PrivacyPolicy.class));
             }
         };
 
-        myString.setSpan(firstwordClick, firstIndex, firstIndex + first.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        myString.setSpan(secondwordClick, secondIndex, secondIndex + second.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        myString.setSpan(firstwordClick,firstIndex, firstIndex+first.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        myString.setSpan(secondwordClick,secondIndex, secondIndex+second.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         textView.setLinksClickable(true);
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setText(myString, TextView.BufferType.SPANNABLE);
@@ -174,18 +179,25 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.nav_login: {
-                Intent i = new Intent(getApplicationContext(), login.class);
+        switch (v.getId())
+        {
+            case R.id.nav_login:
+            {
+                Intent i = new Intent(getApplicationContext(),login.class);
                 startActivity(i);
             }
             break;
-            case R.id.sign_up: {
+            case R.id.sign_up:
+            {
                 checkdata();
-                if (check == 1) {
-                    if (check2 == 1) {
-                        if (check3 == 1) {
-                            if (term_policy.isChecked()) {
+                if(check == 1)
+                {
+                    if(check2 == 1)
+                    {
+                        if(check3 == 1)
+                        {
+                            if(term_policy.isChecked())
+                            {
                                 uname = username.getText().toString();
                                 umob = mob_number.getText().toString();
                                 uemail = useremail.getText().toString();
@@ -196,27 +208,33 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                                 device_name = Build.MODEL;
                                 device_type = "Android";
                                 device_os = String.valueOf(Build.VERSION.SDK_INT);
-                                senddatatoapi(uname, umob, uemail, upass1, upass2, uref, device_id, device_name, device_type, device_os);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "Please accept the terms and privacy policy", Toast.LENGTH_SHORT).show();
+                                senddatatoapi(uname,umob,uemail,upass1,upass2,uref,device_id,device_name,device_type,device_os);
+                            }
+                            else
+                            {
+                                Toast.makeText(getApplicationContext(),"Please accept the terms and privacy policy",Toast.LENGTH_SHORT).show();
                             }
 
-                        } else {
-                            Toast.makeText(getApplicationContext(), "You cannot register without correcting errors", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(),"You cannot register without correcting errors",Toast.LENGTH_SHORT).show();
                         }
 
-                    } else {
-                        Toast.makeText(getApplicationContext(), "You cannot register without correcting errors", Toast.LENGTH_SHORT).show();
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), "You cannot register without correcting errors", Toast.LENGTH_SHORT).show();
+                    else{
+                        Toast.makeText(getApplicationContext(),"You cannot register without correcting errors",Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"You cannot register without correcting errors",Toast.LENGTH_SHORT).show();
                 }
             }
             break;
         }
     }
 
-    private void senddatatoapi(String uname, String umob, String uemail, String upass1, String upass2, String uref, String device_id, String device_name, String device_type, String device_os) {
+    private void senddatatoapi(String uname, String umob, String uemail, String upass1,String upass2, String uref, String device_id, String device_name, String device_type, String device_os) {
         progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
@@ -227,12 +245,10 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Log.e("printLog", "===signup===" + response);
-
                         progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if (response != null) {
+                        if(response != null) {
                             JSONObject json = null;
 
                             try {
@@ -240,7 +256,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                                 JSONObject json2 = json.getJSONObject("userSignup");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if (stat.equals("true")) {
+                                if(stat.equals("true"))
+                                {
                                     JSONArray jsonArray = json2.getJSONArray("data");
                                     JSONObject obj = jsonArray.getJSONObject(0);
                                     String login_token = obj.getString("login_token");
@@ -249,10 +266,12 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 //                                    Intent i = new Intent(getApplicationContext(),login.class);
 //                                    startActivity(i);
 //                                    finish();
-                                    sendotp(umob, login_token);
-                                } else if (stat.equals("false")) {
+                                    sendotp(umob,login_token);
+                                }
+                                else if(stat.equals("false"))
+                                {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -267,41 +286,46 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 progressBar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if (error instanceof ClientError) {
-                    try {
-                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                if(error instanceof ClientError)
+                {
+                    try{
+                        String responsebody = new String(error.networkResponse.data,"utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if (stat.equals("false")) {
+                        if(stat.equals("false"))
+                        {
                             String msg = data.getString("message");
-                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
                         }
-                    } catch (Exception e) {
+                    }
+                    catch (Exception e)
+                    {
                         e.printStackTrace();
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
                 }
             }
-        }) {
+        }){
             @Override
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("customer_name", uname);
-                params.put("customer_email", uemail);
-                params.put("customer_phone", umob);
-                params.put("password", upass1);
-                params.put("passconf", upass2);
-                params.put("device_uid", device_id);
-                params.put("device_name", device_name);
-                params.put("device_type", device_type);
-                params.put("os_version", device_os);
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("customer_name",uname);
+                params.put("customer_email",uemail);
+                params.put("customer_phone",umob);
+                params.put("password",upass1);
+                params.put("passconf",upass2);
+                params.put("device_uid",device_id);
+                params.put("device_name",device_name);
+                params.put("device_type",device_type);
+                params.put("os_version",device_os);
                 return params;
             }
-
             @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
+            public Map<String,String> getHeaders() throws AuthFailureError{
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -329,6 +353,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int height = displayMetrics.heightPixels;
         int width = displayMetrics.widthPixels;
+
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(Register.this);
         alertDialogBuilder.setView(popupOTPView);
@@ -361,11 +386,10 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                         new Response.Listener<String>() {
                             @Override
                             public void onResponse(String response) {
-                                Log.e("printLog", "===checkOtp===" + response);
                                 progressBar.setVisibility(View.GONE);
                                 BaseUrl b = new BaseUrl();
                                 url = b.url;
-                                if (response != null) {
+                                if(response != null) {
                                     JSONObject json = null;
 
                                     try {
@@ -373,13 +397,16 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                                         JSONObject json2 = json.getJSONObject("checkOtp");
                                         Boolean status = json2.getBoolean("status");
                                         String stat = status.toString();
-                                        if (stat.equals("true")) {
+                                        if(stat.equals("true"))
+                                        {
                                             String msg = json2.getString("Message");
-                                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-                                            Intent i = new Intent(getApplicationContext(), login.class);
+                                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                            Intent i = new Intent(getApplicationContext(),login.class);
                                             startActivity(i);
                                             finish();
-                                        } else if (stat.equals("false")) {
+                                        }
+                                        else if(stat.equals("false"))
+                                        {
                                             String msg = json2.getString("Message");
 //                                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
                                             otp_layout.setError(msg);
@@ -398,34 +425,39 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                         progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if (error instanceof ClientError) {
-                            try {
-                                String responsebody = new String(error.networkResponse.data, "utf-8");
+                        if(error instanceof ClientError)
+                        {
+                            try{
+                                String responsebody = new String(error.networkResponse.data,"utf-8");
                                 JSONObject data = new JSONObject(responsebody);
                                 Boolean status = data.getBoolean("status");
                                 String stat = status.toString();
-                                if (stat.equals("false")) {
+                                if(stat.equals("false"))
+                                {
                                     String msg = data.getString("message");
-                                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
                                 }
-                            } catch (Exception e) {
+                            }
+                            catch (Exception e)
+                            {
                                 e.printStackTrace();
                             }
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
                         }
                     }
-                }) {
+                }){
                     @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("customer_phone", umob);
-                        params.put("login_token", userotp);
+                    protected Map<String,String> getParams(){
+                        Map<String,String> params = new HashMap<String, String>();
+                        params.put("customer_phone",umob);
+                        params.put("login_token",userotp);
                         return params;
                     }
-
                     @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
+                    public Map<String,String> getHeaders() throws AuthFailureError{
                         Map<String, String> headers = new HashMap<>();
                         String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                         String auth = "Basic "
@@ -462,7 +494,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                                 progressBar.setVisibility(View.GONE);
                                 BaseUrl b = new BaseUrl();
                                 url = b.url;
-                                if (response != null) {
+                                if(response != null) {
                                     JSONObject json = null;
 
                                     try {
@@ -470,12 +502,15 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                                         JSONObject json2 = json.getJSONObject("resendOtp");
                                         Boolean status = json2.getBoolean("status");
                                         String stat = status.toString();
-                                        if (stat.equals("true")) {
+                                        if(stat.equals("true"))
+                                        {
                                             JSONObject data = json2.getJSONObject("data");
                                             String login_token = data.getString("login_token");
                                             otp.setText(login_token);
-                                            Toast.makeText(getApplicationContext(), "OTP sent successfully", Toast.LENGTH_LONG).show();
-                                        } else if (stat.equals("false")) {
+                                            Toast.makeText(getApplicationContext(),"OTP sent successfully",Toast.LENGTH_LONG).show();
+                                        }
+                                        else if(stat.equals("false"))
+                                        {
                                             String msg = json2.getString("Message");
 //                                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
                                             otp_layout.setError(msg);
@@ -494,34 +529,39 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                         progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if (error instanceof ClientError) {
-                            try {
-                                String responsebody = new String(error.networkResponse.data, "utf-8");
+                        if(error instanceof ClientError)
+                        {
+                            try{
+                                String responsebody = new String(error.networkResponse.data,"utf-8");
                                 JSONObject data = new JSONObject(responsebody);
                                 Boolean status = data.getBoolean("status");
                                 String stat = status.toString();
-                                if (stat.equals("false")) {
+                                if(stat.equals("false"))
+                                {
                                     String msg = data.getString("message");
-                                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
                                 }
-                            } catch (Exception e) {
+                            }
+                            catch (Exception e)
+                            {
                                 e.printStackTrace();
                             }
-                        } else {
-                            Toast.makeText(getApplicationContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
                         }
                     }
-                }) {
+                }){
                     @Override
-                    protected Map<String, String> getParams() {
-                        Map<String, String> params = new HashMap<String, String>();
-                        params.put("customer_phone", umob);
-                        params.put("login_token", userotp);
+                    protected Map<String,String> getParams(){
+                        Map<String,String> params = new HashMap<String, String>();
+                        params.put("customer_phone",umob);
+                        params.put("login_token",userotp);
                         return params;
                     }
-
                     @Override
-                    public Map<String, String> getHeaders() throws AuthFailureError {
+                    public Map<String,String> getHeaders() throws AuthFailureError{
                         Map<String, String> headers = new HashMap<>();
                         String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                         String auth = "Basic "
@@ -544,19 +584,27 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
     }
 
     private void checkdata() {
-        if (isEmpty(username)) {
+        if(isEmpty(username))
+        {
             check = 0;
             username.setError("Username cannot be empty");
-        } else if (isEmpty(useremail)) {
+        }
+        else if(isEmpty(useremail))
+        {
             check = 0;
             useremail.setError("Email cannot be empty");
-        } else if (isEmpty(mob_number)) {
+        }
+        else if(isEmpty(mob_number))
+        {
             check = 0;
             mob_number.setError("Mobile Number cannot be empty");
-        } else if (isEmpty(userpass1)) {
-            check = 0;
+        }
+        else if(isEmpty(userpass1))
+        {
+            check = 0 ;
             userpass1.setError("Password cannot be empty");
-        } else {
+        }
+        else {
             check = 1;
         }
     }

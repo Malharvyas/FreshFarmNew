@@ -140,12 +140,12 @@
     </LinearLayout>
 
     <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/nodata"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/nodata"
         android:layout_centerInParent="true"
-        android:visibility="gone"
-        android:id="@+id/nodata"/>
+        android:src="@drawable/nodata"
+        android:visibility="gone" />
 
     <ProgressBar
         android:id="@+id/progressbar"

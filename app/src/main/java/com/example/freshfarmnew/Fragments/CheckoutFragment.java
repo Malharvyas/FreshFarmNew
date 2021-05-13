@@ -218,12 +218,11 @@ public class CheckoutFragment extends Fragment {
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                     addressDataModels.remove(position);
-                                    if(addressDataModels.isEmpty()){
+                                    if (addressDataModels.isEmpty()) {
 //                                        recyclerView.setVisibility(View.GONE);
                                         nodata.setVisibility(View.VISIBLE);
                                         checkOutAdapter.notifyDataSetChanged();
-                                    }
-                                    else{
+                                    } else {
                                         checkOutAdapter.notifyDataSetChanged();
                                     }
                                 } else if (stat.equals("false")) {
@@ -324,11 +323,10 @@ public class CheckoutFragment extends Fragment {
                                     }.getType();
 
                                     addressDataModels.addAll(gson.fromJson(dataStr, cartListType));
-                                    if(addressDataModels.isEmpty()){
+                                    if (addressDataModels.isEmpty()) {
 //                                        recyclerView.setVisibility(View.GONE);
                                         nodata.setVisibility(View.VISIBLE);
-                                    }
-                                    else{
+                                    } else {
                                         checkOutAdapter.notifyDataSetChanged();
                                     }
 

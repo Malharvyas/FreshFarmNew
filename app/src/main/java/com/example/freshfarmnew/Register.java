@@ -364,6 +364,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         alertDialog.getWindow().setGravity(Gravity.TOP);
         otp = popupOTPView.findViewById(R.id.reg_otp);
         Button verify = popupOTPView.findViewById(R.id.reg_verify_otp);
+        TextView resend = popupOTPView.findViewById(R.id.resend_otp);
         otp.setText(login_token);
         otp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -372,6 +373,111 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
             }
         });
         verify.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String userotp = otp.getText().toString();
+                progressBar.setVisibility(View.VISIBLE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                url = url.concat("freshfarm/api/ApiController/checkOtp");
+                RequestQueue volleyRequestQueue = Volley.newRequestQueue(getApplicationContext());
+
+                StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                progressBar.setVisibility(View.GONE);
+                                BaseUrl b = new BaseUrl();
+                                url = b.url;
+                                if(response != null) {
+                                    JSONObject json = null;
+
+                                    try {
+                                        json = new JSONObject(String.valueOf(response));
+                                        JSONObject json2 = json.getJSONObject("checkOtp");
+                                        Boolean status = json2.getBoolean("status");
+                                        String stat = status.toString();
+                                        if(stat.equals("true"))
+                                        {
+                                            String msg = json2.getString("Message");
+                                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                            Intent i = new Intent(getApplicationContext(),login.class);
+                                            startActivity(i);
+                                            finish();
+                                        }
+                                        else if(stat.equals("false"))
+                                        {
+                                            String msg = json2.getString("Message");
+//                                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                            otp_layout.setError(msg);
+                                            otp.setBackgroundResource(R.drawable.border_edittext);
+                                        }
+//                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        progressBar.setVisibility(View.GONE);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if(error instanceof ClientError)
+                        {
+                            try{
+                                String responsebody = new String(error.networkResponse.data,"utf-8");
+                                JSONObject data = new JSONObject(responsebody);
+                                Boolean status = data.getBoolean("status");
+                                String stat = status.toString();
+                                if(stat.equals("false"))
+                                {
+                                    String msg = data.getString("message");
+                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                e.printStackTrace();
+                            }
+                        }
+                        else
+                        {
+                            Toast.makeText(getApplicationContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }){
+                    @Override
+                    protected Map<String,String> getParams(){
+                        Map<String,String> params = new HashMap<String, String>();
+                        params.put("customer_phone",umob);
+                        params.put("login_token",userotp);
+                        return params;
+                    }
+                    @Override
+                    public Map<String,String> getHeaders() throws AuthFailureError{
+                        Map<String, String> headers = new HashMap<>();
+                        String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                        String auth = "Basic "
+                                + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                        headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                        return headers;
+                    }
+
+                };
+                volleyRequestQueue.add(stringRequest);
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                        10000,
+                        DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                        DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+                );
+            }
+        });
+        resend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String userotp = otp.getText().toString();

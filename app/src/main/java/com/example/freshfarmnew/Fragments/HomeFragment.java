@@ -121,7 +121,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
 
         category_recycler.setHasFixedSize(true);
         category_recycler.setItemAnimator(new DefaultItemAnimator());
-        category_recycler.setLayoutManager(new GridLayoutManager(getContext(), 4, LinearLayoutManager.VERTICAL, false));
+        category_recycler.setLayoutManager(new GridLayoutManager(getContext(), 3, LinearLayoutManager.VERTICAL, false));
         category_recycler.setAdapter(adapter);
         category_recycler.addItemDecoration(new GridSpacing(12));
 

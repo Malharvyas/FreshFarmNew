@@ -87,20 +87,20 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                     if (item.equals(selected)) {
                         holder.pro_price.setText("\u20B9 " + pv.getPrice());
 
-                        if (!pv.getProduct_discount().equals("null")) {
+                        if (pv.getProduct_discount().equals("null") || pv.getProduct_discount().equals("0")) {
+                            holder.pro_discount_percent.setVisibility(View.GONE);
+                        } else {
                             holder.pro_discount_percent.setVisibility(View.VISIBLE);
                             holder.pro_discount_percent.setText(pv.getProduct_discount() + "% OFF");
-                        } else {
-                            holder.pro_discount_percent.setVisibility(View.GONE);
                         }
 
-                        if (!pv.getMarket_price().equals("null")) {
+                        if (pv.getMarket_price().equals("null") || pv.getMarket_price().equals("0.00")) {
+                            holder.product_effective_price.setVisibility(View.INVISIBLE);
+                            holder.view.setVisibility(View.INVISIBLE);
+                        } else {
                             holder.product_effective_price.setVisibility(View.VISIBLE);
                             holder.view.setVisibility(View.VISIBLE);
                             holder.product_effective_price.setText(pv.getMarket_price());
-                        } else {
-                            holder.product_effective_price.setVisibility(View.INVISIBLE);
-                            holder.view.setVisibility(View.INVISIBLE);
                         }
 
                         SharedPreferences sharedPreferences = context.getSharedPreferences("temp", Context.MODE_PRIVATE);

@@ -88,13 +88,15 @@
 
             <Button
                 android:id="@+id/add_product"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="40sp"
                 android:layout_marginLeft="15sp"
                 android:layout_marginTop="5sp"
                 android:layout_marginRight="15sp"
                 android:text="+ Add To Cart"
+                android:padding="0dp"
                 android:visibility="visible"
+                android:textSize="10sp"
                 app:layout_constraintLeft_toRightOf="@id/guideline7"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/product_price" />

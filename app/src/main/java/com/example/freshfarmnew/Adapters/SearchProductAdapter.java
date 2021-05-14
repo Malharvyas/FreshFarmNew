@@ -191,7 +191,7 @@ public class SearchProductAdapter extends RecyclerView.Adapter<SearchProductAdap
                         Toast.makeText(context,"Please login to continue",Toast.LENGTH_SHORT).show();
                     }
                     else {
-                        trend_add.setVisibility(View.GONE);
+                        trend_add.setVisibility(View.INVISIBLE);
                         minus.setVisibility(View.VISIBLE);
                         plus.setVisibility(View.VISIBLE);
                         quant_val.setVisibility(View.VISIBLE);

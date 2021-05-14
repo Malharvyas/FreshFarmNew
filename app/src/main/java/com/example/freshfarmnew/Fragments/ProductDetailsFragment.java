@@ -107,6 +107,9 @@ public class ProductDetailsFragment extends Fragment {
             public void onClick(View v) {
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                 String amount = sharedPreferences.getString("totleAmount", "0");
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("fragment","productd");
+                editor.apply();
                 Bundle bundle = new Bundle();
                 bundle.putString("amount", amount);
                 bundle.putString("total_items", "1");

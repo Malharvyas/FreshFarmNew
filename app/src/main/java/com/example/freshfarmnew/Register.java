@@ -557,7 +557,6 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                     protected Map<String,String> getParams(){
                         Map<String,String> params = new HashMap<String, String>();
                         params.put("customer_phone",umob);
-                        params.put("login_token",userotp);
                         return params;
                     }
                     @Override

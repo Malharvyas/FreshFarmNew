@@ -34,6 +34,8 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15sp"
         android:layout_marginTop="15dp"
+        android:autoSizeTextType="uniform"
+        android:autoSizeMaxTextSize="14sp"
         android:text=""
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"

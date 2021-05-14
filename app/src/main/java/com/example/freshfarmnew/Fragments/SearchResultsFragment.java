@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,6 +111,7 @@ public class SearchResultsFragment extends Fragment implements SearchProductAdap
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.e("Printlog..",response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if(response != null) {
@@ -212,11 +214,13 @@ public class SearchResultsFragment extends Fragment implements SearchProductAdap
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String,String> params = new HashMap<String, String>();
                 params.put("key",key);
-//                if(cus_id.equals(null) || cus_id.equals(""))
-//                {
-//
-//                }
-//                params.put("customer_id",cus_id);
+                if(cus_id.equals(null) || cus_id.equals(""))
+                {
+
+                }
+                else{
+                    params.put("customer_id",cus_id);
+                }
                 return params;
             }
             @Override

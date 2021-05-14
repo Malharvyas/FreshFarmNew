@@ -63,7 +63,20 @@ public class Terms extends AppCompatActivity {
                                 if(stat.equals("true"))
                                 {
                                     JSONArray jsonArray = json2.getJSONArray("data");
-                                    JSONObject terms = jsonArray.getJSONObject(0);
+
+                                    JSONObject terms = null;
+
+                                    for(int i = 0; i < jsonArray.length(); i++)
+                                    {
+                                        JSONObject main = jsonArray.getJSONObject(i);
+                                        String cms_id = main.getString("cms_id");
+                                        if(cms_id.equals("134"))
+                                        {
+                                            terms = main;
+                                        }
+
+                                    }
+
                                     String term = terms.getString("data");
                                     printterms.setText(Html.fromHtml(term));
                                 }

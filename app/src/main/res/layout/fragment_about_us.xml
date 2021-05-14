@@ -25,17 +25,8 @@
             android:id="@+id/about_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="This is dummy about text.This is dummy about
-            text.This is dummy about text.This is dummy about text.This
-            is dummy about text.This is dummy about text.This is dummy
-            about text.This is dummy about text.This is dummy about text.
-            This is dummy about text.This is dummy about text.This is dummy
-            about text.This is dummy about text.This is dummy about text.
-            This is dummy about text.This is dummy about text.This is dummy
-             about text.This is dummy about text.This is dummy about text.
-             This is dummy about text.This is dummy about text.This is dummy
-              about text.This is dummy about text.This is dummy about text."
+            android:layout_marginTop="30dp"
+            android:text="Kadi's most convenient online Grocery Store.\n\nFarm Fresh wale makes your grocery shopping even simpler. No more hassles of sweating it out in crowded markets, grocery shops &amp; supermarkets - now shop from the comfort of your home; office or on the move.\n\nWe offer you convenience of shopping everything that you need for your home - be it fresh fruits &amp; vegetables, Dairy products, Sweet, Snacks And ready To Cook Products from a single virtual store.\n\nFarm Fresh Wale is an online selling Store."
             android:textSize="15sp"
             app:layout_constraintTop_toBottomOf="@id/text1" />
     </androidx.constraintlayout.widget.ConstraintLayout>

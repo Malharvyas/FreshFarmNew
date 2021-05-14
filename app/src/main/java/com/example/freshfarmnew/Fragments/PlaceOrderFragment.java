@@ -39,6 +39,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.freshfarmnew.Class.BaseUrl;
+import com.example.freshfarmnew.Model.CartModel;
 import com.example.freshfarmnew.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
@@ -47,8 +48,8 @@ import com.razorpay.Checkout;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -535,9 +536,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                         String pidset = sharedPreferences2.getString("pidset", null);
                         String pquantset = sharedPreferences2.getString("pquantset", null);
                         String ppriceset = sharedPreferences2.getString("ppriceset", null);
+                        String vidset = sharedPreferences2.getString("vidset", null);
 
                         Gson gson = new Gson();
-                        List<String> pidlist = null, pquantlist = null, ppricelist = null;
+                        List<String> pidlist = null, pquantlist = null, ppricelist = null,vidlist = null;
                         if (pidset != null) {
                             pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
                             }.getType());
@@ -548,6 +550,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                         }
                         if (ppriceset != null) {
                             ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
+                            }.getType());
+                        }
+                        if (vidset != null) {
+                            vidlist = gson.fromJson(vidset, new TypeToken<List<String>>() {
                             }.getType());
                         }
 
@@ -569,7 +575,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                         String delivery_date = sdf.format(result);
                         String total_amount2 = net_amount.getText().toString();
                         String pay_type = "3";
-                        placeorder(cus_id, addressId, total_amount2, pidlist, pquantlist, ppricelist, delivery_date, pay_type);
+                        placeorder(cus_id, addressId, total_amount2, pidlist, pquantlist, ppricelist, delivery_date, pay_type, vidlist);
                     }
                 } else if (selected.equals("online")) {
                     if (total_amount == null || total_amount.equals("")) {
@@ -624,9 +630,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     String pidset = sharedPreferences2.getString("pidset", null);
                                     String pquantset = sharedPreferences2.getString("pquantset", null);
                                     String ppriceset = sharedPreferences2.getString("ppriceset", null);
+                                    String vidset = sharedPreferences2.getString("vidset", null);
 
                                     Gson gson = new Gson();
-                                    List<String> pidlist = null, pquantlist = null, ppricelist = null;
+                                    List<String> pidlist = null, pquantlist = null, ppricelist = null,vidlist = null;
                                     if (pidset != null) {
                                         pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
                                         }.getType());
@@ -637,6 +644,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     }
                                     if (ppriceset != null) {
                                         ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
+                                        }.getType());
+                                    }
+                                    if (vidset != null) {
+                                        vidlist = gson.fromJson(vidset, new TypeToken<List<String>>() {
                                         }.getType());
                                     }
 
@@ -658,7 +669,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     String delivery_date = sdf.format(result);
                                     String total_amount = net_amount.getText().toString();
                                     String pay_type = "1";
-                                    placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date, pay_type);
+                                    placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date, pay_type, vidlist);
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
@@ -758,7 +769,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         }
     }
 
-    private void placeorder(String cus_id, String addressId, String total_amount, List<String> pidlist, List<String> pquantlist, List<String> ppricelist, String delivery_date, String pay_type) {
+    private void placeorder(String cus_id, String addressId, String total_amount, List<String> pidlist, List<String> pquantlist, List<String> ppricelist, String delivery_date, String pay_type, List<String> vidlist) {
         String comments = order_comments.getText().toString();
         progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
@@ -790,6 +801,21 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     editor.apply();
 
                                     SharedPreferences sh2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                                    String frag = sh2.getString("fragment","");
+                                    if(frag.equals(null) || frag.equals(""))
+                                    {
+
+                                    }
+                                    else {
+                                        if(frag.equals("cart"))
+                                        {
+                                            for(int i = 0; i < pidlist.size(); i++)
+                                            {
+                                                int quantity = 0;
+                                                removefromcart(pidlist.get(i),vidlist.get(i),cus_id,0);
+                                            }
+                                        }
+                                    }
                                     SharedPreferences.Editor editor2 = sh2.edit();
                                     editor2.clear();
                                     editor2.apply();
@@ -897,6 +923,96 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
                     Log.e("PrintLog", "----" + pidlist.get(i));
                 }
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+    }
+
+    private void removefromcart(String pid, String vid, String cus_id, int i) {
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/addtocart");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                Log.e("PrintLog", "---------response--------" + response);
+                                JSONObject json2 = json.getJSONObject("addtocart");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+                                if (stat.equals("true")) {
+
+                                    JSONArray data = json2.getJSONArray("data");
+                                    String dataStr = data.toString();
+                                    Log.e("PrintLog", "----" + dataStr);
+
+                                } else if (stat.equals("false")) {
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                }
+//                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                params.put("product_id", pid);
+                params.put("v_id", vid);
+                params.put("quantity", String.valueOf(i));
                 return params;
             }
 
@@ -1065,9 +1181,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 String pidset = sharedPreferences2.getString("pidset", null);
                 String pquantset = sharedPreferences2.getString("pquantset", null);
                 String ppriceset = sharedPreferences2.getString("ppriceset", null);
+                String vidset = sharedPreferences2.getString("vidset", null);
 
                 Gson gson = new Gson();
-                List<String> pidlist = null, pquantlist = null, ppricelist = null;
+                List<String> pidlist = null, pquantlist = null, ppricelist = null,vidlist = null;
                 if (pidset != null) {
                     pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
                     }.getType());
@@ -1078,6 +1195,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 }
                 if (ppriceset != null) {
                     ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
+                if (vidset != null) {
+                    vidlist = gson.fromJson(vidset, new TypeToken<List<String>>() {
                     }.getType());
                 }
 
@@ -1099,7 +1220,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 String delivery_date = sdf.format(result);
                 String total_amount = net_amount.getText().toString();
                 String pay_type = "2";
-                placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date, pay_type);
+                placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date, pay_type,vidlist);
             }
         }
     }

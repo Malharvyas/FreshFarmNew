@@ -218,6 +218,11 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     JSONObject dataJson = json2.getJSONObject("data");
                                     int deli = dataJson.getInt("deliverycharge");
                                     Double deli2 = new Double(deli);
+                                    int min_order = dataJson.getInt("min_order_amount");
+                                    SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences2.edit();
+                                    editor.putInt("min_order",min_order);
+                                    editor.apply();
 
                                     printreceipt(deli2, 0);
 
@@ -508,84 +513,96 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
             }
             break;
             case R.id.place_order: {
+                SharedPreferences shared = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                int min_order = shared.getInt("min_order",100);
+                Double minimum = new Double(min_order);
                 String total_amount = net_amount.getText().toString();
-//                Log.e("PrintLog", "----" + pidlist.size());
+                Double actual_order = Double.parseDouble(total_amount);
+
+                if(actual_order >= minimum)
+                {
+//                    Log.e("PrintLog", "----" + pidlist.size());
 
 //                Toast.makeText(getContext(),""+delivery_date,Toast.LENGTH_SHORT).show();
 
-                if (selected.equals("wallet")) {
-                    if (total_amount == null || total_amount.equals("")) {
-                        Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
-                    } else {
-                        String w_amount = wallet_amount.getText().toString();
-
-                        double order_amount = Double.parseDouble(total_amount);
-                        double wall_amnt = Double.parseDouble(w_amount);
-
-                        if (wall_amnt < order_amount) {
-                            Toast.makeText(getContext(), "Insufficient wallet balance!!", Toast.LENGTH_SHORT).show();
+                    if (selected.equals("wallet")) {
+                        if (total_amount == null || total_amount.equals("")) {
+                            Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
                         } else {
-                            cutwallbalance(cus_id, total_amount);
+                            String w_amount = wallet_amount.getText().toString();
+
+                            double order_amount = Double.parseDouble(total_amount);
+                            double wall_amnt = Double.parseDouble(w_amount);
+
+                            if (wall_amnt < order_amount) {
+                                Toast.makeText(getContext(), "Insufficient wallet balance!!", Toast.LENGTH_SHORT).show();
+                            } else {
+                                cutwallbalance(cus_id, total_amount);
+                            }
                         }
-                    }
-                } else if (selected.equals("cash")) {
-                    if (total_amount == null || total_amount.equals("")) {
-                        Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                    } else if (selected.equals("cash")) {
+                        if (total_amount == null || total_amount.equals("")) {
+                            Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                        } else {
+                            SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
+                            String pidset = sharedPreferences2.getString("pidset", null);
+                            String pquantset = sharedPreferences2.getString("pquantset", null);
+                            String ppriceset = sharedPreferences2.getString("ppriceset", null);
+                            String vidset = sharedPreferences2.getString("vidset", null);
+
+                            Gson gson = new Gson();
+                            List<String> pidlist = null, pquantlist = null, ppricelist = null,vidlist = null;
+                            if (pidset != null) {
+                                pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
+                                }.getType());
+                            }
+                            if (pquantset != null) {
+                                pquantlist = gson.fromJson(pquantset, new TypeToken<List<String>>() {
+                                }.getType());
+                            }
+                            if (ppriceset != null) {
+                                ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
+                                }.getType());
+                            }
+                            if (vidset != null) {
+                                vidlist = gson.fromJson(vidset, new TypeToken<List<String>>() {
+                                }.getType());
+                            }
+
+                            Date c = Calendar.getInstance().getTime();
+                            SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+                            String formattedDate = df.format(c);
+
+                            Calendar c1 = Calendar.getInstance();
+                            try {
+                                c1.setTime(df.parse(formattedDate));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            c1.add(Calendar.DATE, 2);
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                            Date result = new Date(c1.getTimeInMillis());
+                            String delivery_date = sdf.format(result);
+                            String total_amount2 = net_amount.getText().toString();
+                            String pay_type = "3";
+                            placeorder(cus_id, addressId, total_amount2, pidlist, pquantlist, ppricelist, delivery_date, pay_type, vidlist);
+                        }
+                    } else if (selected.equals("online")) {
+                        if (total_amount == null || total_amount.equals("")) {
+                            Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
+                        } else {
+                            makepayment(total_amount);
+                        }
                     } else {
-                        SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
-                        String pidset = sharedPreferences2.getString("pidset", null);
-                        String pquantset = sharedPreferences2.getString("pquantset", null);
-                        String ppriceset = sharedPreferences2.getString("ppriceset", null);
-                        String vidset = sharedPreferences2.getString("vidset", null);
-
-                        Gson gson = new Gson();
-                        List<String> pidlist = null, pquantlist = null, ppricelist = null,vidlist = null;
-                        if (pidset != null) {
-                            pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
-                            }.getType());
-                        }
-                        if (pquantset != null) {
-                            pquantlist = gson.fromJson(pquantset, new TypeToken<List<String>>() {
-                            }.getType());
-                        }
-                        if (ppriceset != null) {
-                            ppricelist = gson.fromJson(ppriceset, new TypeToken<List<String>>() {
-                            }.getType());
-                        }
-                        if (vidset != null) {
-                            vidlist = gson.fromJson(vidset, new TypeToken<List<String>>() {
-                            }.getType());
-                        }
-
-                        Date c = Calendar.getInstance().getTime();
-                        SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
-                        String formattedDate = df.format(c);
-
-                        Calendar c1 = Calendar.getInstance();
-                        try {
-                            c1.setTime(df.parse(formattedDate));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
-                        c1.add(Calendar.DATE, 2);
-
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-                        Date result = new Date(c1.getTimeInMillis());
-                        String delivery_date = sdf.format(result);
-                        String total_amount2 = net_amount.getText().toString();
-                        String pay_type = "3";
-                        placeorder(cus_id, addressId, total_amount2, pidlist, pquantlist, ppricelist, delivery_date, pay_type, vidlist);
+                        Toast.makeText(getContext(), "Please select the mode of payment", Toast.LENGTH_SHORT).show();
                     }
-                } else if (selected.equals("online")) {
-                    if (total_amount == null || total_amount.equals("")) {
-                        Toast.makeText(getContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show();
-                    } else {
-                        makepayment(total_amount);
-                    }
-                } else {
-                    Toast.makeText(getContext(), "Please select the mode of payment", Toast.LENGTH_SHORT).show();
                 }
+                else {
+                    Toast.makeText(getContext(),"Minimum order amount is "+min_order,Toast.LENGTH_SHORT).show();
+                }
+//
             }
             break;
         }

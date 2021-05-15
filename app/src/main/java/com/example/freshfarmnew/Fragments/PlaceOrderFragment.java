@@ -820,6 +820,11 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     editor2.clear();
                                     editor2.apply();
 
+                                    SharedPreferences sh3 = getActivity().getSharedPreferences("temp", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor3 = sh3.edit();
+                                    editor3.clear();
+                                    editor3.apply();
+
 //                                    String msg = json2.getString("Message");
 //                                    Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
                                     LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(LAYOUT_INFLATER_SERVICE);

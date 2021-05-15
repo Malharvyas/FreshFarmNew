@@ -161,10 +161,11 @@
 
             <CheckBox
                 android:id="@+id/term_policy_check"
-                android:layout_width="25sp"
+                android:layout_width="wrap_content"
                 android:layout_height="25sp"
                 android:layout_marginTop="10dp"
                 app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/text3"
                 app:layout_constraintTop_toBottomOf="@id/referral" />
 
 

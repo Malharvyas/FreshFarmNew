@@ -468,7 +468,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     editor.putString("lat",String.valueOf(currentLocation.getLatitude()));
                     editor.putString("long",String.valueOf(currentLocation.getLongitude()));
                     editor.apply();
-                    Toast.makeText(getApplicationContext(),""+currentLocation.getLongitude(),Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(),""+currentLocation.getLongitude(),Toast.LENGTH_SHORT).show();
                     mapFragment.getMapAsync(MapsActivity.this);
                     try {
                         fetchAddress(currentLocation.getLatitude(),currentLocation.getLongitude());

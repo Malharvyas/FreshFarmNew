@@ -73,7 +73,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
     SearchView searchView;
-    EditText map_address;
+    EditText map_address,search_map;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
@@ -95,17 +95,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
 
-        searchView = findViewById(R.id.searchview);
+//        searchView = findViewById(R.id.searchview);
         map_address = findViewById(R.id.map_address);
         save_changes = findViewById(R.id.save_changes);
         progressBar = findViewById(R.id.progressbar);
+        search_map = findViewById(R.id.search_map);
+
+        Places.initialize(getApplicationContext(),"AIzaSyC7MBbojxsXRi72GRRGTx88n5iZFFNkrAo");
+
+        search_map.setFocusable(false);
+        search_map.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS,Place.Field.LAT_LNG,Place.Field.NAME);
+
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY,fieldList).build(MapsActivity.this);
+
+                startActivityForResult(intent,100);
+            }
+        });
 
         SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
         cus_id = sharedPreferences.getString("customer_id", "");
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-
 
         fetchLocation();
 
@@ -115,6 +128,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 savelatlng();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 100 && resultCode == RESULT_OK){
+
+            Place place = Autocomplete.getPlaceFromIntent(data);
+
+            search_map.setText(place.getAddress());
+        }
+        else if(resultCode == AutocompleteActivity.RESULT_ERROR){
+            Status status = Autocomplete.getStatusFromIntent(data);
+
+            Log.e("error : ",status.getStatusMessage());
+
+            Toast.makeText(getApplicationContext(),status.getStatusMessage(),Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void savelatlng() {

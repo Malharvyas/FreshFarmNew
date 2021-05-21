@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.freshfarmnew">
+    package="com.freshfarm.freshfarmnew">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -19,7 +19,7 @@
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.FreshFarmNew">
-        <activity android:name=".SplashScreen">
+        <activity android:name="com.freshfarm.freshfarmnew.SplashScreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,15 +39,15 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
+            android:name="com.freshfarm.freshfarmnew.MapsActivity"
             android:label="@string/title_activity_maps" />
-        <activity android:name=".ForgotPassword" />
-        <activity android:name=".PrivacyPolicy" />
-        <activity android:name=".Terms" />
-        <activity android:name=".Register" />
-        <activity android:name=".login" />
+        <activity android:name="com.freshfarm.freshfarmnew.ForgotPassword" />
+        <activity android:name="com.freshfarm.freshfarmnew.PrivacyPolicy" />
+        <activity android:name="com.freshfarm.freshfarmnew.Terms" />
+        <activity android:name="com.freshfarm.freshfarmnew.Register" />
+        <activity android:name="com.freshfarm.freshfarmnew.login" />
         <activity
-            android:name=".MainActivity"
+            android:name="com.freshfarm.freshfarmnew.MainActivity"
             android:windowSoftInputMode="adjustNothing">
 
         </activity>

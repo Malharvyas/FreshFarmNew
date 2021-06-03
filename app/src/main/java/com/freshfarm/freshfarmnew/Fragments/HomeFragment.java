@@ -10,9 +10,11 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,6 +57,7 @@ import me.relex.circleindicator.CircleIndicator;
 
 public class HomeFragment extends Fragment implements CategoryAdapter.onClickListener, TrendingAdapter.onClickListener, DealsAdapter.onClickListener {
 
+    SwipeRefreshLayout mSwipeRefreshLayout;
     ViewPager viewPager;
     String url = "";
     ArrayList<String> banners = new ArrayList<String>();
@@ -116,6 +119,21 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
         deals_recycler = v.findViewById(R.id.deals_recycler);
         progressBar = v.findViewById(R.id.progressbar);
 
+        mSwipeRefreshLayout = v.findViewById(R.id.swipe_container);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getApi();
+            }
+        });
+
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                getApi();
+            }
+        });
+
         category_recycler.setHasFixedSize(true);
         category_recycler.setItemAnimator(new DefaultItemAnimator());
         category_recycler.setLayoutManager(new GridLayoutManager(getContext(), 3, LinearLayoutManager.VERTICAL, false));
@@ -134,7 +152,12 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
         deals_recycler.setAdapter(adapter3);
         deals_recycler.addItemDecoration(new GridSpacing(12));
 
+        return v;
+    }
+
+    private void getApi() {
         progressBar.setVisibility(View.VISIBLE);
+        mSwipeRefreshLayout.setRefreshing(true);
 
         getBanners();
 
@@ -146,9 +169,8 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
 
         if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
             progressBar.setVisibility(View.GONE);
+            mSwipeRefreshLayout.setRefreshing(false);
         }
-
-        return v;
     }
 
     private void getdeals(String cat_id, String sub_cat_id, String deals_id) {
@@ -222,6 +244,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                             c4 = 1;
                             if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
                                 progressBar.setVisibility(View.GONE);
+                                mSwipeRefreshLayout.setRefreshing(false);
                             }
                         }
 
@@ -349,6 +372,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                             c3 = 1;
                             if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
                                 progressBar.setVisibility(View.GONE);
+                                mSwipeRefreshLayout.setRefreshing(false);
                             }
                         }
 
@@ -453,6 +477,8 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                             c2 = 1;
                             if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
                                 progressBar.setVisibility(View.GONE);
+                                mSwipeRefreshLayout.setRefreshing(false);
+
                             }
                         }
 
@@ -535,6 +561,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                                     c1 = 1;
                                     if (c1 == 1 && c2 == 1 && c3 == 1 && c4 == 1) {
                                         progressBar.setVisibility(View.GONE);
+                                        mSwipeRefreshLayout.setRefreshing(false);
                                     }
                                     TimerTask timerTask = new TimerTask() {
                                         @Override
@@ -749,6 +776,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
 
     @Override
     public void onTAddClicked(int position, String quantity, String product_id, String v_id) {
+
         progressBar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
@@ -823,6 +851,12 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                 params.put("product_id", product_id);
                 params.put("v_id", v_id);
                 params.put("quantity", quantity);
+                Log.e("printLog", "====product_id====" + product_id);
+                Log.e("printLog", "====customer_id====" + cus_id);
+                Log.e("printLog", "====v_id====" + v_id);
+                Log.e("printLog", "====quantity====" + quantity);
+
+
                 return params;
             }
 

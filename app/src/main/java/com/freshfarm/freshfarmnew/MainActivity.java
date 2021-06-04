@@ -81,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     View headerView;
     private static final int PERMISSION_REQUEST_CODE = 1;
     Thread thread;
+    private TextView text11;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +96,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             requestPermission(); // Code for permission
         }
 //        }
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navprofile = findViewById(R.id.prof_icon);
+        bottomNavigationView = findViewById(R.id.bottom_nav);
+        nav_location = findViewById(R.id.nav_location);
+        text11 = findViewById(R.id.text11);
 
         navigationView = findViewById(R.id.nav_view);
         search = findViewById(R.id.search_input);
@@ -117,6 +124,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         head_address.setText(address);
         tvAddressMain.setText(address);
+
+        if (isLogin) {
+            nav_location.setVisibility(View.VISIBLE);
+            text11.setVisibility(View.VISIBLE);
+        } else {
+            nav_location.setVisibility(View.GONE);
+            text11.setVisibility(View.INVISIBLE);
+        }
 
         if (isLogin == true && address.equals("")) {
             finish();
@@ -154,10 +169,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        navprofile = findViewById(R.id.prof_icon);
-        bottomNavigationView = findViewById(R.id.bottom_nav);
-        nav_location = findViewById(R.id.nav_location);
+
         navigationView.setNavigationItemSelectedListener(this);
 
         drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));

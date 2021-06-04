@@ -1,16 +1,5 @@
 package com.freshfarm.freshfarmnew;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -30,6 +19,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.ClientError;
@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     EditText search;
     private static final int REQUEST_CODE = 101;
     TextView head_address;
+    TextView tvAddressMain;
     View headerView;
     private static final int PERMISSION_REQUEST_CODE = 1;
     Thread thread;
@@ -87,18 +88,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
 //        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkPermission()) {
-                // Code for above or equal 23 API Oriented Device
-                // Your Permission granted already .Do next code
-            } else {
-                requestPermission(); // Code for permission
-            }
+        if (checkPermission()) {
+            // Code for above or equal 23 API Oriented Device
+            // Your Permission granted already .Do next code
+        } else {
+            requestPermission(); // Code for permission
+        }
 //        }
 
         navigationView = findViewById(R.id.nav_view);
         search = findViewById(R.id.search_input);
         headerView = navigationView.getHeaderView(0);
         head_address = headerView.findViewById(R.id.head_address);
+        tvAddressMain = findViewById(R.id.tvAddressMain);
 
         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
         isLogin = sharedPreferences.getBoolean("islogin", false);
@@ -114,11 +116,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         address = sharedPreferences2.getString("address", "");
 
         head_address.setText(address);
+        tvAddressMain.setText(address);
 
-        if (isLogin == true && address.equals(""))
-        {
+        if (isLogin == true && address.equals("")) {
             finish();
-            startActivity(new Intent(getApplicationContext(),MapsActivity.class));
+            startActivity(new Intent(getApplicationContext(), MapsActivity.class));
         }
 
         toolbar = findViewById(R.id.toolbar);

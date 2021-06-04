@@ -70,7 +70,7 @@ public class PrivacyPolicy extends AppCompatActivity {
                                     {
                                         JSONObject main = jsonArray.getJSONObject(i);
                                         String cms_id = main.getString("cms_id");
-                                        if(cms_id.equals("3"))
+                                        if(cms_id.equals("73"))
                                         {
                                             terms = main;
                                         }

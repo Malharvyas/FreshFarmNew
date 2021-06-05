@@ -20,7 +20,7 @@
         android:id="@+id/text1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No Item In Wishlist"
+        android:text="No Item In Order"
         android:textColor="#000000"
         android:textSize="18sp"
         android:textStyle="bold"

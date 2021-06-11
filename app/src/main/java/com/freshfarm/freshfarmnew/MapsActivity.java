@@ -67,18 +67,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     SupportMapFragment mapFragment;
     SearchView searchView;
-    EditText map_address,search_map;
+    EditText map_address, search_map;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
     MarkerOptions markerOptions;
     Button save_changes;
-    Double m_latitude,m_longitude;
+    Double m_latitude, m_longitude;
     int check = 0;
     LatLng slatLng;
-    SharedPreferences sharedPreferences,sharedPreferences2,getpreferances;
+    SharedPreferences sharedPreferences, sharedPreferences2, getpreferances;
     ProgressBar progressBar;
-    String cus_id,url = "";
+    String cus_id, url = "";
 
 
     @Override
@@ -86,8 +86,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 
 //        searchView = findViewById(R.id.searchview);
         map_address = findViewById(R.id.map_address);
@@ -95,17 +94,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         progressBar = findViewById(R.id.progressbar);
         search_map = findViewById(R.id.search_map);
 
-        Places.initialize(getApplicationContext(),"AIzaSyC7MBbojxsXRi72GRRGTx88n5iZFFNkrAo");
+        Places.initialize(getApplicationContext(), "AIzaSyC7MBbojxsXRi72GRRGTx88n5iZFFNkrAo");
 
         search_map.setFocusable(false);
         search_map.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS,Place.Field.LAT_LNG,Place.Field.NAME);
+                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG, Place.Field.NAME);
 
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY,fieldList).build(MapsActivity.this);
+                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList).build(MapsActivity.this);
 
-                startActivityForResult(intent,100);
+                startActivityForResult(intent, 100);
             }
         });
 
@@ -127,25 +126,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 100 && resultCode == RESULT_OK){
+        if (requestCode == 100 && resultCode == RESULT_OK) {
 
             Place place = Autocomplete.getPlaceFromIntent(data);
 
             search_map.setText(place.getAddress());
-        }
-        else if(resultCode == AutocompleteActivity.RESULT_ERROR){
+        } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
             Status status = Autocomplete.getStatusFromIntent(data);
 
-            Log.e("error : ",status.getStatusMessage());
+            Log.e("error : ", status.getStatusMessage());
 
-            Toast.makeText(getApplicationContext(),status.getStatusMessage(),Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void savelatlng() {
-        getpreferances = getSharedPreferences("location",Context.MODE_PRIVATE);
-        String latitude = getpreferances.getString("lat","00");
-        String longitude = getpreferances.getString("long","00");
+        getpreferances = getSharedPreferences("location", Context.MODE_PRIVATE);
+        String latitude = getpreferances.getString("lat", "00");
+        String longitude = getpreferances.getString("long", "00");
         String address = map_address.getText().toString();
 
         progressBar.setVisibility(View.VISIBLE);
@@ -171,7 +169,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
 //                                    Toast.makeText(getApplicationContext(),"latlon set",Toast.LENGTH_SHORT).show();
-                                    saveadress(address,latitude,longitude);
+                                    saveadress(address, latitude, longitude);
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
@@ -251,7 +249,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -259,24 +257,21 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 JSONObject json2 = json.getJSONObject("getProduct");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     String msg = json2.getString("Message");
                                     JSONObject data = json2.getJSONObject("data");
                                     String cusadd = data.getString("address");
 
                                     SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("address",cusadd);
+                                    editor.putString("address", cusadd);
                                     editor.apply();
 
-                                    addaddress(cus_id,address,latitude,longitude);
+                                    addaddress(cus_id, address, latitude, longitude);
 
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -291,39 +286,34 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 progressBar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("customer_id",cus_id);
-                params.put("address",address);
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                params.put("address", address);
                 return params;
             }
+
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "
@@ -345,9 +335,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void addaddress(String cus_id, String address, String latitude, String longitude) {
         progressBar.setVisibility(View.VISIBLE);
-        SharedPreferences ss = getSharedPreferences("userpref",Context.MODE_PRIVATE);
-        String phoneNumber = ss.getString("customer_phone","");
-        String name = ss.getString("customer_name","");
+        SharedPreferences ss = getSharedPreferences("userpref", Context.MODE_PRIVATE);
+        String phoneNumber = ss.getString("customer_phone", "");
+        String name = ss.getString("customer_name", "");
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/addAddress");
@@ -372,10 +362,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getApplicationContext(),"Location Saved",Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getApplicationContext(), "Location Saved", Toast.LENGTH_SHORT).show();
 
                                     finish();
-                                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
                                     Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
@@ -454,8 +444,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         sharedPreferences2 = getSharedPreferences("location", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences2.edit();
-        editor.putString("lat",String.valueOf(latitude));
-        editor.putString("long",String.valueOf(longitude));
+        editor.putString("lat", String.valueOf(latitude));
+        editor.putString("long", String.valueOf(longitude));
         editor.apply();
 
         map_address.setText(address);
@@ -477,7 +467,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]
-                    {Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE);
+                    {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
             return;
         }
         Task<Location> task = fusedLocationProviderClient.getLastLocation();
@@ -485,30 +475,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         task.addOnSuccessListener(new OnSuccessListener<Location>() {
             @Override
             public void onSuccess(Location location) {
-                if(location != null)
-                {
+                if (location != null) {
                     currentLocation = location;
                     sharedPreferences = getSharedPreferences("location", Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("lat",String.valueOf(currentLocation.getLatitude()));
-                    editor.putString("long",String.valueOf(currentLocation.getLongitude()));
+                    editor.putString("lat", String.valueOf(currentLocation.getLatitude()));
+                    editor.putString("long", String.valueOf(currentLocation.getLongitude()));
                     editor.apply();
 //                    Toast.makeText(getApplicationContext(),""+currentLocation.getLongitude(),Toast.LENGTH_SHORT).show();
                     mapFragment.getMapAsync(MapsActivity.this);
                     try {
-                        fetchAddress(currentLocation.getLatitude(),currentLocation.getLongitude());
+                        fetchAddress(currentLocation.getLatitude(), currentLocation.getLongitude());
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                }
-                else {
-                    Toast.makeText(getApplicationContext(),"Location null ",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Location null ", Toast.LENGTH_LONG).show();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(),"Exception : "+e,Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Exception : " + e, Toast.LENGTH_LONG).show();
             }
         })
         ;
@@ -529,7 +517,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onMarkerDrag(Marker marker) {
                 try {
-                    fetchmarkerLocation(marker.getPosition().latitude,marker.getPosition().longitude);
+                    fetchmarkerLocation(marker.getPosition().latitude, marker.getPosition().longitude);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -547,11 +535,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 //        else{
 //            latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
 //        }
-        latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+        latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
 
         markerOptions.position(latLng);
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,10));
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
         Marker marker = googleMap.addMarker(markerOptions);
         marker.setTitle("Hold the marker to drag!");
         marker.setVisible(true);

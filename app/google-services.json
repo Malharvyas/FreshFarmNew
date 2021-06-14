@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "268884424288",
+    "project_id": "freshfarmwale",
+    "storage_bucket": "freshfarmwale.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268884424288:android:2020b3878467b7f2253505",
+        "android_client_info": {
+          "package_name": "com.freshfarm.freshfarmnew"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "268884424288-6gr6nvj8o6gjhubttgp4nkue6n7np5ke.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.freshfarm.freshfarmnew",
+            "certificate_hash": "dda17529b3e8526ef247365b5570d037a1eca6d4"
+          }
+        },
+        {
+          "client_id": "268884424288-vnt950ncof8rev63nsabgkc9677eufch.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqKUpxnTX3micGyRMSeQM_OAWT2QOctaQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "268884424288-vnt950ncof8rev63nsabgkc9677eufch.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

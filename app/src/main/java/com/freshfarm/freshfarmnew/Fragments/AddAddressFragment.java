@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -15,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -33,9 +36,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.freshfarm.freshfarmnew.Adapters.AreaAdapter;
 import com.freshfarm.freshfarmnew.Class.BaseUrl;
+import com.freshfarm.freshfarmnew.MapsActivity;
 import com.freshfarm.freshfarmnew.Model.AddressDataModel;
 import com.freshfarm.freshfarmnew.Model.AddressModel;
+import com.freshfarm.freshfarmnew.Model.AreaModel;
 import com.freshfarm.freshfarmnew.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -48,17 +54,23 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
+public class AddAddressFragment extends Fragment {
 
+    ArrayList<AreaModel> areaModelList = new ArrayList<>();
+    AutoCompleteTextView autoCompleteText;
     AddressModel addressModel;
     String url = "", cus_id = "", latitude = "0.0", longitude = "0.0", name = "", phoneNumber = "", address = "", type = "1";
     private Button btnAddAddress;
@@ -67,10 +79,7 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
     private AddressDataModel addressDataModel;
     private RadioButton radioBtnHome;
     private RadioButton radioBtnOffice;
-    private GoogleMap mMap;
     SupportMapFragment mapFragment;
-    Location currentLocation;
-    FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
     MarkerOptions markerOptions;
     SharedPreferences sharedPreferences, sharedPreferences2, getpreferances;
@@ -99,10 +108,6 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.address_map);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
-
         markerOptions = new MarkerOptions().draggable(true);
 
         edName = v.findViewById(R.id.edName);
@@ -112,6 +117,18 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
         radioGroup = v.findViewById(R.id.radioGroup);
         radioBtnHome = v.findViewById(R.id.radioBtnHome);
         radioBtnOffice = v.findViewById(R.id.radioBtnOffice);
+        autoCompleteText = v.findViewById(R.id.autoCompleteText);
+
+        autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Object item = parent.getItemAtPosition(position);
+                if (item instanceof AreaModel) {
+                    AreaModel areaModel = (AreaModel) item;
+                    edAddress.setText(areaModel.getAreaName());
+                }
+            }
+        });
 
         if (getArguments() != null) {
             if (getArguments().containsKey("data")) {
@@ -145,38 +162,13 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
         btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 getAddressDetails();
             }
         });
 
-        if (addressDataModel != null) {
-            fetchlatlnglocation();
-        } else {
-            fetchLocation();
-        }
+        getArea();
 
         return v;
-    }
-
-    private void fetchlatlnglocation() {
-        if (addressDataModel != null) {
-            Location location = new Location(LocationManager.GPS_PROVIDER);
-            location.setLatitude(Double.parseDouble(addressDataModel.getLatitude()));
-            location.setLongitude(Double.parseDouble(addressDataModel.getLongitude()));
-            currentLocation = location;
-            sharedPreferences = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("lat", String.valueOf(currentLocation.getLatitude()));
-            editor.putString("long", String.valueOf(currentLocation.getLongitude()));
-            editor.apply();
-            mapFragment.getMapAsync(AddAddressFragment.this);
-            try {
-                fetchAddress(currentLocation.getLatitude(), currentLocation.getLongitude());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void getAddressDetails() {
@@ -297,112 +289,92 @@ public class AddAddressFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    private void fetchLocation() {
+    private void getArea() {
+        //progressBar.setVisibility(View.VISIBLE);
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/getArea");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getContext());
 
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[]
-                    {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-            return;
-        }
-        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        //progressBar.setVisibility(View.GONE);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
 
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+                            try {
+                                Gson gson = new Gson();
+
+                                Type areaListType = new TypeToken<List<AreaModel>>() {
+                                }.getType();
+
+                                areaModelList.addAll(gson.fromJson(response, areaListType));
+
+                                AreaAdapter areaAdapter = new AreaAdapter(getContext(), R.layout.item_area, areaModelList);
+                                autoCompleteText.setThreshold(1);
+                                autoCompleteText.setAdapter(areaAdapter);
+                                autoCompleteText.setTextColor(Color.RED);
+                                Log.e("printLog", "---areaModelList---" + areaModelList.size());
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }, new Response.ErrorListener() {
             @Override
-            public void onSuccess(Location location) {
-                if (location != null) {
-                    currentLocation = location;
-                    sharedPreferences = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putString("lat", String.valueOf(currentLocation.getLatitude()));
-                    editor.putString("long", String.valueOf(currentLocation.getLongitude()));
-                    editor.apply();
-                    mapFragment.getMapAsync(AddAddressFragment.this);
+            public void onErrorResponse(VolleyError error) {
+                //progressBar.setVisibility(View.GONE);
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
                     try {
-                        fetchAddress(currentLocation.getLatitude(), currentLocation.getLongitude());
-                    } catch (IOException e) {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-    }
+        }) {
 
-    private void fetchAddress(double latitude, double longitude) throws IOException {
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(getContext(), Locale.getDefault());
-
-        addresses = geocoder.getFromLocation(latitude, longitude, 1);
-
-        String address = "";
-
-        if(addresses != null)
-        {
-            address = addresses.get(0).getAddressLine(0);
-        }
-
-        if(address != null)
-        {
-            edAddress.setText(address);
-        }
-    }
-
-    private void fetchmarkerLocation(double latitude, double longitude) throws IOException {
-        Geocoder geocoder;
-        List<Address> addresses;
-        geocoder = new Geocoder(getContext(), Locale.getDefault());
-
-        addresses = geocoder.getFromLocation(latitude, longitude, 1);
-
-        String address = addresses.get(0).getAddressLine(0);
-
-        sharedPreferences2 = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences2.edit();
-        editor.putString("lat", String.valueOf(latitude));
-        editor.putString("long", String.valueOf(longitude));
-        editor.apply();
-
-        edAddress.setText(address);
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        LatLng latLng;
-
-        mMap.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
             @Override
-            public void onMarkerDragStart(Marker marker) {
-
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                //params.put("customer_id", cus_id);
+                return params;
             }
 
             @Override
-            public void onMarkerDrag(Marker marker) {
-                try {
-                    fetchmarkerLocation(marker.getPosition().latitude, marker.getPosition().longitude);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
             }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-
-            }
-        });
-
-//        if(addressDataModel != null){
-//            latLng = new LatLng(Double.parseDouble(addressDataModel.getLatitude()),Double.parseDouble(addressDataModel.getLongitude()));
-//        }
-//        else{
-//            latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
-//        }
-        latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
-        markerOptions.position(latLng);
-        googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 10));
-        googleMap.addMarker(markerOptions).setTitle("Hold the marker to drag!");
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
     }
 
     @Override

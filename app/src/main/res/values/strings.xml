@@ -31,5 +31,6 @@
     <string name="orderDetails">Order Details</string>
     <string name="orderTrack">Order Track</string>
     <string name="rs">₹</string>
+    <string name="notification_channel_id">default</string>
 
 </resources>

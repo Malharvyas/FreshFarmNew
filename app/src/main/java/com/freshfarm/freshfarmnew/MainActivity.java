@@ -52,9 +52,13 @@ import com.freshfarm.freshfarmnew.Fragments.ProfileFragments.ReferralFragment;
 import com.freshfarm.freshfarmnew.Fragments.SearchResultsFragment;
 import com.freshfarm.freshfarmnew.Fragments.WalletFragment;
 import com.freshfarm.freshfarmnew.Fragments.WishlistFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.razorpay.Checkout;
 import com.razorpay.PaymentData;
 import com.razorpay.PaymentResultWithDataListener;
@@ -82,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final int PERMISSION_REQUEST_CODE = 1;
     Thread thread;
     private TextView text11;
+    private String token;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +113,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         headerView = navigationView.getHeaderView(0);
         head_address = headerView.findViewById(R.id.head_address);
         tvAddressMain = findViewById(R.id.tvAddressMain);
+
 
         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
         isLogin = sharedPreferences.getBoolean("islogin", false);
@@ -278,6 +284,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             ft.commit();
         }
 
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if (!task.isSuccessful()) {
+                    token = task.getException().getMessage();
+                    Log.e("printLog", "----FCM TOKEN Failed----" + task.getException());
+                } else {
+                    token = task.getResult().getToken();
+                    Log.e("printLog", "----FCM TOKEN----" + token);
+                    if (isLogin)
+                        updateNotification(cus_id, token);
+                }
+            }
+        });
 
     }
 
@@ -360,6 +380,85 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("customer_id", cus_id);
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
+                String auth = "Basic "
+                        + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+                headers.put("Authorization", auth);
+//                headers.put("x-api-key","HRCETCRACKER@123");
+//                headers.put("Content-Type", "application/form-data");
+                return headers;
+            }
+
+        };
+        volleyRequestQueue.add(stringRequest);
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
+        );
+    }
+
+    private void updateNotification(String cus_id, String token) {
+        BaseUrl b = new BaseUrl();
+        url = b.url;
+        url = url.concat("freshfarm/api/ApiController/updateNotification");
+        RequestQueue volleyRequestQueue = Volley.newRequestQueue(getApplicationContext());
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("printLog", "---responseToken---" + response);
+                        BaseUrl b = new BaseUrl();
+                        url = b.url;
+                        if (response != null) {
+                            JSONObject json = null;
+                            try {
+                                json = new JSONObject(String.valueOf(response));
+                                JSONObject json2 = json.getJSONObject("updateNotification");
+                                Boolean status = json2.getBoolean("status");
+                                String stat = status.toString();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                BaseUrl b = new BaseUrl();
+                url = b.url;
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
+                        JSONObject data = new JSONObject(responsebody);
+                        Boolean status = data.getBoolean("status");
+                        String stat = status.toString();
+                        if (stat.equals("false")) {
+                            String msg = data.getString("Message");
+//                            Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+//                    Toast.makeText(getApplicationContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                params.put("notification_token", token);
                 return params;
             }
 

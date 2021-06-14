@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
 
     <ScrollView
@@ -15,11 +16,21 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <fragment
-                android:id="@+id/address_map"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteText"
                 android:layout_width="match_parent"
-                android:layout_height="300dp" />
+                android:layout_height="40sp"
+                android:layout_marginLeft="20sp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20sp"
+                android:layout_marginBottom="10sp"
+                android:background="@drawable/border_edittext"
+                android:drawableLeft="@drawable/ic_baseline_search_24"
+                android:drawablePadding="10sp"
+                android:hint="@string/hint_search"
+                android:paddingLeft="10sp"
+                android:textSize="15sp"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
                 android:id="@+id/edName"

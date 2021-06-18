@@ -15,8 +15,13 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.ClientError;
@@ -28,8 +33,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.freshfarm.freshfarmnew.Adapters.AreaAdapter;
+import com.freshfarm.freshfarmnew.Adapters.CategoryAdapter;
+import com.freshfarm.freshfarmnew.Adapters.MapAdapter;
 import com.freshfarm.freshfarmnew.Class.BaseUrl;
+import com.freshfarm.freshfarmnew.Class.GridSpacing;
 import com.freshfarm.freshfarmnew.Model.AreaModel;
+import com.freshfarm.freshfarmnew.Model.Category;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -49,9 +58,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapsActivity extends FragmentActivity {
+public class MapsActivity extends FragmentActivity implements MapAdapter.onClickListener {
 
     ArrayList<AreaModel> areaModelList = new ArrayList<>();
+    ArrayList<AreaModel> tempAreaModelList = new ArrayList<>();
     EditText map_address;
     AutoCompleteTextView autoCompleteText;
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -63,19 +73,22 @@ public class MapsActivity extends FragmentActivity {
     String cus_id, url = "";
     private AreaModel areaModel;
     private boolean isLogin;
+    RecyclerView maprecyclerView;
+    RecyclerView.Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        SharedPreferences sharedPreferences1= getSharedPreferences("userlogin", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences1 = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
         isLogin = sharedPreferences1.getBoolean("islogin", false);
 
         map_address = findViewById(R.id.map_address);
         save_changes = findViewById(R.id.save_changes);
         progressBar = findViewById(R.id.progressbar);
         autoCompleteText = findViewById(R.id.autoCompleteText);
+        maprecyclerView = findViewById(R.id.recyclerView_Map);
 
         autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -103,7 +116,7 @@ public class MapsActivity extends FragmentActivity {
                 if (isLogin)
                     saveadress(map_address.getText().toString(), "", "");
                 else {
-                    if (areaModel != null){
+                    if (areaModel != null) {
                         SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString("address", areaModel.getAreaName());
@@ -253,7 +266,7 @@ public class MapsActivity extends FragmentActivity {
 
                             try {
                                 json = new JSONObject(String.valueOf(response));
-                                JSONObject json2 = json.getJSONObject("getProduct");
+                                JSONObject json2 = json.getJSONObject("editProfile");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
@@ -467,7 +480,19 @@ public class MapsActivity extends FragmentActivity {
                                 AreaAdapter areaAdapter = new AreaAdapter(MapsActivity.this, R.layout.item_area, areaModelList);
                                 autoCompleteText.setThreshold(1);
                                 autoCompleteText.setAdapter(areaAdapter);
-                                autoCompleteText.setTextColor(Color.RED);
+
+                                for (int i = 0; i < areaModelList.size(); i++)
+                                    if (i <= 5)
+                                        tempAreaModelList.add(areaModelList.get(i));
+                                    else
+                                        break;
+
+                                adapter = new MapAdapter(getApplicationContext(), tempAreaModelList, MapsActivity.this);
+                                maprecyclerView.setHasFixedSize(true);
+                                maprecyclerView.setItemAnimator(new DefaultItemAnimator());
+                                maprecyclerView.setLayoutManager(new GridLayoutManager(getApplicationContext(), 2, LinearLayoutManager.VERTICAL, false));
+                                maprecyclerView.setAdapter(adapter);
+                                maprecyclerView.addItemDecoration(new GridSpacing(12));
                                 Log.e("printLog", "---areaModelList---" + areaModelList.size());
 
                             } catch (Exception e) {
@@ -525,5 +550,15 @@ public class MapsActivity extends FragmentActivity {
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
         );
+    }
+
+    @Override
+    public void onClicked(int position) {
+        areaModel = tempAreaModelList.get(position);
+        SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("area_id", areaModel.getAreaId());
+        editor.apply();
+        map_address.setText(areaModel.getAreaName());
     }
 }

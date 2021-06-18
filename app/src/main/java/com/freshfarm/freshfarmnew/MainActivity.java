@@ -2,7 +2,9 @@ package com.freshfarm.freshfarmnew;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -709,7 +711,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (islogin == false) {
                     Toast.makeText(getApplicationContext(), "Please login to continue", Toast.LENGTH_SHORT).show();
                 } else {
-                    gotomaps();
+                    new AlertDialog.Builder(this)
+                            .setMessage("If you change the location,Cart items will be removed.")
+
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    gotomaps();
+                                }
+                            })
+
+                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            }).show();
                 }
                 /*} else {
                     Toast.makeText(getApplicationContext(), "Please provide location permission to continue", Toast.LENGTH_SHORT).show();

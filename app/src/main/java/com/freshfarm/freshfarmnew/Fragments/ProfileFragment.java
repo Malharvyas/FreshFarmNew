@@ -85,10 +85,10 @@ public class ProfileFragment extends Fragment implements View.OnClickListener {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("islogin", false);
                 editor.apply();
-                SharedPreferences sharedPreferences1 = getActivity().getSharedPreferences("userpref",Context.MODE_PRIVATE);
+               /* SharedPreferences sharedPreferences1 = getActivity().getSharedPreferences("userpref",Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor1 = sharedPreferences1.edit();
                 editor1.clear();
-                editor1.apply();
+                editor1.apply();*/
                 SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails",Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor2 = sharedPreferences2.edit();
                 editor2.clear();

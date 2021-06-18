@@ -72,6 +72,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
     String cat_id = "0", sub_cat_id = "0", trend_id = "3", deals_id = "2";
     int c1 = 0, c2 = 0, c3 = 0, c4 = 0;
     String cus_id = "";
+    String area_id = "";
 
     ProgressBar progressBar;
 
@@ -98,6 +99,7 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
         cus_id = sharedPreferences.getString("customer_id", "");
+        area_id = sharedPreferences.getString("area_id", "");
 
         adapter = new CategoryAdapter(getContext(), catlist, this, "Home");
         adapter2 = new TrendingAdapter(getContext(), prolist, this, cus_id);
@@ -278,6 +280,12 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
                 params.put("category_id", cat_id);
                 params.put("subcat_id", sub_cat_id);
                 params.put("product_type", deals_id);
+                params.put("area_id", area_id);
+
+                Log.e("printLog1", "===-Dcategory_id-===" + cat_id);
+                Log.e("printLog1", "===-Dsubcat_id-===" + sub_cat_id);
+                Log.e("printLog1", "===-Dproduct_type-===" + deals_id);
+                Log.e("printLog1", "===-Darea_id-===" + area_id);
                 return params;
             }
 
@@ -403,9 +411,15 @@ public class HomeFragment extends Fragment implements CategoryAdapter.onClickLis
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("area_id", area_id);
                 params.put("category_id", cat_id);
                 params.put("subcat_id", sub_cat_id);
                 params.put("product_type", trend_id);
+
+                Log.e("printLog1", "===-Tcategory_id-===" + cat_id);
+                Log.e("printLog1", "===-Tsubcat_id-===" + sub_cat_id);
+                Log.e("printLog1", "===-Tproduct_type-===" + trend_id);
+                Log.e("printLog1", "===-Tarea_id-===" + area_id);
                 return params;
             }
 

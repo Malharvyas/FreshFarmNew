@@ -1,31 +1,22 @@
 package com.freshfarm.freshfarmnew;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.SearchView;
 import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.ClientError;
@@ -39,38 +30,23 @@ import com.android.volley.toolbox.Volley;
 import com.freshfarm.freshfarmnew.Adapters.AreaAdapter;
 import com.freshfarm.freshfarmnew.Class.BaseUrl;
 import com.freshfarm.freshfarmnew.Model.AreaModel;
-import com.freshfarm.freshfarmnew.Model.CartModel;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class MapsActivity extends FragmentActivity {
@@ -81,32 +57,36 @@ public class MapsActivity extends FragmentActivity {
     FusedLocationProviderClient fusedLocationProviderClient;
     private static final int REQUEST_CODE = 101;
     Button save_changes;
-    Double m_latitude, m_longitude;
     int check = 0;
-    LatLng slatLng;
     SharedPreferences sharedPreferences, sharedPreferences2, getpreferances;
     ProgressBar progressBar;
     String cus_id, url = "";
-
+    private AreaModel areaModel;
+    private boolean isLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-//        searchView = findViewById(R.id.searchview);
+        SharedPreferences sharedPreferences1= getSharedPreferences("userlogin", Context.MODE_PRIVATE);
+        isLogin = sharedPreferences1.getBoolean("islogin", false);
+
         map_address = findViewById(R.id.map_address);
         save_changes = findViewById(R.id.save_changes);
         progressBar = findViewById(R.id.progressbar);
         autoCompleteText = findViewById(R.id.autoCompleteText);
 
-        Places.initialize(getApplicationContext(), "AIzaSyC7MBbojxsXRi72GRRGTx88n5iZFFNkrAo");
         autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Object item = parent.getItemAtPosition(position);
                 if (item instanceof AreaModel) {
-                    AreaModel areaModel = (AreaModel) item;
+                    areaModel = (AreaModel) item;
+                    SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("area_id", areaModel.getAreaId());
+                    editor.apply();
                     map_address.setText(areaModel.getAreaName());
                 }
             }
@@ -120,7 +100,21 @@ public class MapsActivity extends FragmentActivity {
         save_changes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveadress(map_address.getText().toString(), "", "");
+                if (isLogin)
+                    saveadress(map_address.getText().toString(), "", "");
+                else {
+                    if (areaModel != null){
+                        SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString("address", areaModel.getAreaName());
+                        editor.apply();
+
+                        Toast.makeText(getApplicationContext(), "Location Saved", Toast.LENGTH_SHORT).show();
+
+                        finish();
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    }
+                }
                 /*savelatlng();*/
             }
         });
@@ -241,7 +235,6 @@ public class MapsActivity extends FragmentActivity {
 
     private void saveadress(String address, String latitude, String longitude) {
         progressBar.setVisibility(View.VISIBLE);
-
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/editProfile");
@@ -251,6 +244,7 @@ public class MapsActivity extends FragmentActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.e("printLog", "----editProfile_response----" + response);
                         progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
@@ -272,7 +266,11 @@ public class MapsActivity extends FragmentActivity {
                                     editor.putString("address", cusadd);
                                     editor.apply();
 
-                                    addaddress(cus_id, address, latitude, longitude);
+                                    Toast.makeText(getApplicationContext(), "Location Saved", Toast.LENGTH_SHORT).show();
+
+                                    finish();
+                                    startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//                                    addaddress(cus_id, address, latitude, longitude);
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
@@ -283,7 +281,6 @@ public class MapsActivity extends FragmentActivity {
                                 e.printStackTrace();
                             }
                         }
-
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -313,6 +310,8 @@ public class MapsActivity extends FragmentActivity {
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("customer_id", cus_id);
+                if (areaModel != null)
+                    params.put("area_id", areaModel.getAreaId());
                 params.put("address", address);
                 return params;
             }
@@ -328,7 +327,6 @@ public class MapsActivity extends FragmentActivity {
 //                headers.put("Content-Type", "application/form-data");
                 return headers;
             }
-
         };
         volleyRequestQueue.add(stringRequest);
         stringRequest.setRetryPolicy(new DefaultRetryPolicy(
@@ -353,7 +351,7 @@ public class MapsActivity extends FragmentActivity {
                     @Override
                     public void onResponse(String response) {
                         progressBar.setVisibility(View.GONE);
-                        Log.e("PrintLog", "----" + response);
+                        Log.e("printLog", "----addaddress_response----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -415,6 +413,8 @@ public class MapsActivity extends FragmentActivity {
                 params.put("type", "1");
                 params.put("phone_number", phoneNumber);
                 params.put("contact_name", name);
+                if (areaModel != null)
+                    params.put("area_id", areaModel.getAreaId());
                 return params;
             }
 
@@ -449,6 +449,7 @@ public class MapsActivity extends FragmentActivity {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.e("printLog", "----getArea_response----" + response);
                         progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;

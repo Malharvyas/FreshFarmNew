@@ -205,12 +205,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
                             try {
                                 json = new JSONObject(String.valueOf(response));
-                                Log.e("PrintLog", "-----DeliveryResponse----" + response);
 
                                 JSONObject json2 = json.getJSONObject("getDeliveryCharge");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                Log.e("PrintLog", "-----stat----" + stat);
                                 if (stat.equals("true")) {
 
                                     JSONObject dataJson = json2.getJSONObject("data");
@@ -219,12 +217,10 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     int min_order = dataJson.getInt("min_order_amount");
                                     SharedPreferences sharedPreferences2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences2.edit();
-                                    editor.putInt("min_order",min_order);
+                                    editor.putInt("min_order", min_order);
                                     editor.apply();
 
                                     printreceipt(deli2, 0);
-
-                                    Log.e("PrintLog", "-----DeliveryResponse----" + dataJson.getInt("deliverycharge"));
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
@@ -232,7 +228,6 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                Log.e("PrintLog", "-----getMessage----" + e.getMessage());
                             }
                         }
                     }
@@ -294,7 +289,6 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                     params.put("product_data[" + i + "][product_id]", pidlist.get(i));
                     params.put("product_data[" + i + "][category_id]", pcatelist.get(i));
 
-                    Log.e("PrintLog", "----" + pidlist.get(i));
                 }
                 return params;
             }
@@ -332,7 +326,6 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void onResponse(String response) {
                         progressBar.setVisibility(View.GONE);
-                        Log.e("PrintLog", "----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -415,6 +408,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         delivery_charges.setText("" + deleviry);
         discount.setText("" + discount2);
         net_amount.setText("" + netamount);
+
     }
 
 //    private void printreceipt(int deleviry, int discount, Double netamount) {
@@ -512,13 +506,12 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
             break;
             case R.id.place_order: {
                 SharedPreferences shared = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
-                int min_order = shared.getInt("min_order",100);
+                int min_order = shared.getInt("min_order", 100);
                 Double minimum = new Double(min_order);
                 String total_amount = net_amount.getText().toString();
                 Double actual_order = Double.parseDouble(total_amount);
 
-                if(actual_order >= minimum)
-                {
+                if (actual_order >= minimum) {
 //                    Log.e("PrintLog", "----" + pidlist.size());
 
 //                Toast.makeText(getContext(),""+delivery_date,Toast.LENGTH_SHORT).show();
@@ -549,7 +542,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                             String vidset = sharedPreferences2.getString("vidset", null);
 
                             Gson gson = new Gson();
-                            List<String> pidlist = null, pquantlist = null, ppricelist = null,vidlist = null;
+                            List<String> pidlist = null, pquantlist = null, ppricelist = null, vidlist = null;
                             if (pidset != null) {
                                 pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
                                 }.getType());
@@ -596,9 +589,8 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                     } else {
                         Toast.makeText(getContext(), "Please select the mode of payment", Toast.LENGTH_SHORT).show();
                     }
-                }
-                else {
-                    Toast.makeText(getContext(),"Minimum order amount is "+min_order,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Minimum order amount is " + min_order, Toast.LENGTH_SHORT).show();
                 }
 //
             }
@@ -618,7 +610,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                     @Override
                     public void onResponse(String response) {
                         progressBar.setVisibility(View.GONE);
-                        Log.e("PrintLog", "----" + response);
+                        Log.e("PrintLog", "----updateWallet_response----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -648,7 +640,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     String vidset = sharedPreferences2.getString("vidset", null);
 
                                     Gson gson = new Gson();
-                                    List<String> pidlist = null, pquantlist = null, ppricelist = null,vidlist = null;
+                                    List<String> pidlist = null, pquantlist = null, ppricelist = null, vidlist = null;
                                     if (pidset != null) {
                                         pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
                                         }.getType());
@@ -804,6 +796,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
                             try {
                                 json = new JSONObject(String.valueOf(response));
+                                Log.e("PrintLog", "----createOrder_response----" + response);
                                 JSONObject json2 = json.getJSONObject("createOrder");
                                 Boolean status = json2.getBoolean("Status");
                                 String stat = status.toString();
@@ -816,18 +809,14 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                     editor.apply();
 
                                     SharedPreferences sh2 = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
-                                    String frag = sh2.getString("fragment","");
-                                    if(frag.equals(null) || frag.equals(""))
-                                    {
+                                    String frag = sh2.getString("fragment", "");
+                                    if (frag.equals(null) || frag.equals("")) {
 
-                                    }
-                                    else {
-                                        if(frag.equals("cart"))
-                                        {
-                                            for(int i = 0; i < pidlist.size(); i++)
-                                            {
+                                    } else {
+                                        if (frag.equals("cart")) {
+                                            for (int i = 0; i < pidlist.size(); i++) {
                                                 int quantity = 0;
-                                                removefromcart(pidlist.get(i),vidlist.get(i),cus_id,0);
+                                                removefromcart(pidlist.get(i), vidlist.get(i), cus_id, 0);
                                             }
                                         }
                                     }
@@ -920,6 +909,15 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 params.put("scheduled_date", delivery_date);
                 params.put("delivery_time_id", "1");
                 params.put("total_amount", total_amount);
+
+                Log.e("PrintLog", "--customer_id--" + cus_id);
+                Log.e("PrintLog", "--address_id--" + addressId);
+                Log.e("PrintLog", "--payment_id--" + pay_type);
+                Log.e("PrintLog", "--delivery_charge--" + delivery_charges.getText().toString());
+                Log.e("PrintLog", "--scheduled_date--" + delivery_date);
+                Log.e("PrintLog", "--delivery_time_id--" + "1");
+                Log.e("PrintLog", "--total_amount--" + total_amount);
+
                 if (sharedPreferences.getString("promo_id", "").equals(null) || sharedPreferences.getString("promo_id", "").equals("")) {
 
                 } else {
@@ -941,7 +939,6 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                     params.put("product_data[" + i + "][price]", ppricelist.get(i));
                     params.put("product_data[" + i + "][product_id]", pidlist.get(i));
 
-                    Log.e("PrintLog", "----" + pidlist.get(i));
                 }
                 return params;
             }
@@ -983,7 +980,6 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                             JSONObject json = null;
                             try {
                                 json = new JSONObject(String.valueOf(response));
-                                Log.e("PrintLog", "---------response--------" + response);
                                 JSONObject json2 = json.getJSONObject("addtocart");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
@@ -991,7 +987,6 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
 
                                     JSONArray data = json2.getJSONArray("data");
                                     String dataStr = data.toString();
-                                    Log.e("PrintLog", "----" + dataStr);
 
                                 } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
@@ -1204,7 +1199,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 String vidset = sharedPreferences2.getString("vidset", null);
 
                 Gson gson = new Gson();
-                List<String> pidlist = null, pquantlist = null, ppricelist = null,vidlist = null;
+                List<String> pidlist = null, pquantlist = null, ppricelist = null, vidlist = null;
                 if (pidset != null) {
                     pidlist = gson.fromJson(pidset, new TypeToken<List<String>>() {
                     }.getType());
@@ -1240,7 +1235,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 String delivery_date = sdf.format(result);
                 String total_amount = net_amount.getText().toString();
                 String pay_type = "2";
-                placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date, pay_type,vidlist);
+                placeorder(cus_id, addressId, total_amount, pidlist, pquantlist, ppricelist, delivery_date, pay_type, vidlist);
             }
         }
     }

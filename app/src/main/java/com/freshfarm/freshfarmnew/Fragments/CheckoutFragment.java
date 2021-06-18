@@ -108,14 +108,14 @@ public class CheckoutFragment extends Fragment {
         btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (checkPermission()) {
-                    AddAddressFragment addressFragment = new AddAddressFragment();
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("add_address");
-                    ft.replace(R.id.fragment_container, addressFragment);
-                    ft.commit();
-                } else {
+                //if (checkPermission()) {
+                AddAddressFragment addressFragment = new AddAddressFragment();
+                FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("add_address");
+                ft.replace(R.id.fragment_container, addressFragment);
+                ft.commit();
+                /*} else {
                     Toast.makeText(getContext(), "Please provide location permission to continue", Toast.LENGTH_SHORT).show();
-                }
+                }*/
             }
         });
 
@@ -143,6 +143,9 @@ public class CheckoutFragment extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putString("amount", tvTotalAmount.getText().toString());
                     bundle.putString("addressId", selectedAddressId);
+
+                    Log.e("PrintLog", "===addressId===" + selectedAddressId);
+
                     PlaceOrderFragment pof = new PlaceOrderFragment();
                     pof.setArguments(bundle);
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("PlaceOrder");
@@ -184,14 +187,14 @@ public class CheckoutFragment extends Fragment {
         return v;
     }
 
-    private boolean checkPermission() {
+   /* private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
         if (result == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             return false;
         }
-    }
+    }*/
 
     private void remvoeAddress(int position, String addressId) {
         progressbar.setVisibility(View.VISIBLE);

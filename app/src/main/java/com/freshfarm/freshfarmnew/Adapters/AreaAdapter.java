@@ -62,7 +62,7 @@ public class AreaAdapter extends ArrayAdapter<AreaModel> {
             if (constraint != null) {
                 suggestions.clear();
                 for (AreaModel customer : itemsAll) {
-                    if (customer.getAreaName().toLowerCase().startsWith(constraint.toString().toLowerCase())) {
+                    if (customer.getAreaName().toLowerCase().contains(constraint.toString().toLowerCase())) {
                         suggestions.add(customer);
                     }
                 }

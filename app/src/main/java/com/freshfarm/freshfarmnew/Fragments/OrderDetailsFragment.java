@@ -120,7 +120,7 @@ public class OrderDetailsFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         progressbar.setVisibility(View.GONE);
-                        Log.e("PrintLog", "----response----" + response);
+                        Log.e("PrintLog", "----getOrderDetail_response----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -131,7 +131,6 @@ public class OrderDetailsFragment extends Fragment {
                                 JSONObject json2 = json.getJSONObject("getOrderDetail");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                Log.e("PrintLog", "----stat----" + stat);
                                 if (stat.equals("true")) {
 
                                     odList.clear();
@@ -148,14 +147,14 @@ public class OrderDetailsFragment extends Fragment {
 
                                     OrderDetailsModel orderDetailsModel = odList.get(0);
 
-                                    tvUserName.setText(orderDetailsModel.getCustomerDetail().getCustomerName());
+                                    tvUserName.setText(orderDetailsModel.getAddressDetail().getContact_name());
                                     tvEmail.setText(orderDetailsModel.getCustomerDetail().getCustomerEmail());
-                                    tvContactNumber.setText(orderDetailsModel.getCustomerDetail().getCustomerPhone());
-                                    tvUserName1.setText(orderDetailsModel.getCustomerDetail().getCustomerName());
+                                    tvContactNumber.setText(orderDetailsModel.getAddressDetail().getPhone_number());
+                                    tvUserName1.setText(orderDetailsModel.getAddressDetail().getContact_name());
                                     tvFinalPayAmount.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getTotalAmount());
                                     tvDeliveryCharge.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getDeliveryCharge());
                                     tvDiscount.setText(getContext().getResources().getString(R.string.rs) + " " + orderDetailsModel.getDiscount());
-
+                                    
                                     if (orderDetailsModel.getTotalAmount() != null && orderDetailsModel.getDeliveryCharge() != null && orderDetailsModel.getDiscount() != null) {
                                         double total = Double.parseDouble(orderDetailsModel.getTotalAmount()) - Double.parseDouble(orderDetailsModel.getDeliveryCharge()) + Double.parseDouble(orderDetailsModel.getDiscount());
                                         tvTotalAmount.setText(getContext().getResources().getString(R.string.rs) + " " + String.valueOf(total));

@@ -81,8 +81,8 @@ public class AddAddressFragment extends Fragment {
     private RadioButton radioBtnOffice;
     SupportMapFragment mapFragment;
     private static final int REQUEST_CODE = 101;
-    MarkerOptions markerOptions;
     SharedPreferences sharedPreferences, sharedPreferences2, getpreferances;
+    private AreaModel areaModel;
 
     public AddAddressFragment() {
         // Required empty public constructor
@@ -108,8 +108,6 @@ public class AddAddressFragment extends Fragment {
 
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
-        markerOptions = new MarkerOptions().draggable(true);
-
         edName = v.findViewById(R.id.edName);
         edAddress = v.findViewById(R.id.edAddress);
         edPhone = v.findViewById(R.id.edPhone);
@@ -124,7 +122,7 @@ public class AddAddressFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Object item = parent.getItemAtPosition(position);
                 if (item instanceof AreaModel) {
-                    AreaModel areaModel = (AreaModel) item;
+                    areaModel = (AreaModel) item;
                     edAddress.setText(areaModel.getAreaName());
                 }
             }
@@ -175,14 +173,12 @@ public class AddAddressFragment extends Fragment {
         address = edAddress.getText().toString();
         name = edName.getText().toString();
         phoneNumber = edPhone.getText().toString();
-        if(name.isEmpty() || phoneNumber.isEmpty())
-        {
-            Toast.makeText(getContext(),"Please fill up all the details",Toast.LENGTH_SHORT).show();
-        }
-        else {
-            SharedPreferences ss = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
-            latitude = ss.getString("lat", "0.0");
-            longitude = ss.getString("long", "0.0");
+        if (name.isEmpty() || phoneNumber.isEmpty()) {
+            Toast.makeText(getContext(), "Please fill up all the details", Toast.LENGTH_SHORT).show();
+        } else {
+            //SharedPreferences ss = getActivity().getSharedPreferences("location", Context.MODE_PRIVATE);
+            //latitude = ss.getString("lat", "0.0");
+            //longitude = ss.getString("long", "0.0");
             // progressbar.setVisibility(View.VISIBLE);
             BaseUrl b = new BaseUrl();
             url = b.url;
@@ -197,7 +193,7 @@ public class AddAddressFragment extends Fragment {
                         @Override
                         public void onResponse(String response) {
                             //progressbar.setVisibility(View.GONE);
-                            Log.e("PrintLog", "----" + response);
+                            Log.e("printLog", "----updateAddress_response----" + response);
                             BaseUrl b = new BaseUrl();
                             url = b.url;
                             if (response != null) {
@@ -230,7 +226,6 @@ public class AddAddressFragment extends Fragment {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     // progressbar.setVisibility(View.GONE);
-                    Log.e("PrintLog", "----" + error);
                     BaseUrl b = new BaseUrl();
                     url = b.url;
                     if (error instanceof ClientError) {
@@ -258,12 +253,14 @@ public class AddAddressFragment extends Fragment {
                     if (addressDataModel != null)
                         params.put("address_id", addressDataModel.getAddressId());
                     params.put("customer_id", cus_id);
-                    params.put("latitude", latitude);
-                    params.put("longitude", longitude);
+                    /*params.put("latitude", latitude);
+                    params.put("longitude", longitude);*/
                     params.put("address", address);
                     params.put("type", type);
                     params.put("phone_number", phoneNumber);
                     params.put("contact_name", name);
+                    if (areaModel != null)
+                        params.put("area_id", areaModel.getAreaId());
                     return params;
                 }
 
@@ -286,7 +283,6 @@ public class AddAddressFragment extends Fragment {
                     DefaultRetryPolicy.DEFAULT_BACKOFF_MULT)
             );
         }
-
     }
 
     private void getArea() {
@@ -300,6 +296,7 @@ public class AddAddressFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.e("printLog", "---getArea_response---" + response);
                         //progressBar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;

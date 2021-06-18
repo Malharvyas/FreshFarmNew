@@ -40,10 +40,9 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:text="Delivery Location"
+                            android:text="Select City Name"
                             android:textColor="#FFFFFF"
-                            android:textSize="18sp"
-                            android:visibility="invisible" />
+                            android:textSize="18sp" />
 
                         <ImageView
                             android:id="@+id/prof_icon"
@@ -76,7 +75,6 @@
                             android:layout_width="25dp"
                             android:layout_height="14dp"
                             android:src="@drawable/ic_baseline_mode_edit_24"
-                            android:visibility="gone"
                             app:tint="#FFFFFF" />
 
                     </androidx.appcompat.widget.LinearLayoutCompat>

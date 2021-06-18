@@ -94,12 +94,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
 
 //        if (Build.VERSION.SDK_INT >= 23) {
-        if (checkPermission()) {
+        /*if (checkPermission()) {
             // Code for above or equal 23 API Oriented Device
             // Your Permission granted already .Do next code
         } else {
             requestPermission(); // Code for permission
-        }
+        }*/
 //        }
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -113,7 +113,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         headerView = navigationView.getHeaderView(0);
         head_address = headerView.findViewById(R.id.head_address);
         tvAddressMain = findViewById(R.id.tvAddressMain);
-
 
         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
         isLogin = sharedPreferences.getBoolean("islogin", false);
@@ -131,15 +130,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         head_address.setText(address);
         tvAddressMain.setText(address);
 
-        if (isLogin) {
+        /*if (isLogin) {
             nav_location.setVisibility(View.VISIBLE);
             text11.setVisibility(View.VISIBLE);
         } else {
             nav_location.setVisibility(View.GONE);
             text11.setVisibility(View.INVISIBLE);
-        }
+        }*/
 
-        if (isLogin == true && address.equals("")) {
+        if (address.equals("")) {
             finish();
             startActivity(new Intent(getApplicationContext(), MapsActivity.class));
         }
@@ -179,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         drawerLayout.setScrimColor(getResources().getColor(android.R.color.transparent));
-
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -301,14 +299,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    private boolean checkPermission() {
+   /* private boolean checkPermission() {
         int result = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION);
         if (result == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             return false;
         }
-    }
+    }*/
 
     private void requestPermission() {
         ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSION_REQUEST_CODE);
@@ -459,6 +457,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Map<String, String> params = new HashMap<String, String>();
                 params.put("customer_id", cus_id);
                 params.put("notification_token", token);
+                Log.e("printLog", "----GetToken----" + token);
                 return params;
             }
 
@@ -552,10 +551,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putBoolean("islogin", false);
                 editor.apply();
-                SharedPreferences sharedPreferences1 = getSharedPreferences("userpref", Context.MODE_PRIVATE);
+               /* SharedPreferences sharedPreferences1 = getSharedPreferences("userpref", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor1 = sharedPreferences1.edit();
                 editor1.clear();
-                editor1.apply();
+                editor1.apply();*/
                 SharedPreferences sharedPreferences2 = getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor2 = sharedPreferences2.edit();
                 editor2.clear();
@@ -704,17 +703,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             break;
 
             case R.id.nav_location: {
-                if (checkPermission()) {
-                    SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
-                    Boolean islogin = sharedPreferences.getBoolean("islogin", false);
-                    if (islogin == false) {
-                        Toast.makeText(getApplicationContext(), "Please login to continue", Toast.LENGTH_SHORT).show();
-                    } else {
-                        gotomaps();
-                    }
+                //if (checkPermission()) {
+                SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
+                Boolean islogin = sharedPreferences.getBoolean("islogin", false);
+                if (islogin == false) {
+                    Toast.makeText(getApplicationContext(), "Please login to continue", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Please provide location permission to continue", Toast.LENGTH_SHORT).show();
+                    gotomaps();
                 }
+                /*} else {
+                    Toast.makeText(getApplicationContext(), "Please provide location permission to continue", Toast.LENGTH_SHORT).show();
+                }*/
             }
             break;
         }

@@ -37,16 +37,15 @@ import java.util.Map;
 
 public class EditProfile extends Fragment {
 
-    EditText username,umobnum,uemailadd,uaddress;
-    String uname,umob,uemail,uadd,cus_id;
-    String url =  "";
-    String updatedname,updatedadd;
+    EditText username, umobnum, uemailadd, uaddress;
+    String uname, umob, uemail, uadd, cus_id;
+    String url = "";
+    String updatedname, updatedadd;
     Button save;
 
     public EditProfile() {
         // Required empty public constructor
     }
-
 
     public static EditProfile newInstance(String param1, String param2) {
         EditProfile fragment = new EditProfile();
@@ -56,7 +55,6 @@ public class EditProfile extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     private void setdetails(String uname, String umob, String uemail, String uadd) {
@@ -80,13 +78,13 @@ public class EditProfile extends Fragment {
         save = v.findViewById(R.id.save_profile);
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
-        uname = sharedPreferences.getString("customer_name","NA");
-        umob = sharedPreferences.getString("customer_phone","NA");
-        uemail = sharedPreferences.getString("customer_email","NA");
-        uadd = sharedPreferences.getString("address","");
-        cus_id = sharedPreferences.getString("customer_id","");
+        uname = sharedPreferences.getString("customer_name", "NA");
+        umob = sharedPreferences.getString("customer_phone", "NA");
+        uemail = sharedPreferences.getString("customer_email", "NA");
+        uadd = sharedPreferences.getString("address", "");
+        cus_id = sharedPreferences.getString("customer_id", "");
 
-        setdetails(uname,umob,uemail,uadd);
+        setdetails(uname, umob, uemail, uadd);
 
         save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,14 +92,11 @@ public class EditProfile extends Fragment {
                 updatedname = username.getText().toString();
                 updatedadd = uaddress.getText().toString();
 
-                if(updatedname.equals("") || updatedname == null || updatedadd.equals("") || updatedadd == null)
-                {
-                    Toast.makeText(getContext(),"Name or Address cannot be empty",Toast.LENGTH_SHORT).show();
+                if (updatedname.equals("") || updatedname == null || updatedadd.equals("") || updatedadd == null) {
+                    Toast.makeText(getContext(), "Name or Address cannot be empty", Toast.LENGTH_SHORT).show();
+                } else {
+                    update(cus_id, updatedname, updatedadd);
                 }
-                else {
-                    update(cus_id,updatedname,updatedadd);
-                }
-
             }
         });
         return v;
@@ -119,7 +114,7 @@ public class EditProfile extends Fragment {
                     public void onResponse(String response) {
                         BaseUrl b = new BaseUrl();
                         url = b.url;
-                        if(response != null) {
+                        if (response != null) {
                             JSONObject json = null;
 
                             try {
@@ -127,8 +122,7 @@ public class EditProfile extends Fragment {
                                 JSONObject json2 = json.getJSONObject("getProduct");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                if(stat.equals("true"))
-                                {
+                                if (stat.equals("true")) {
                                     String msg = json2.getString("Message");
                                     JSONObject data = json2.getJSONObject("data");
                                     String cusname = data.getString("customer_name");
@@ -136,20 +130,18 @@ public class EditProfile extends Fragment {
 
                                     SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("customer_name",cusname);
-                                    editor.putString("address",cusadd);
+                                    editor.putString("customer_name", cusname);
+                                    editor.putString("address", cusadd);
                                     editor.apply();
 
-                                    Toast.makeText(getContext(),""+msg,Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
 
                                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
                                     imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                                     getActivity().getSupportFragmentManager().popBackStack();
-                                }
-                                else if(stat.equals("false"))
-                                {
+                                } else if (stat.equals("false")) {
                                     String msg = json2.getString("Message");
-                                    Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                                 }
 //                                Toast.makeText(getApplicationContext(),""+response,Toast.LENGTH_SHORT).show();
                             } catch (Exception e) {
@@ -163,40 +155,35 @@ public class EditProfile extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 BaseUrl b = new BaseUrl();
                 url = b.url;
-                if(error instanceof ClientError)
-                {
-                    try{
-                        String responsebody = new String(error.networkResponse.data,"utf-8");
+                if (error instanceof ClientError) {
+                    try {
+                        String responsebody = new String(error.networkResponse.data, "utf-8");
                         JSONObject data = new JSONObject(responsebody);
                         Boolean status = data.getBoolean("status");
                         String stat = status.toString();
-                        if(stat.equals("false"))
-                        {
+                        if (stat.equals("false")) {
                             String msg = data.getString("Message");
-                            Toast.makeText(getContext(),msg,Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
                         }
-                    }
-                    catch (Exception e)
-                    {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                else
-                {
-                    Toast.makeText(getContext(),"Error : "+error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(), "Error : " + error, Toast.LENGTH_SHORT).show();
                 }
             }
-        }){
+        }) {
             @Override
-            protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("customer_id",cus_id);
-                params.put("customer_name",updatedname);
-                params.put("address",updatedadd);
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("customer_id", cus_id);
+                params.put("customer_name", updatedname);
+                params.put("address", updatedadd);
                 return params;
             }
+
             @Override
-            public Map<String,String> getHeaders() throws AuthFailureError {
+            public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String> headers = new HashMap<>();
                 String credentials = "u222436058_fresh_farm:tG9r6C5Q$";
                 String auth = "Basic "

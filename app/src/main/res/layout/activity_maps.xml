@@ -16,8 +16,10 @@
         android:layout_marginBottom="10sp"
         android:background="@drawable/border_edittext"
         android:drawableLeft="@drawable/ic_baseline_search_24"
+        android:drawableRight="@drawable/ic_drop_down"
         android:drawablePadding="10sp"
-        android:hint="@string/hint_search"
+        android:paddingRight="10dp"
+        android:hint="Search Area"
         android:paddingLeft="10sp"
         android:textSize="15sp"
         app:layout_constraintTop_toTopOf="parent" />
@@ -31,7 +33,7 @@
         android:layout_marginRight="15dp"
         android:layout_marginBottom="15dp"
         app:cardCornerRadius="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/autoCompleteText"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
@@ -47,6 +49,8 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/border_edittext"
+                android:editable="false"
+                android:focusable="false"
                 android:inputType="textMultiLine"
                 android:padding="8sp"
                 android:textAlignment="center"

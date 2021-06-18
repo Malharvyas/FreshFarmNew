@@ -31,6 +31,15 @@ public class AddressDataModel implements Serializable {
     @SerializedName("type")
     @Expose
     private String type;
+
+    public String getArea_id() {
+        return area_id;
+    }
+
+    public void setArea_id(String area_id) {
+        this.area_id = area_id;
+    }
+
     @SerializedName("phone_number")
     @Expose
     private String phoneNumber;
@@ -43,6 +52,9 @@ public class AddressDataModel implements Serializable {
     @SerializedName("contact_name")
     @Expose
     private String contactName;
+    @SerializedName("area_id")
+    @Expose
+    private String area_id;
 
     public String getAddressId() {
         return addressId;

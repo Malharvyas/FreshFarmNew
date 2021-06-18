@@ -45,6 +45,7 @@ import pl.droidsonroids.gif.GifImageView;
 public class ProductsFragment extends Fragment implements ProductAdapter.onClickListener {
 
     String url = "", cus_id = "";
+    String area_id = "";
     RecyclerView product_recycler;
     RecyclerView.Adapter adapter;
     List<Product> prolist;
@@ -71,6 +72,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
 
         SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
         cus_id = sharedPreferences.getString("customer_id", "");
+        area_id = sharedPreferences.getString("area_id", "");
     }
 
     @Override
@@ -208,6 +210,7 @@ public class ProductsFragment extends Fragment implements ProductAdapter.onClick
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<String, String>();
+                params.put("area_id", area_id);
                 params.put("category_id", category_id);
                 params.put("subcat_id", sub_cat_id);
                 params.put("product_type", all_pro_id);

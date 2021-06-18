@@ -154,7 +154,7 @@ public class MyOrdersFragment extends Fragment {
                                 JSONObject json2 = json.getJSONObject("cancelOrderDetail");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
-                                Log.e("PrintLog", "--dataStr--" + stat);
+                                Log.e("PrintLog", "--Order_dataStr--" + stat);
                                 if (stat.equals("true")) {
 
                                     getMyOrderData();
@@ -236,7 +236,7 @@ public class MyOrdersFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         progressbar.setVisibility(View.GONE);
-                        //Log.e("PrintLog", "----" + response);
+                        Log.e("PrintLog", "----getOrderHistory----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -252,7 +252,6 @@ public class MyOrdersFragment extends Fragment {
 
                                     JSONArray data = json2.getJSONArray("data");
                                     String dataStr = data.toString();
-                                    //Log.e("PrintLog", "--dataStr--" + dataStr);
                                     Gson gson = new Gson();
 
                                     Type cartListType = new TypeToken<List<OrderListModel>>() {

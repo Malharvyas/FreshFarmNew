@@ -141,6 +141,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
                                 if (stat.equals("true")) {
                                     JSONArray data = json2.getJSONArray("data");
                                     JSONObject jsonObject = data.getJSONObject(0);
+                                    String area_id = jsonObject.getString("area_id");
                                     String customer_id = jsonObject.getString("customer_id");
                                     String customer_name = jsonObject.getString("customer_name");
                                     String customer_phone = jsonObject.getString("customer_phone");
@@ -158,6 +159,7 @@ public class login extends AppCompatActivity implements View.OnClickListener {
 
                                     SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("area_id", area_id);
                                     editor.putString("customer_id", customer_id);
                                     editor.putString("customer_name", customer_name);
                                     editor.putString("customer_phone", customer_phone);

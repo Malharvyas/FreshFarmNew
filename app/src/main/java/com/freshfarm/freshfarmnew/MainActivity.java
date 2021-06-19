@@ -116,6 +116,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         head_address = headerView.findViewById(R.id.head_address);
         tvAddressMain = findViewById(R.id.tvAddressMain);
 
+        
+
         SharedPreferences sharedPreferences = getSharedPreferences("userlogin", Context.MODE_PRIVATE);
         isLogin = sharedPreferences.getBoolean("islogin", false);
 

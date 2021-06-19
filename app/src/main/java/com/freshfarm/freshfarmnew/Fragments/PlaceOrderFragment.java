@@ -932,9 +932,6 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 params.put("delivery_time_id", "1");
                 params.put("total_amount", total_amount);
 
-                Log.e("PrintLog", "===customer_id===" + cus_id);
-                Log.e("PrintLog", "===address_id===" + addressId);
-
                 if (sharedPreferences.getString("promo_id", "").equals(null) || sharedPreferences.getString("promo_id", "").equals("")) {
 
                 } else {
@@ -957,12 +954,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                     params.put("product_data[" + i + "][product_id]", pidlist.get(i));
                     params.put("product_data[" + i + "][unit]", punitlist.get(i));
                     params.put("product_data[" + i + "][unit_val]", punitvallist.get(i));
-
-                    Log.e("PrintLog", "===Unit===" + punitlist.get(i));
-                    Log.e("PrintLog", "===unit_val===" + punitvallist.get(i));
-
                 }
-
                 Log.e("PrintLog", "===params===" + params.toString());
                 return params;
             }

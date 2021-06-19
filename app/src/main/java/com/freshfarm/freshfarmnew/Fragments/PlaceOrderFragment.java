@@ -265,6 +265,8 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 String pquantset = sharedPreferences2.getString("pquantset", null);
                 String ppriceset = sharedPreferences2.getString("ppriceset", null);
                 String pcatset = sharedPreferences2.getString("pcatset", null);
+                String punitset = sharedPreferences2.getString("punitset", null);
+                String punitvalset = sharedPreferences2.getString("punitvalset", null);
 
                 Gson gson = new Gson();
                 List<String> pidlist = null, pquantlist = null, ppricelist = null, pcatelist = null;
@@ -284,12 +286,22 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                     pcatelist = gson.fromJson(pcatset, new TypeToken<List<String>>() {
                     }.getType());
                 }
+                if (punitset != null) {
+                    punitlist = gson.fromJson(punitset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
+                if (punitvalset != null) {
+                    punitvallist = gson.fromJson(punitvalset, new TypeToken<List<String>>() {
+                    }.getType());
+                }
 
                 for (int i = 0; i < pidlist.size(); i++) {
                     params.put("product_data[" + i + "][quantity]", pquantlist.get(i));
                     params.put("product_data[" + i + "][price]", ppricelist.get(i));
                     params.put("product_data[" + i + "][product_id]", pidlist.get(i));
                     params.put("product_data[" + i + "][category_id]", pcatelist.get(i));
+                    params.put("product_data[" + i + "][unit]", punitlist.get(i));
+                    params.put("product_data[" + i + "][unit_val]", punitvallist.get(i));
 
                 }
                 return params;
@@ -954,6 +966,12 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                     params.put("product_data[" + i + "][product_id]", pidlist.get(i));
                     params.put("product_data[" + i + "][unit]", punitlist.get(i));
                     params.put("product_data[" + i + "][unit_val]", punitvallist.get(i));
+
+                    Log.e("PrintLog", "--params--" + "product_data[" + i + "][quantity]" + "--quantity--" + pquantlist.get(i));
+                    Log.e("PrintLog", "--params--" + "product_data[" + i + "][price]" + "--price--" + ppricelist.get(i));
+                    Log.e("PrintLog", "--params--" + "product_data[" + i + "][product_id]" + "--product_id--" + pidlist.get(i));
+                    Log.e("PrintLog", "--params--" + "product_data[" + i + "][unit]" + "--unit--" + punitlist.get(i));
+                    Log.e("PrintLog", "--params--" + "product_data[" + i + "][unit_val]" + "--unit_val--" + punitvallist.get(i));
                 }
                 Log.e("PrintLog", "===params===" + params.toString());
                 return params;

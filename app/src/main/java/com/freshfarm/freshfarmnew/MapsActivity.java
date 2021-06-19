@@ -113,9 +113,9 @@ public class MapsActivity extends FragmentActivity implements MapAdapter.onClick
         save_changes.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isLogin)
+                if (isLogin) {
                     saveadress(map_address.getText().toString(), "", "");
-                else {
+                } else {
                     if (areaModel != null) {
                         SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -273,6 +273,11 @@ public class MapsActivity extends FragmentActivity implements MapAdapter.onClick
                                     String msg = json2.getString("Message");
                                     JSONObject data = json2.getJSONObject("data");
                                     String cusadd = data.getString("address");
+
+                                    SharedPreferences sharedPreferences3 = getSharedPreferences("temp", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor3 = sharedPreferences3.edit();
+                                    editor3.clear();
+                                    editor3.apply();
 
                                     SharedPreferences sharedPreferences = getSharedPreferences("userpref", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();

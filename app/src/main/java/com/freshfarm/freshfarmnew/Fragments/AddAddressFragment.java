@@ -128,6 +128,18 @@ public class AddAddressFragment extends Fragment {
             }
         });
 
+        edAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(edAddress.getText().toString().equals(""))
+                {
+                    Toast.makeText(getContext(),"Please Select the area first from the search field.",Toast.LENGTH_SHORT).show();
+                    edAddress.clearFocus();
+                    autoCompleteText.setFocusable(true);
+                }
+            }
+        });
+
         if (getArguments() != null) {
             if (getArguments().containsKey("data")) {
                 addressDataModel = (AddressDataModel) getArguments().getSerializable("data");

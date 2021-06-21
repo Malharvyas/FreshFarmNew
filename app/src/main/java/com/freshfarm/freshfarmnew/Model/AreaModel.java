@@ -3,7 +3,9 @@ package com.freshfarm.freshfarmnew.Model;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class AreaModel {
+import java.io.Serializable;
+
+public class AreaModel implements Serializable {
     @SerializedName("area_id")
     @Expose
     private String areaId;

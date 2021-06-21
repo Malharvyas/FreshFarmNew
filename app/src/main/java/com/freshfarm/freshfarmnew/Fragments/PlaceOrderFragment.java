@@ -79,6 +79,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
     double deleviry, discount2;
     Double netamount;
     String selected = "";
+    private TextView order_address;
 
     public PlaceOrderFragment() {
         // Required empty public constructor
@@ -134,6 +135,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
         delivery_charges = v.findViewById(R.id.delivery_charges);
         discount = v.findViewById(R.id.discount);
         net_amount = v.findViewById(R.id.net_amount);
+        order_address = v.findViewById(R.id.order_address);
 
 
         wallet_amount = v.findViewById(R.id.wallet_amount);
@@ -148,6 +150,9 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 deleviry = 0;
                 discount2 = 0;
                 printreceipt(deleviry, discount2);
+            }
+            if (getArguments().containsKey("address")) {
+                order_address.setText(getArguments().getString("address"));
             }
             if (getArguments().containsKey("addressId")) {
                 addressId = getArguments().getString("addressId");
@@ -822,6 +827,7 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.e("PrintLog", "----Onresponse----" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -836,6 +842,9 @@ public class PlaceOrderFragment extends Fragment implements View.OnClickListener
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
                                     int order_id = json2.getInt("data");
+                                    String msg = json2.getString("Message");
+                                    Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
+                                    Log.e("PrintLog", "--OrderID--" + order_id);
 
                                     SharedPreferences sh1 = getActivity().getSharedPreferences("payment_details", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sh1.edit();

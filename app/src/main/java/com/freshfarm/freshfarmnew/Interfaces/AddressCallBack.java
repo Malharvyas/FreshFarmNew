@@ -8,4 +8,5 @@ public interface AddressCallBack {
     void updateAddress(AddressDataModel addressDataModel);
 
     void onAddressSelect(String id);
+    void onAddressSelect1(String address);
 }

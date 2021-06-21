@@ -61,6 +61,7 @@ public class CheckoutFragment extends Fragment {
     private Button btnAddAddress;
     private Button btnContinue, btnPayment;
     private String selectedAddressId = "";
+    private String selectedAddress = "";
     GifImageView nodata;
 
     public CheckoutFragment() {
@@ -143,8 +144,10 @@ public class CheckoutFragment extends Fragment {
                     Bundle bundle = new Bundle();
                     bundle.putString("amount", tvTotalAmount.getText().toString());
                     bundle.putString("addressId", selectedAddressId);
+                    bundle.putString("address", selectedAddress);
 
                     Log.e("PrintLog", "===addressId===" + selectedAddressId);
+                    Log.e("PrintLog", "===address===" + selectedAddress);
 
                     PlaceOrderFragment pof = new PlaceOrderFragment();
                     pof.setArguments(bundle);
@@ -167,6 +170,7 @@ public class CheckoutFragment extends Fragment {
             public void updateAddress(AddressDataModel addressDataModel) {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("data", addressDataModel);
+                Log.e("PrintLog", "----UpdateAddress_Response----" + addressDataModel.getArea_id());
                 AddAddressFragment addressFragment = new AddAddressFragment();
                 addressFragment.setArguments(bundle);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
@@ -176,8 +180,12 @@ public class CheckoutFragment extends Fragment {
 
             @Override
             public void onAddressSelect(String id) {
-
                 selectedAddressId = id;
+            }
+
+            @Override
+            public void onAddressSelect1(String address) {
+                selectedAddress = address;
             }
         });
         recyclerView.setAdapter(checkOutAdapter);

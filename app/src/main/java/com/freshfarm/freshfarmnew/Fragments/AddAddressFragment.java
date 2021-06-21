@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
@@ -74,7 +75,7 @@ public class AddAddressFragment extends Fragment {
     AddressModel addressModel;
     String url = "", cus_id = "", latitude = "0.0", longitude = "0.0", name = "", phoneNumber = "", address = "", type = "1";
     private Button btnAddAddress;
-    private EditText edName, edAddress, edPhone;
+    private EditText edName, edArea, edAddress, edPhone;
     private RadioGroup radioGroup;
     private AddressDataModel addressDataModel;
     private RadioButton radioBtnHome;
@@ -83,6 +84,7 @@ public class AddAddressFragment extends Fragment {
     private static final int REQUEST_CODE = 101;
     SharedPreferences sharedPreferences, sharedPreferences2, getpreferances;
     private AreaModel areaModel;
+    private ProgressBar progressbar;
 
     public AddAddressFragment() {
         // Required empty public constructor
@@ -109,6 +111,7 @@ public class AddAddressFragment extends Fragment {
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         edName = v.findViewById(R.id.edName);
+        edArea = v.findViewById(R.id.edArea);
         edAddress = v.findViewById(R.id.edAddress);
         edPhone = v.findViewById(R.id.edPhone);
         btnAddAddress = v.findViewById(R.id.btnAddAddress);
@@ -116,6 +119,7 @@ public class AddAddressFragment extends Fragment {
         radioBtnHome = v.findViewById(R.id.radioBtnHome);
         radioBtnOffice = v.findViewById(R.id.radioBtnOffice);
         autoCompleteText = v.findViewById(R.id.autoCompleteText);
+        progressbar = v.findViewById(R.id.progressbar);
 
         autoCompleteText.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -123,22 +127,21 @@ public class AddAddressFragment extends Fragment {
                 Object item = parent.getItemAtPosition(position);
                 if (item instanceof AreaModel) {
                     areaModel = (AreaModel) item;
-                    edAddress.setText(areaModel.getAreaName());
+                    edArea.setText(areaModel.getAreaName());
                 }
             }
         });
 
-        edAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        /*edAddress.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(edAddress.getText().toString().equals(""))
-                {
-                    Toast.makeText(getContext(),"Please Select the area first from the search field.",Toast.LENGTH_SHORT).show();
+                if (edAddress.getText().toString().equals("")) {
+                    Toast.makeText(getContext(), "Please Select the area first from the search field.", Toast.LENGTH_SHORT).show();
                     edAddress.clearFocus();
                     autoCompleteText.setFocusable(true);
                 }
             }
-        });
+        });*/
 
         if (getArguments() != null) {
             if (getArguments().containsKey("data")) {
@@ -182,6 +185,7 @@ public class AddAddressFragment extends Fragment {
     }
 
     private void getAddressDetails() {
+        progressbar.setVisibility(View.VISIBLE);
         address = edAddress.getText().toString();
         name = edName.getText().toString();
         phoneNumber = edPhone.getText().toString();
@@ -204,7 +208,7 @@ public class AddAddressFragment extends Fragment {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            //progressbar.setVisibility(View.GONE);
+                            progressbar.setVisibility(View.GONE);
                             Log.e("printLog", "----updateAddress_response----" + response);
                             BaseUrl b = new BaseUrl();
                             url = b.url;
@@ -237,7 +241,7 @@ public class AddAddressFragment extends Fragment {
                     }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    // progressbar.setVisibility(View.GONE);
+                    progressbar.setVisibility(View.GONE);
                     BaseUrl b = new BaseUrl();
                     url = b.url;
                     if (error instanceof ClientError) {
@@ -298,7 +302,7 @@ public class AddAddressFragment extends Fragment {
     }
 
     private void getArea() {
-        //progressBar.setVisibility(View.VISIBLE);
+        progressbar.setVisibility(View.VISIBLE);
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/getArea");
@@ -309,7 +313,7 @@ public class AddAddressFragment extends Fragment {
                     @Override
                     public void onResponse(String response) {
                         Log.e("printLog", "---getArea_response---" + response);
-                        //progressBar.setVisibility(View.GONE);
+                        progressbar.setVisibility(View.GONE);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -329,6 +333,13 @@ public class AddAddressFragment extends Fragment {
                                 autoCompleteText.setTextColor(Color.RED);
                                 Log.e("printLog", "---areaModelList---" + areaModelList.size());
 
+                                if (addressDataModel != null)
+                                    for (int i = 0; i < areaModelList.size(); i++) {
+                                        if (addressDataModel.getArea_id().equals(areaModelList.get(i).getAreaId())) {
+                                            edArea.setText(areaModelList.get(i).getAreaName());
+                                        }
+                                    }
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -337,7 +348,7 @@ public class AddAddressFragment extends Fragment {
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                //progressBar.setVisibility(View.GONE);
+                progressbar.setVisibility(View.GONE);
                 BaseUrl b = new BaseUrl();
                 url = b.url;
                 if (error instanceof ClientError) {

@@ -93,6 +93,7 @@ public class CheckOutAdapter extends RecyclerView.Adapter<CheckOutAdapter.ViewHo
                 public void onClick(View v) {
 
                     addressCallBack.onAddressSelect(list.get(getAdapterPosition()).getAddressId());
+                    addressCallBack.onAddressSelect1(list.get(getAdapterPosition()).getAddress());
 
                     mSelectedItem = getAdapterPosition();
                     notifyDataSetChanged();

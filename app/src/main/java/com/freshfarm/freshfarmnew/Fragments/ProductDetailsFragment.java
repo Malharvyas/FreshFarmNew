@@ -9,6 +9,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -104,14 +105,16 @@ public class ProductDetailsFragment extends Fragment {
         pdbuy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e("printLog", "========pdbuy click=========");
                 SharedPreferences sharedPreferences = getActivity().getSharedPreferences("cartdetails", Context.MODE_PRIVATE);
                 String amount = sharedPreferences.getString("totleAmount", "0");
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString("fragment","productd");
+                editor.putString("fragment", "productd");
                 editor.apply();
                 Bundle bundle = new Bundle();
                 bundle.putString("amount", amount);
                 bundle.putString("total_items", "1");
+                Log.e("PrintLog", "--final_amount--" + amount);
                 CheckoutFragment checkoutFragment = new CheckoutFragment();
                 checkoutFragment.setArguments(bundle);
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction().addToBackStack("Cart");
@@ -234,6 +237,7 @@ public class ProductDetailsFragment extends Fragment {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        Log.e("printLog", "=========onResponse=========" + response);
                         BaseUrl b = new BaseUrl();
                         url = b.url;
                         if (response != null) {
@@ -316,12 +320,13 @@ public class ProductDetailsFragment extends Fragment {
                                                 String item = pv.getUnit_val() + " " + pv.getUnit();
                                                 String selected = pdvariant.getSelectedItem().toString();
                                                 if (item.equals(selected)) {
-                                                    savedetailstopref(prolist);
                                                     SharedPreferences sharedPreferences = getActivity().getSharedPreferences("pdtemp", Context.MODE_PRIVATE);
                                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                                     editor.putString("v_id", pv.getV_id());
                                                     editor.apply();
                                                     productprice.setText("\u20B9 " + pv.getPrice());
+                                                    savedetailstopref(prolist);
+                                                    Log.e("printLog","----ProductPrice----"+pv.getPrice());
                                                 }
                                             }
                                         }
@@ -411,6 +416,7 @@ public class ProductDetailsFragment extends Fragment {
         List<String> productcategoryid2 = new ArrayList<>();
 
         String price = productprice.getText().toString();
+        Log.e("printLog", "===price===" + price);
         char c = '\0';
         StringBuffer sf = new StringBuffer();
         for (int i = 0; i < price.length(); i++) {
@@ -423,6 +429,7 @@ public class ProductDetailsFragment extends Fragment {
         }
 
         String newprice = String.valueOf(sf);
+        Log.e("printLog", "=====newprice=====" + newprice);
 //        Toast.makeText(getContext(),""+price,Toast.LENGTH_SHORT).show();
         if (prolist != null) {
             for (int i = 0; i < prolist.size(); i++) {
@@ -437,15 +444,19 @@ public class ProductDetailsFragment extends Fragment {
         String pidset = null, ppriceset = null, pquantset = null, pcategoryset = null;
         if (productid2 != null) {
             pidset = gson.toJson(productid2);
+            Log.e("printLog", "=====pidset=====" + pidset);
         }
         if (productprice2 != null) {
             ppriceset = gson.toJson(productprice2);
+            Log.e("printLog", "=====ppriceset=====" + ppriceset);
         }
         if (productquantity2 != null) {
             pquantset = gson.toJson(productquantity2);
+            Log.e("printLog", "=====pquantset=====" + pquantset);
         }
         if (productcategoryid2 != null) {
             pcategoryset = gson.toJson(productcategoryid2);
+            Log.e("printLog", "=====pcategoryset=====" + pcategoryset);
         }
 
         editor.putString("pidset", pidset);

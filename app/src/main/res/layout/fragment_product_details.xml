@@ -38,7 +38,7 @@
 
             <TextView
                 android:id="@+id/pdproduct_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="10dp"
@@ -46,6 +46,7 @@
                 android:textColor="#374241"
                 android:textSize="18sp"
                 app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/pd_variation"
                 app:layout_constraintTop_toBottomOf="@id/circle_indicator" />
 
             <TextView

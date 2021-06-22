@@ -109,7 +109,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                                 holder.plus.setVisibility(View.VISIBLE);
                                 holder.minus.setVisibility(View.VISIBLE);
                                 holder.quant_val.setVisibility(View.VISIBLE);
-                                holder.trend_add.setVisibility(View.GONE);
+                                holder.trend_add.setVisibility(View.INVISIBLE);
 
                                 String key = key2 + "quant";
 

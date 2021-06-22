@@ -326,7 +326,7 @@ public class ProductDetailsFragment extends Fragment {
                                                     editor.apply();
                                                     productprice.setText("\u20B9 " + pv.getPrice());
                                                     savedetailstopref(prolist);
-                                                    Log.e("printLog","----ProductPrice----"+pv.getPrice());
+                                                    Log.e("printLog", "----ProductPrice----" + pv.getPrice());
                                                 }
                                             }
                                         }
@@ -414,6 +414,8 @@ public class ProductDetailsFragment extends Fragment {
         List<String> productprice2 = new ArrayList<>();
         List<String> productid2 = new ArrayList<>();
         List<String> productcategoryid2 = new ArrayList<>();
+        List<String> productunit2 = new ArrayList<>();
+        List<String> productunitval2 = new ArrayList<>();
 
         String price = productprice.getText().toString();
         Log.e("printLog", "===price===" + price);
@@ -437,26 +439,33 @@ public class ProductDetailsFragment extends Fragment {
                 productprice2.add(newprice);
                 productquantity2.add("1");
                 productcategoryid2.add(prolist.get(i).getCategory_id());
+                productunit2.add(prolist.get(i).getVariations().get(i).getUnit());
+                productunitval2.add(prolist.get(i).getVariations().get(i).getUnit_val());
             }
         }
 
         Gson gson = new Gson();
-        String pidset = null, ppriceset = null, pquantset = null, pcategoryset = null;
+        String pidset = null, ppriceset = null, pquantset = null, pcategoryset = null, punitset = null, punitvalset = null;
+        ;
         if (productid2 != null) {
             pidset = gson.toJson(productid2);
-            Log.e("printLog", "=====pidset=====" + pidset);
         }
         if (productprice2 != null) {
             ppriceset = gson.toJson(productprice2);
-            Log.e("printLog", "=====ppriceset=====" + ppriceset);
         }
         if (productquantity2 != null) {
             pquantset = gson.toJson(productquantity2);
-            Log.e("printLog", "=====pquantset=====" + pquantset);
         }
         if (productcategoryid2 != null) {
             pcategoryset = gson.toJson(productcategoryid2);
-            Log.e("printLog", "=====pcategoryset=====" + pcategoryset);
+        }
+        if (productunit2 != null) {
+            punitset = gson.toJson(productunit2);
+            Log.e("printLog", "=====punitset=====" + punitset);
+        }
+        if (productunitval2 != null) {
+            punitvalset = gson.toJson(productunitval2);
+            Log.e("printLog", "=====punitvalset=====" + punitvalset);
         }
 
         editor.putString("pidset", pidset);
@@ -464,6 +473,8 @@ public class ProductDetailsFragment extends Fragment {
         editor.putString("pquantset", pquantset);
         editor.putString("totleAmount", newprice);
         editor.putString("pcatset", pcategoryset);
+        editor.putString("punitset", punitset);
+        editor.putString("punitvalset", punitvalset);
         editor.apply();
 
     }

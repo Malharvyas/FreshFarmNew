@@ -27,7 +27,7 @@
                 android:background="@drawable/border_edittext"
                 android:drawableLeft="@drawable/ic_baseline_search_24"
                 android:drawablePadding="10sp"
-                android:hint="@string/hint_search"
+                android:hint="@string/hint_search_area"
                 android:paddingLeft="10sp"
                 android:textSize="15sp"
                 app:layout_constraintTop_toTopOf="parent" />

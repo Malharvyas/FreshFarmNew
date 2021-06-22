@@ -8,6 +8,7 @@ import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 
 import android.util.Base64;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ import java.util.Map;
 public class EditProfile extends Fragment {
 
     EditText username, umobnum, uemailadd, uaddress;
-    String uname, umob, uemail, uadd, cus_id;
+    String uname, umob, uemail, uadd, cus_id, area_id;
     String url = "";
     String updatedname, updatedadd;
     Button save;
@@ -83,6 +84,7 @@ public class EditProfile extends Fragment {
         uemail = sharedPreferences.getString("customer_email", "NA");
         uadd = sharedPreferences.getString("address", "");
         cus_id = sharedPreferences.getString("customer_id", "");
+        area_id = sharedPreferences.getString("area_id", "");
 
         setdetails(uname, umob, uemail, uadd);
 
@@ -95,14 +97,14 @@ public class EditProfile extends Fragment {
                 if (updatedname.equals("") || updatedname == null || updatedadd.equals("") || updatedadd == null) {
                     Toast.makeText(getContext(), "Name or Address cannot be empty", Toast.LENGTH_SHORT).show();
                 } else {
-                    update(cus_id, updatedname, updatedadd);
+                    update(cus_id, area_id, updatedname, updatedadd);
                 }
             }
         });
         return v;
     }
 
-    private void update(String cus_id, String updatedname, String updatedadd) {
+    private void update(String cus_id, String area_id, String updatedname, String updatedadd) {
         BaseUrl b = new BaseUrl();
         url = b.url;
         url = url.concat("freshfarm/api/ApiController/editProfile");
@@ -119,7 +121,8 @@ public class EditProfile extends Fragment {
 
                             try {
                                 json = new JSONObject(String.valueOf(response));
-                                JSONObject json2 = json.getJSONObject("getProduct");
+                                Log.e("printLog", "----editProfile_response----" + response);
+                                JSONObject json2 = json.getJSONObject("editProfile");
                                 Boolean status = json2.getBoolean("status");
                                 String stat = status.toString();
                                 if (stat.equals("true")) {
@@ -127,11 +130,13 @@ public class EditProfile extends Fragment {
                                     JSONObject data = json2.getJSONObject("data");
                                     String cusname = data.getString("customer_name");
                                     String cusadd = data.getString("address");
+                                    String cusarea_id = data.getString("area_id");
 
                                     SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putString("customer_name", cusname);
                                     editor.putString("address", cusadd);
+                                    editor.putString("area_id", cusarea_id);
                                     editor.apply();
 
                                     Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
@@ -179,6 +184,12 @@ public class EditProfile extends Fragment {
                 params.put("customer_id", cus_id);
                 params.put("customer_name", updatedname);
                 params.put("address", updatedadd);
+                params.put("area_id", area_id);
+
+                Log.e("printLog", "-----customer_id-----" + cus_id);
+                Log.e("printLog", "-----customer_name-----" + updatedname);
+                Log.e("printLog", "-----address-----" + updatedadd);
+                Log.e("printLog", "-----area_id-----" + area_id);
                 return params;
             }
 

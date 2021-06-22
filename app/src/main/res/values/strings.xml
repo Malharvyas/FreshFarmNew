@@ -9,6 +9,7 @@
     <string name="hint_pass2"><b>Confirm Password</b></string>
     <string name="hint_referral"><b>Referral Code</b></string>
     <string name="hint_search"><b>Search</b></string>
+    <string name="hint_search_area"><b>Search Area</b></string>
     <string name="hint_address"><b>Address</b></string>
     <string name="hint_curr_pass"><b>Current Password</b></string>
     <string name="hint_new_pass"><b>New Password</b></string>

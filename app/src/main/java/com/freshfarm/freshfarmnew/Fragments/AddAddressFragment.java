@@ -1,14 +1,8 @@
 package com.freshfarm.freshfarmnew.Fragments;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -25,7 +19,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
@@ -39,33 +32,20 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.freshfarm.freshfarmnew.Adapters.AreaAdapter;
 import com.freshfarm.freshfarmnew.Class.BaseUrl;
-import com.freshfarm.freshfarmnew.MapsActivity;
 import com.freshfarm.freshfarmnew.Model.AddressDataModel;
 import com.freshfarm.freshfarmnew.Model.AddressModel;
 import com.freshfarm.freshfarmnew.Model.AreaModel;
 import com.freshfarm.freshfarmnew.R;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class AddAddressFragment extends Fragment {
@@ -83,7 +63,7 @@ public class AddAddressFragment extends Fragment {
     SupportMapFragment mapFragment;
     private static final int REQUEST_CODE = 101;
     SharedPreferences sharedPreferences, sharedPreferences2, getpreferances;
-    private AreaModel areaModel;
+    private String areaId = "";
     private ProgressBar progressbar;
 
     public AddAddressFragment() {
@@ -126,8 +106,12 @@ public class AddAddressFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Object item = parent.getItemAtPosition(position);
                 if (item instanceof AreaModel) {
-                    areaModel = (AreaModel) item;
-                    edArea.setText(areaModel.getAreaName());
+                    areaId = ((AreaModel) item).getAreaId();
+                    /*SharedPreferences sharedPreferences = getActivity().getSharedPreferences("userpref", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("area_id", areaModel.getAreaId());
+                    editor.apply();*/
+                    edArea.setText(((AreaModel) item).getAreaName());
                 }
             }
         });
@@ -147,6 +131,7 @@ public class AddAddressFragment extends Fragment {
             if (getArguments().containsKey("data")) {
                 addressDataModel = (AddressDataModel) getArguments().getSerializable("data");
                 if (addressDataModel != null) {
+                    areaId = addressDataModel.getArea_id();
                     edName.setText(addressDataModel.getContactName());
                     edPhone.setText(addressDataModel.getPhoneNumber());
                     edAddress.setText(addressDataModel.getAddress());
@@ -175,7 +160,10 @@ public class AddAddressFragment extends Fragment {
         btnAddAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getAddressDetails();
+                if (!areaId.isEmpty())
+                    getAddressDetails();
+                else
+                    Toast.makeText(getContext(), "Please Select Area", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -275,8 +263,7 @@ public class AddAddressFragment extends Fragment {
                     params.put("type", type);
                     params.put("phone_number", phoneNumber);
                     params.put("contact_name", name);
-                    if (areaModel != null)
-                        params.put("area_id", areaModel.getAreaId());
+                    params.put("area_id", areaId);
                     return params;
                 }
 
